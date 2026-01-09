@@ -1,0 +1,530 @@
+/* App container */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 80rem; /* max-w-7xlと同じ1280px */
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+/* ダークモード時の背景色をbodyから継承 */
+:global(:root.dark) .app,
+:global(html.dark) .app {
+  background-color: transparent;
+}
+
+.appMain {
+  flex: 1;
+  padding: 0;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+:global(:root:not(.dark)) .appMain,
+:global(html:not(.dark)) .appMain {
+  background-color: transparent !important;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+}
+
+:global(:root:not(.dark)) .emptyState,
+:global(html:not(.dark)) .emptyState {
+  color: #666 !important;
+}
+
+/* Condition Selector */
+.conditionSelector {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+:global(:root:not(.dark)) .conditionSelector,
+:global(html:not(.dark)) .conditionSelector {
+  background: white !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.conditionSelector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:global(:root:not(.dark)) .conditionSelector:hover,
+:global(html:not(.dark)) .conditionSelector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.selectorGroup {
+  margin-bottom: 1.5rem;
+}
+
+.selectorGroup:last-child {
+  margin-bottom: 0;
+}
+
+.labelText {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #555;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+:global(:root:not(.dark)) .labelText,
+:global(html:not(.dark)) .labelText {
+  color: #555 !important;
+}
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.radioLabel:hover {
+  background: #f3f4f6;
+}
+
+:global(:root:not(.dark)) .radioLabel:hover,
+:global(html:not(.dark)) .radioLabel:hover {
+  background: #f3f4f6 !important;
+}
+
+.radioInput {
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.radioText {
+  font-size: 0.95rem;
+  color: #333;
+  user-select: none;
+}
+
+:global(:root:not(.dark)) .radioText,
+:global(html:not(.dark)) .radioText {
+  color: #333 !important;
+}
+
+/* Checklist Container */
+.checklistContainer {
+  margin-top: 2rem;
+}
+
+.checklistNotice {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+:global(:root:not(.dark)) .checklistNotice,
+:global(html:not(.dark)) .checklistNotice {
+  background: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+
+.checklistNotice p {
+  margin: 0.25rem 0;
+}
+
+.checklistNotice p:first-child {
+  margin-top: 0;
+}
+
+.checklistNotice p:last-child {
+  margin-bottom: 0;
+}
+
+.copyButton {
+  width: 100%;
+  padding: 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+:global(:root:not(.dark)) .copyButton,
+:global(html:not(.dark)) .copyButton {
+  background: #667eea !important;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3) !important;
+}
+
+.copyButton:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+:global(:root:not(.dark)) .copyButton:hover:not(:disabled),
+:global(html:not(.dark)) .copyButton:hover:not(:disabled) {
+  background: #5568d3 !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4) !important;
+}
+
+.copyButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.copyButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+:global(:root:not(.dark)) .copyButton:disabled,
+:global(html:not(.dark)) .copyButton:disabled {
+  background: #ccc !important;
+  color: white !important;
+}
+
+.checklistSections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Checklist Section */
+.checklistSection {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+:global(:root:not(.dark)) .checklistSection,
+:global(html:not(.dark)) .checklistSection {
+  background: white !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.checklistSection:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:global(:root:not(.dark)) .checklistSection:hover,
+:global(html:not(.dark)) .checklistSection:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sectionHeader {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: #f9fafb;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  text-align: left;
+}
+
+:global(:root:not(.dark)) .sectionHeader,
+:global(html:not(.dark)) .sectionHeader {
+  background: #f9fafb !important;
+  border-bottom-color: #e5e7eb !important;
+}
+
+.sectionHeader:hover {
+  background: #f3f4f6;
+}
+
+:global(:root:not(.dark)) .sectionHeader:hover,
+:global(html:not(.dark)) .sectionHeader:hover {
+  background: #f3f4f6 !important;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+:global(:root:not(.dark)) .sectionTitle,
+:global(html:not(.dark)) .sectionTitle {
+  color: #333 !important;
+}
+
+.collapseIcon {
+  color: #666;
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+:global(:root:not(.dark)) .collapseIcon,
+:global(html:not(.dark)) .collapseIcon {
+  color: #666 !important;
+}
+
+.sectionContent {
+  padding: 1rem 1.5rem;
+}
+
+.categoryGroup {
+  margin-bottom: 1.5rem;
+}
+
+.categoryGroup:last-child {
+  margin-bottom: 0;
+}
+
+.categoryTitle {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4b5563;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+:global(:root:not(.dark)) .categoryTitle,
+:global(html:not(.dark)) .categoryTitle {
+  color: #4b5563 !important;
+  border-bottom-color: #e5e7eb !important;
+}
+
+.categoryItems {
+  padding-left: 0.5rem;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  gap: 0.75rem;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+.checklistItem:hover {
+  background: #f8f9fa;
+}
+
+:global(:root:not(.dark)) .checklistItem:hover,
+:global(html:not(.dark)) .checklistItem:hover {
+  background: #f8f9fa !important;
+}
+
+.checkboxInput {
+  margin-top: 0.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: #667eea;
+}
+
+.itemText {
+  flex: 1;
+  color: #333;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+:global(:root:not(.dark)) .itemText,
+:global(html:not(.dark)) .itemText {
+  color: #333 !important;
+}
+
+.checkboxInput:checked + .itemText {
+  color: #555;
+  text-decoration: none;
+}
+
+:global(:root:not(.dark)) .checkboxInput:checked + .itemText,
+:global(html:not(.dark)) .checkboxInput:checked + .itemText {
+  color: #555 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .appMain {
+    padding: 1.5rem 1rem;
+  }
+
+  .conditionSelector {
+    padding: 1.25rem;
+  }
+
+  .sectionHeader {
+    padding: 1rem 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 1rem;
+  }
+
+  .sectionContent {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .itemText {
+    font-size: 0.9rem;
+  }
+}
+
+/* ダークモード対応 */
+:global(:root.dark) .conditionSelector,
+:global(html.dark) .conditionSelector {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+:global(:root.dark) .conditionSelector:hover,
+:global(html.dark) .conditionSelector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+:global(:root.dark) .labelText,
+:global(html.dark) .labelText {
+  color: #d1d5db !important;
+}
+
+:global(:root.dark) .radioLabel,
+:global(html.dark) .radioLabel {
+  color: #e5e7eb !important;
+}
+
+:global(:root.dark) .radioLabel:hover,
+:global(html.dark) .radioLabel:hover {
+  background: #374151 !important;
+}
+
+:global(:root.dark) .radioText,
+:global(html.dark) .radioText {
+  color: #e5e7eb !important;
+}
+
+:global(:root.dark) .checklistNotice,
+:global(html.dark) .checklistNotice {
+  background: #78350f !important;
+  border-color: #92400e !important;
+  color: #fef3c7 !important;
+}
+
+:global(:root.dark) .categoryTitle,
+:global(html.dark) .categoryTitle {
+  color: #d1d5db !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+:global(:root.dark) .checklistSection,
+:global(html.dark) .checklistSection {
+  background: #1f2937 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+:global(:root.dark) .sectionHeader,
+:global(html.dark) .sectionHeader {
+  background: #374151 !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+:global(:root.dark) .sectionHeader:hover,
+:global(html.dark) .sectionHeader:hover {
+  background: #4b5563 !important;
+}
+
+:global(:root.dark) .checklistSection:hover,
+:global(html.dark) .checklistSection:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+:global(:root.dark) .sectionTitle,
+:global(html.dark) .sectionTitle {
+  color: #f3f4f6 !important;
+}
+
+:global(:root.dark) .collapseIcon,
+:global(html.dark) .collapseIcon {
+  color: #9ca3af !important;
+}
+
+:global(:root.dark) .itemText,
+:global(html.dark) .itemText {
+  color: #e5e7eb !important;
+}
+
+:global(:root.dark) .checkboxInput:checked + .itemText,
+:global(html.dark) .checkboxInput:checked + .itemText {
+  color: #d1d5db !important;
+}
+
+:global(:root.dark) .checklistItem:hover,
+:global(html.dark) .checklistItem:hover {
+  background: #374151 !important;
+}
+
+:global(:root.dark) .emptyState,
+:global(html.dark) .emptyState {
+  color: #9ca3af !important;
+}
+
+:global(:root.dark) .appMain,
+:global(html.dark) .appMain {
+  background-color: transparent !important;
+}
+
+:global(:root.dark) .copyButton,
+:global(html.dark) .copyButton {
+  background: #667eea !important;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.4) !important;
+}
+
+:global(:root.dark) .copyButton:hover:not(:disabled),
+:global(html.dark) .copyButton:hover:not(:disabled) {
+  background: #5568d3 !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.5) !important;
+}
+
+:global(:root.dark) .copyButton:disabled,
+:global(html.dark) .copyButton:disabled {
+  background: #4b5563 !important;
+  color: #9ca3af !important;
+}

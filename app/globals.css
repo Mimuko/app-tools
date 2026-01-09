@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply transition-colors font-sans bg-gray-50 dark:bg-gray-900;
+  }
+}
+
+@layer components {
+  /* 統一されたボタンスタイル */
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-500 dark:bg-primary-600 text-white rounded-md hover:bg-primary-600 dark:hover:bg-primary-700 transition-all font-medium shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-500 dark:bg-gray-600 text-white rounded-md hover:bg-gray-600 dark:hover:bg-gray-700 transition-all font-medium shadow-sm hover:shadow-md;
+  }
+
+  /* 統一されたカードスタイル */
+  .card {
+    @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700;
+  }
+
+
+  /* app-headerスタイル（useTailwind={false}用） */
+  .app-header {
+    margin-bottom: 2rem;
+  }
+
+  .header-content {
+    background-color: #5568d3 !important; /* フォールバック用の背景色 */
+    background-image: linear-gradient(135deg, #4c5ab0 0%, #5568d3 30%, #6366f1 70%, #764ba2 100%) !important;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: unset;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .header-content {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  /* ダークモード時のグラデーション */
+  .dark .header-content {
+    background-color: #667eea !important; /* フォールバック用の背景色 */
+    background-image: theme('backgroundImage.gradient-primary') !important;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #fff; /* text-white */
+  }
+
+  .header-text .subtitle {
+    font-size: 0.875rem;
+    opacity: 1;
+    color: #fff; /* text-white */
+  }
+}
+
+/* ヘッダーのflex-colスタイル - PC時とSP時で異なるレイアウト */
+/* @layer utilitiesの外に定義して確実に適用されるようにする */
+.header-flex-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: unset !important;
+  gap: 1rem !important; /* gap-4と同じ */
+}
+
+@media (min-width: 640px) {
+  .header-flex-col {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+}
+
+/* AppHeaderのテキスト色（useTailwind={true}用） - ライトテーマとダークテーマで#fffに統一 */
+.header-title-text {
+  color: #fff !important; /* text-white */
+}
+
+.header-subtitle-text {
+  color: #fff !important; /* text-white */
+}
+
+/* グラデーション背景 - ライトモードでも視認性を確保するために濃いグラデーションを使用 */
+/* @layer componentsの外に定義して確実に適用されるようにする */
+.bg-gradient-primary {
+  /* より濃いグラデーションでテキストの視認性を向上 */
+  background-color: #5568d3 !important; /* フォールバック用の背景色 */
+  background-image: linear-gradient(135deg, #4c5ab0 0%, #5568d3 30%, #6366f1 70%, #764ba2 100%) !important;
+  position: relative;
+}
+
+/* ダークモードでは元のグラデーションを使用 */
+.dark .bg-gradient-primary {
+  background-color: #667eea !important; /* フォールバック用の背景色 */
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* ThemeToggleのテキスト色 - ライトテーマとダークテーマで#fffに統一 */
+.theme-toggle-text {
+  color: #fff !important; /* text-white */
+}

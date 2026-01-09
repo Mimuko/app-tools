@@ -1,0 +1,750 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.app-header {
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-text {
+  flex: 1;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.theme-toggle {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.theme-toggle:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.theme-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  background-color: #f9fafb;
+  transition: background-color 0.3s ease;
+}
+
+:root:not(.dark) .app-main,
+html:not(.dark) .app-main {
+  background-color: #f9fafb !important;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+}
+
+:root:not(.dark) .empty-state,
+html:not(.dark) .empty-state {
+  color: #666 !important;
+}
+
+/* Condition Selector */
+.condition-selector {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+:root:not(.dark) .condition-selector,
+html:not(.dark) .condition-selector {
+  background: white !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.condition-selector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:root:not(.dark) .condition-selector:hover,
+html:not(.dark) .condition-selector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.selector-group {
+  margin-bottom: 1.5rem;
+}
+
+.selector-group:last-child {
+  margin-bottom: 0;
+}
+
+.label-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #555;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+:root:not(.dark) .label-text,
+html:not(.dark) .label-text {
+  color: #555 !important;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.radio-label:hover {
+  background: #f3f4f6;
+}
+
+:root:not(.dark) .radio-label:hover,
+html:not(.dark) .radio-label:hover {
+  background: #f3f4f6 !important;
+}
+
+.radio-input {
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.radio-text {
+  font-size: 0.95rem;
+  color: #333;
+  user-select: none;
+}
+
+:root:not(.dark) .radio-text,
+html:not(.dark) .radio-text {
+  color: #333 !important;
+}
+
+/* Checklist Container */
+.checklist-container {
+  margin-top: 2rem;
+}
+
+.checklist-notice {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+:root:not(.dark) .checklist-notice,
+html:not(.dark) .checklist-notice {
+  background: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+
+.checklist-notice p {
+  margin: 0.25rem 0;
+}
+
+.checklist-notice p:first-child {
+  margin-top: 0;
+}
+
+.checklist-notice p:last-child {
+  margin-bottom: 0;
+}
+
+.copy-button {
+  width: 100%;
+  padding: 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+:root:not(.dark) .copy-button,
+html:not(.dark) .copy-button {
+  background: #667eea !important;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3) !important;
+}
+
+.copy-button:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+:root:not(.dark) .copy-button:hover:not(:disabled),
+html:not(.dark) .copy-button:hover:not(:disabled) {
+  background: #5568d3 !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4) !important;
+}
+
+.copy-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.copy-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+:root:not(.dark) .copy-button:disabled,
+html:not(.dark) .copy-button:disabled {
+  background: #ccc !important;
+  color: white !important;
+}
+
+.checklist-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Checklist Section */
+.checklist-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+:root:not(.dark) .checklist-section,
+html:not(.dark) .checklist-section {
+  background: white !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.checklist-section:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:root:not(.dark) .checklist-section:hover,
+html:not(.dark) .checklist-section:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.section-header {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: #f9fafb;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  text-align: left;
+}
+
+:root:not(.dark) .section-header,
+html:not(.dark) .section-header {
+  background: #f9fafb !important;
+  border-bottom-color: #e5e7eb !important;
+}
+
+.section-header:hover {
+  background: #f3f4f6;
+}
+
+:root:not(.dark) .section-header:hover,
+html:not(.dark) .section-header:hover {
+  background: #f3f4f6 !important;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+:root:not(.dark) .section-title,
+html:not(.dark) .section-title {
+  color: #333 !important;
+}
+
+.collapse-icon {
+  color: #666;
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+:root:not(.dark) .collapse-icon,
+html:not(.dark) .collapse-icon {
+  color: #666 !important;
+}
+
+.section-content {
+  padding: 1rem 1.5rem;
+}
+
+.category-group {
+  margin-bottom: 1.5rem;
+}
+
+.category-group:last-child {
+  margin-bottom: 0;
+}
+
+.category-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4b5563;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+:root:not(.dark) .category-title,
+html:not(.dark) .category-title {
+  color: #4b5563 !important;
+  border-bottom-color: #e5e7eb !important;
+}
+
+.category-items {
+  padding-left: 0.5rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  gap: 0.75rem;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+.checklist-item:hover {
+  background: #f8f9fa;
+}
+
+:root:not(.dark) .checklist-item:hover,
+html:not(.dark) .checklist-item:hover {
+  background: #f8f9fa !important;
+}
+
+.checkbox-input {
+  margin-top: 0.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: #667eea;
+}
+
+.item-text {
+  flex: 1;
+  color: #333;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+:root:not(.dark) .item-text,
+html:not(.dark) .item-text {
+  color: #333 !important;
+}
+
+.checkbox-input:checked + .item-text {
+  color: #555;
+  text-decoration: none;
+}
+
+:root:not(.dark) .checkbox-input:checked + .item-text,
+html:not(.dark) .checkbox-input:checked + .item-text {
+  color: #555 !important;
+}
+
+/* Footer */
+.app-footer {
+  padding: 1.5rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+:root:not(.dark) .app-footer,
+html:not(.dark) .app-footer {
+  background: #f9fafb !important;
+  border-top-color: #e5e7eb !important;
+  color: #6b7280 !important;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-text {
+    text-align: center;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .theme-toggle {
+    align-self: flex-end;
+  }
+
+  .app-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .condition-selector {
+    padding: 1.25rem;
+  }
+
+  .condition-selector h2 {
+    font-size: 1.1rem;
+  }
+
+  .section-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .section-content {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .item-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* ダークモード対応 */
+:root.dark,
+html.dark {
+  color: #e0e0e0;
+  background-color: #111827;
+}
+
+:root.dark .condition-selector,
+html.dark .condition-selector {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root.dark .condition-selector:hover,
+html.dark .condition-selector:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+:root.dark .label-text,
+html.dark .label-text {
+  color: #d1d5db !important;
+}
+
+:root.dark .radio-label,
+html.dark .radio-label {
+  color: #e5e7eb !important;
+}
+
+:root.dark .radio-label:hover,
+html.dark .radio-label:hover {
+  background: #374151 !important;
+}
+
+:root.dark .radio-text,
+html.dark .radio-text {
+  color: #e5e7eb !important;
+}
+
+:root.dark .checklist-notice,
+html.dark .checklist-notice {
+  background: #78350f !important;
+  border-color: #92400e !important;
+  color: #fef3c7 !important;
+}
+
+:root.dark .category-title,
+html.dark .category-title {
+  color: #d1d5db !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+:root.dark .checklist-section,
+html.dark .checklist-section {
+  background: #1f2937 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+:root.dark .section-header,
+html.dark .section-header {
+  background: #374151 !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+:root.dark .section-header:hover,
+html.dark .section-header:hover {
+  background: #4b5563 !important;
+}
+
+:root.dark .checklist-section:hover,
+html.dark .checklist-section:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root.dark .section-title,
+html.dark .section-title {
+  color: #f3f4f6 !important;
+}
+
+:root.dark .collapse-icon,
+html.dark .collapse-icon {
+  color: #9ca3af !important;
+}
+
+:root.dark .item-text,
+html.dark .item-text {
+  color: #e5e7eb !important;
+}
+
+:root.dark .checkbox-input:checked + .item-text,
+html.dark .checkbox-input:checked + .item-text {
+  color: #d1d5db !important;
+}
+
+:root.dark .checklist-item:hover,
+html.dark .checklist-item:hover {
+  background: #374151 !important;
+}
+
+:root.dark .app-footer,
+html.dark .app-footer {
+  background: #1f2937 !important;
+  border-top-color: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+:root.dark .empty-state,
+html.dark .empty-state {
+  color: #9ca3af !important;
+}
+
+:root.dark .app-main,
+html.dark .app-main {
+  background-color: #111827 !important;
+}
+
+:root.dark .copy-button,
+html.dark .copy-button {
+  background: #667eea !important;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.4) !important;
+}
+
+:root.dark .copy-button:hover:not(:disabled),
+html.dark .copy-button:hover:not(:disabled) {
+  background: #5568d3 !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.5) !important;
+}
+
+:root.dark .copy-button:disabled,
+html.dark .copy-button:disabled {
+  background: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+/* prefers-color-scheme fallback (JavaScriptが無効な場合) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color: #e0e0e0;
+    background-color: #111827;
+  }
+
+  :root:not(.light) .condition-selector {
+    background: #1f2937;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  :root:not(.light) .label-text {
+    color: #d1d5db;
+  }
+
+  :root:not(.light) .radio-label {
+    color: #e5e7eb;
+  }
+
+  :root:not(.light) .radio-label:hover {
+    background: #374151;
+  }
+
+  :root:not(.light) .radio-text {
+    color: #e5e7eb;
+  }
+
+  :root:not(.light) .checklist-notice {
+    background: #78350f;
+    border-color: #92400e;
+    color: #fef3c7;
+  }
+
+  :root:not(.light) .category-title {
+    color: #d1d5db;
+    border-bottom-color: #4b5563;
+  }
+
+  :root:not(.light) .checklist-section {
+    background: #1f2937;
+    border-color: #4b5563;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  :root:not(.light) .section-header {
+    background: #374151;
+    border-bottom-color: #4b5563;
+  }
+
+  :root:not(.light) .section-header:hover {
+    background: #4b5563;
+  }
+
+  :root:not(.light) .section-title {
+    color: #f3f4f6;
+  }
+
+  :root:not(.light) .collapse-icon {
+    color: #9ca3af;
+  }
+
+  :root:not(.light) .item-text {
+    color: #e5e7eb;
+  }
+
+  :root:not(.light) .checkbox-input:checked + .item-text {
+    color: #d1d5db;
+  }
+
+  :root:not(.light) .checklist-item:hover {
+    background: #374151;
+  }
+
+  :root:not(.light) .app-footer {
+    background: #1f2937;
+    border-top-color: #4b5563;
+    color: #9ca3af;
+  }
+
+  :root:not(.light) .empty-state {
+    color: #9ca3af;
+  }
+
+  :root:not(.light) .app-main {
+    background-color: #111827;
+  }
+
+  :root:not(.light) .copy-button {
+    background: #667eea;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.4);
+  }
+
+  :root:not(.light) .copy-button:hover:not(:disabled) {
+    background: #5568d3;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.5);
+  }
+
+  :root:not(.light) .copy-button:disabled {
+    background: #4b5563;
+    color: #9ca3af;
+  }
+}

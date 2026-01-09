@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChecklistSection } from '../../types';
+import { ChecklistSection } from '../types';
 import styles from '../qa.module.css';
 
 interface CopyButtonProps {

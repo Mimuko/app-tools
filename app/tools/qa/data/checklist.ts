@@ -1,4 +1,4 @@
-import { ChecklistItem, TechStack, ProjectType } from '../../types';
+import { ChecklistItem, TechStack, ProjectType } from '../types';
 
 // 基本項目（常に表示）
 const basicItems: ChecklistItem[] = [
@@ -55,7 +55,7 @@ const postReleaseItems: ChecklistItem[] = [
   { id: 'post-5', text: 'キャッシュ・CDN影響の確認', checked: false },
 ];
 
-import { ChecklistCategory } from '../../types';
+import { ChecklistCategory } from '../types';
 
 export function getChecklistData(
   techStack: TechStack | null,

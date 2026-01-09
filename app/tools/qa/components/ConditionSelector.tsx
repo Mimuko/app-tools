@@ -1,4 +1,4 @@
-import { TechStack, ProjectType } from '../../types';
+import { TechStack, ProjectType } from '../types';
 import styles from '../qa.module.css';
 
 interface ConditionSelectorProps {

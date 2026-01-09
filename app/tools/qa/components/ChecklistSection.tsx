@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChecklistSection as ChecklistSectionType } from '../../types';
+import { ChecklistSection as ChecklistSectionType } from '../types';
 import styles from '../qa.module.css';
 
 interface ChecklistSectionProps {

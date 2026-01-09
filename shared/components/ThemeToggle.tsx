@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '../lib/theme';
 
-interface ThemeToggleProps {
+export interface ThemeToggleProps {
   /**
    * Tailwind CSSを使用する場合のスタイル
    * true: Tailwind CSSのスタイル（request-content-generation-tool用）

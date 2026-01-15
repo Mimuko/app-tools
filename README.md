@@ -112,19 +112,46 @@ XserverなどのApacheサーバーにも静的ファイルとしてデプロイ�
 
 #### サブディレクトリに配置する場合（例: `/crh/request-content-generation-tool/`）
 
-1. **ビルドの実行（ベースパスを指定）**
-   ```bash
-   BASE_PATH=/crh/request-content-generation-tool npm run build
-   ```
-   - サブディレクトリのパスを `BASE_PATH` 環境変数で指定します
-   - パスの先頭と末尾にスラッシュは不要です
+**方法1: 環境変数ファイルを使用（推奨）**
 
-2. **ファイルのアップロード**
+リポジトリに反映させたくない設定を管理する場合、`.env.local`ファイルを使用します。
+
+1. **環境変数ファイルの作成**
+   - プロジェクトルートに `.env.local` ファイルを作成します
+   - 以下の内容を記述します：
+     ```
+     BASE_PATH=/crh/request-content-generation-tool
+     ```
+   - `.env.local` は `.gitignore` に含まれているため、リポジトリにコミットされません
+
+2. **ビルドの実行**
+   ```bash
+   npm run build
+   ```
+   - Next.jsが自動的に `.env.local` を読み込みます
+
+3. **ファイルのアップロード**
    - `out` ディレクトリ内のすべてのファイルを、指定したサブディレクトリ（例: `public_html/crh/request-content-generation-tool/`）にアップロードします
    - `public/.htaccess` ファイルも `out` ディレクトリにコピーされていることを確認してください
 
-3. **動作確認**
-   - アップロード後、ブラウザでアクセスして動作を確認してください
+**方法2: コマンドラインで環境変数を指定**
+
+```bash
+# Windows (コマンドプロンプト)
+set BASE_PATH=/crh/request-content-generation-tool
+npm run build
+
+# Windows (PowerShell)
+$env:BASE_PATH="/crh/request-content-generation-tool"
+npm run build
+
+# Linux/Mac
+BASE_PATH=/crh/request-content-generation-tool npm run build
+```
+
+**注意事項:**
+- パスの先頭と末尾にスラッシュは不要です
+- 複数の環境で異なるパスを使用する場合は、`.env.local`、`.env.production` などを環境ごとに作成できます
 
 **注意事項:**
 - Next.jsの静的エクスポートでは、各ルートに対してHTMLファイルが生成されます

@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 開発環境では output: 'export' を無効化（静的エクスポートはビルド時のみ）
-  ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
+  // 静的エクスポートを有効化（ビルド時に静的ファイルを生成）
+  // 開発環境では無効化するため、環境変数で制御
+  ...(process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true' ? { output: 'export' } : {}),
+  // サブディレクトリに配置する場合のベースパス（環境変数で指定可能）
+  ...(process.env.BASE_PATH ? { basePath: process.env.BASE_PATH } : {}),
   images: {
-    unoptimized: true,
+    unoptimized: true, // 静的エクスポートでは画像最適化は無効
   },
-  trailingSlash: true,
-  // 開発環境では標準の .next ディレクトリを使用
-  ...(process.env.NODE_ENV === 'production' && { distDir: 'out' }),
+  trailingSlash: true, // 静的ホスティングとの互換性のため
+  // 静的エクスポート時は out ディレクトリに出力
+  ...(process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true' ? { distDir: 'out' } : {}),
   // パフォーマンス最適化
   compress: true,
   poweredByHeader: false,

@@ -27,7 +27,7 @@ export function AppHeader({
   if (useTailwind) {
     return (
       <header className={`mb-8 ${className}`}>
-        <div className="bg-gradient-primary rounded-lg p-6 shadow-lg relative">
+        <div className="bg-gradient-primary rounded-lg py-8 px-4 mb-4 shadow-lg relative">
           <div className="header-flex-col relative z-10">
             <div>
               <h1 className="text-2xl font-bold mb-1 header-title-text">{title}</h1>

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node scripts/inline-css.js",
+    "postbuild": "node scripts/inline-css.js && npx tsx scripts/export-engine-config.ts",
     "export": "next build",
     "static": "next build",
     "start": "next start",
@@ -24,6 +24,7 @@
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.40",
     "tailwindcss": "^3.4.7",
+    "tsx": "^4.7.0",
     "typescript": "^5.5.4"
   }
 }

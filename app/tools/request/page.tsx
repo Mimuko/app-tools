@@ -172,7 +172,8 @@ export default function RequestTool() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    fetch('/api/engine-config')
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    fetch(`${base}/engine-config.json`)
       .then((res) => res.json())
       .then((data) => {
         if (data.error) throw new Error(data.error);

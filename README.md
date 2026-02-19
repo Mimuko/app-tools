@@ -77,7 +77,7 @@ npm run build
 
 本番環境では静的エクスポート（`output: 'export'`）が有効になり、`out` ディレクトリにビルド結果が出力されます。
 
-ビルド後、`scripts/inline-css.js` が自動実行され、CSSがインライン化されます。
+ビルド後、`scripts/inline-css.js`（CSSのインライン化）と `scripts/export-engine-config.ts`（設定JSONの出力）が自動実行されます。`out/engine-config.json` が生成されるため、**静的デプロイ時は `out` 一式をアップロードすればよく、別ファイルの追加アップロードは不要です**。
 
 ### 本番サーバーの起動
 
@@ -118,9 +118,10 @@ XserverなどのApacheサーバーにも静的ファイルとしてデプロイ�
 
 1. **環境変数ファイルの作成**
    - プロジェクトルートに `.env.local` ファイルを作成します
-   - 以下の内容を記述します：
+   - 以下の内容を記述します（サブディレクトリで設定を読み込むため `NEXT_PUBLIC_BASE_PATH` も必要です）：
      ```
      BASE_PATH=/crh/request-content-generation-tool
+     NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool
      ```
    - `.env.local` は `.gitignore` に含まれているため、リポジトリにコミットされません
 
@@ -139,14 +140,16 @@ XserverなどのApacheサーバーにも静的ファイルとしてデプロイ�
 ```bash
 # Windows (コマンドプロンプト)
 set BASE_PATH=/crh/request-content-generation-tool
+set NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool
 npm run build
 
 # Windows (PowerShell)
 $env:BASE_PATH="/crh/request-content-generation-tool"
+$env:NEXT_PUBLIC_BASE_PATH="/crh/request-content-generation-tool"
 npm run build
 
 # Linux/Mac
-BASE_PATH=/crh/request-content-generation-tool npm run build
+BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool npm run build
 ```
 
 **注意事項:**

@@ -59,7 +59,7 @@ npm install
 npm run dev
 ```
 
-ブラウザで [http://localhost:3000](http://localhost:3000) を開いてアプリケーションを確認できます。
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いてアプリケーションを確認できます。`BASE_PATH` は開発時には適用されないため、常にルート（`/`）でアクセスできます。
 
 ### リント
 
@@ -158,6 +158,7 @@ BASE_PATH=/crh/request-content-generation-tool npm run build
 - `trailingSlash: true` が設定されているため、URLの末尾にスラッシュが付きます（例: `/tools/`）
 - すべての機能はクライアントサイドで動作するため、サーバー側の特別な設定は不要です
 - サブディレクトリに配置する場合は、必ず `BASE_PATH` を指定してビルドしてください
+- `BASE_PATH` は本番ビルド時（`npm run build`）にのみ適用されます。開発時（`npm run dev`）は常に http://localhost:3000 でアクセスできます
 
 ## プロジェクト構造
 

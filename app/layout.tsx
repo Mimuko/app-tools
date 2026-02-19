@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@shared/lib/theme';
@@ -16,7 +16,11 @@ const notoSansJP = Noto_Sans_JP({
 export const metadata: Metadata = {
   title: 'ツール集',
   description: '各種ツールの統合アプリケーション',
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#111827' },

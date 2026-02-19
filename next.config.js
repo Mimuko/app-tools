@@ -3,8 +3,8 @@ const nextConfig = {
   // 静的エクスポートを有効化（ビルド時に静的ファイルを生成）
   // 開発環境では無効化するため、環境変数で制御
   ...(process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true' ? { output: 'export' } : {}),
-  // サブディレクトリに配置する場合のベースパス（環境変数で指定可能）
-  ...(process.env.BASE_PATH ? { basePath: process.env.BASE_PATH } : {}),
+  // サブディレクトリに配置する場合のベースパス（本番ビルド時のみ適用、ローカルは localhost:3000）
+  ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH ? { basePath: process.env.BASE_PATH } : {}),
   images: {
     unoptimized: true, // 静的エクスポートでは画像最適化は無効
   },

@@ -173,23 +173,45 @@ export default function RequestTool() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    const url = `${base}/engine-config.json`;
+    // 現在のページパスから「アプリのルート」を算出（サブディレクトリでも動く）
+    const appRoot =
+      typeof window !== 'undefined'
+        ? window.location.pathname.replace(/\/tools\/request\/?$/, '').replace(/\/$/, '') || ''
+        : process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+    const url = `${appRoot}/engine-config.json`;
     setLoadError(null);
-    fetch(url)
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15秒でタイムアウト
+
+    fetch(url, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${url}`);
+        const contentType = res.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+          throw new Error(`JSON ではない応答です (Content-Type: ${contentType ?? 'なし'})`);
+        }
         return res.json();
       })
       .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setConfig(data);
+        if (data?.error) throw new Error(data.error);
+        if (!data?.fieldsById || !data?.fieldSetsBySetId || !data?.rules) {
+          throw new Error('設定の形式が正しくありません');
+        }
+        setConfig(data as EngineConfig);
       })
       .catch((e) => {
         console.error(e);
-        setLoadError(e instanceof Error ? e.message : String(e));
+        if (e.name === 'AbortError') {
+          setLoadError('タイムアウト: 設定の取得に時間がかかりすぎています。');
+        } else {
+          setLoadError(e instanceof Error ? e.message : String(e));
+        }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        clearTimeout(timeoutId);
+        setLoading(false);
+      });
   }, []);
 
   const submitState0 = useCallback(() => {

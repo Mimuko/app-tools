@@ -156,6 +156,23 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 - パスの先頭と末尾にスラッシュは不要です
 - 複数の環境で異なるパスを使用する場合は、`.env.local`、`.env.production` などを環境ごとに作成できます
 
+**具体例（Xserver などで公開ディレクトリが `/public_html/crh/request-content-generation-tool/` の場合）**
+
+| 項目 | 内容 |
+|------|------|
+| 公開ディレクトリ（URL 上のパス） | `/public_html/crh/request-content-generation-tool/`（ブラウザでは通常 `https://ドメイン/crh/request-content-generation-tool/` のように `public_html` は見えない） |
+| リモートのサーバー上のパス | 例: `/xs080940.xsrv.jp/public_html/crh/request-content-generation-tool` |
+| 環境変数（`.env.local` に記載） | `BASE_PATH=/crh/request-content-generation-tool` と `NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool`（**URL のパス**。`public_html` は含めない） |
+| アップロード元（ローカル） | プロジェクトの **`out` ディレクトリの中身**（`out` フォルダそのものではなく、その中にあるファイル・フォルダすべて） |
+| アップロード先（リモート） | 上記リモートパス **直下**（`/xs080940.xsrv.jp/public_html/crh/request-content-generation-tool` の直下に `index.html` や `engine-config.json` などが並ぶ形） |
+
+アップロード後のイメージ（リモートディレクトリ直下）:
+- `index.html`
+- `engine-config.json` ← 必須（設定読み込み用）
+- `_next/` フォルダ（中に JS/CSS 等）
+- `tools/` フォルダ
+- その他 `out` に含まれるファイル・フォルダ一式
+
 **注意事項:**
 - Next.jsの静的エクスポートでは、各ルートに対してHTMLファイルが生成されます
 - `trailingSlash: true` が設定されているため、URLの末尾にスラッシュが付きます（例: `/tools/`）

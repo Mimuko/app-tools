@@ -1,0 +1,6 @@
+rule_id,priority,condition_expr (human readable),route,show_field_set,next_action_label,notes
+R_STOP_NO_URL,1,target_url is empty,STOP,STOP_MIN,入力不足：対象を入れて続ける,対象がないと着手できない
+R_STOP_NO_INTENT,2,request_intent is empty,STOP,STOP_MIN,入力不足：依頼の種類を選んで続ける,Q1未選択は差し戻し
+R_S2_DISPLAY_CHANGE,10,request_intent == display_change,STATE2,S2_DISPLAY_FIX,修正依頼を作る（作業に入る）,表示内容変更 → STATE2（軽微修正）
+R_S1_INTENT,11,request_intent in (feature_change bug_fix revert_spec need_consult),STATE1,S1_GENERAL,原因確認へ進む（仕様/不具合の切り分け）,その他はSTATE1
+R_DEFAULT_S1,99,otherwise,STATE1,S1_GENERAL,原因確認へ進む（仕様/不具合の切り分け）,迷うものはSTATE1へ（事故防止）

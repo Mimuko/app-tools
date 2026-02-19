@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const isStaticExport = process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true'
+
 const nextConfig = {
   // 静的エクスポートを有効化（ビルド時に静的ファイルを生成）
   // 開発環境では無効化するため、環境変数で制御
@@ -10,7 +12,7 @@ const nextConfig = {
   },
   trailingSlash: true, // 静的ホスティングとの互換性のため
   // 静的エクスポート時は out ディレクトリに出力
-  ...(process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true' ? { distDir: 'out' } : {}),
+  ...(isStaticExport ? { distDir: 'out' } : {}),
   // パフォーマンス最適化
   compress: true,
   poweredByHeader: false,

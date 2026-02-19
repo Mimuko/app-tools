@@ -22,7 +22,7 @@ export default function ToolsPage() {
               実装依頼生成ツール
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              実装依頼内容を自動生成します
+              依頼整理から原因確認・修正依頼文を生成します（状態分岐・判断フロー統合）
             </p>
             <div className="text-primary-600 dark:text-primary-400 font-medium">
               利用する →

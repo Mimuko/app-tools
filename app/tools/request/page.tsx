@@ -173,10 +173,10 @@ export default function RequestTool() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // 現在のページパスから「アプリのルート」を算出（サブディレクトリでも動く）
+    // 現在のページパスから「アプリのルート」を算出（/tools/request や /tools/qa など下層でも動く）
     const appRoot =
       typeof window !== 'undefined'
-        ? window.location.pathname.replace(/\/tools\/request\/?$/, '').replace(/\/$/, '') || ''
+        ? window.location.pathname.replace(/\/tools\/[^/]+\/?$/, '').replace(/\/$/, '') || ''
         : process.env.NEXT_PUBLIC_BASE_PATH ?? '';
     const url = `${appRoot}/engine-config.json`;
     setLoadError(null);

@@ -156,21 +156,26 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 - パスの先頭と末尾にスラッシュは不要です
 - 複数の環境で異なるパスを使用する場合は、`.env.local`、`.env.production` などを環境ごとに作成できます
 
-**具体例（Xserver などで公開ディレクトリが `/public_html/crh/request-content-generation-tool/` の場合）**
+**具体例（リモート・URL・下層を整理した場合）**
 
 | 項目 | 内容 |
 |------|------|
-| 公開ディレクトリ（URL 上のパス） | `/public_html/crh/request-content-generation-tool/`（ブラウザでは通常 `https://ドメイン/crh/request-content-generation-tool/` のように `public_html` は見えない） |
-| リモートのサーバー上のパス | 例: `/xs080940.xsrv.jp/public_html/crh/request-content-generation-tool` |
-| 環境変数（`.env.local` に記載） | `BASE_PATH=/crh/request-content-generation-tool` と `NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool`（**URL のパス**。`public_html` は含めない） |
-| アップロード元（ローカル） | プロジェクトの **`out` ディレクトリの中身**（`out` フォルダそのものではなく、その中にあるファイル・フォルダすべて） |
-| アップロード先（リモート） | 上記リモートパス **直下**（`/xs080940.xsrv.jp/public_html/crh/request-content-generation-tool` の直下に `index.html` や `engine-config.json` などが並ぶ形） |
+| **リモートディレクトリ**（FTP 等のサーバー上のパス） | `/xs080940.xsrv.jp/public_html/crh/request-content-generation-tool` |
+| **アクセス先 URL**（ブラウザで開くアドレス） | `https://xs080940.xsrv.jp/crh/request-content-generation-tool` |
+| **下層のパス** | `tools/request`（実装依頼ツール）、`tools/qa`（公開前確認チェックリスト） |
+| **実際のアクセス URL 例** | トップ: `https://xs080940.xsrv.jp/crh/request-content-generation-tool/`<br>実装依頼: `https://xs080940.xsrv.jp/crh/request-content-generation-tool/tools/request/`<br>チェックリスト: `https://xs080940.xsrv.jp/crh/request-content-generation-tool/tools/qa/` |
+| **アップロード元（ローカル）** | プロジェクトの **`out` ディレクトリの中身**（`out` フォルダそのものではなく、その中にあるファイル・フォルダすべて） |
+| **アップロード先（リモート）** | 上記リモートディレクトリ **直下**。直下に `index.html`・`engine-config.json`・`_next/`・`tools/` などが並ぶ形にする |
+
+**この構成の場合の動き**
+- 実装依頼ツール（`/tools/request/`）は、表示中の URL から「アプリのルート」を自動で判定し、`https://xs080940.xsrv.jp/crh/request-content-generation-tool/engine-config.json` を取得します。`BASE_PATH` 等の環境変数がなくても動作します。
+- ビルド時に `BASE_PATH` を指定すると、Next のリンクやリダイレクトがサブディレクトリ向けになります。指定しなくても設定読み込みは上記の仕組みで動きます。
 
 アップロード後のイメージ（リモートディレクトリ直下）:
 - `index.html`
 - `engine-config.json` ← 必須（設定読み込み用）
 - `_next/` フォルダ（中に JS/CSS 等）
-- `tools/` フォルダ
+- `tools/` フォルダ（その中に `request/`、`qa/` など）
 - その他 `out` に含まれるファイル・フォルダ一式
 
 **注意事項:**

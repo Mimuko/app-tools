@@ -162,6 +162,7 @@ function FieldRender({
 export default function RequestTool() {
   const [config, setConfig] = useState<EngineConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [state0, setState0] = useState<State0Values>(initialState0);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
   const [stopMissing, setStopMissing] = useState<string[]>([]);
@@ -173,13 +174,21 @@ export default function RequestTool() {
 
   useEffect(() => {
     const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    fetch(`${base}/engine-config.json`)
-      .then((res) => res.json())
+    const url = `${base}/engine-config.json`;
+    setLoadError(null);
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}: ${url}`);
+        return res.json();
+      })
       .then((data) => {
         if (data.error) throw new Error(data.error);
         setConfig(data);
       })
-      .catch(console.error)
+      .catch((e) => {
+        console.error(e);
+        setLoadError(e instanceof Error ? e.message : String(e));
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -278,6 +287,11 @@ export default function RequestTool() {
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           <p className="text-red-600 dark:text-red-400">設定の読み込みに失敗しました</p>
+          {loadError && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 font-mono break-all">
+              {loadError}
+            </p>
+          )}
         </div>
       </main>
     );

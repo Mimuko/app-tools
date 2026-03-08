@@ -11,6 +11,7 @@ import type {
   RuleDef,
   InputType,
   OptionItem,
+  OptionsByConsultation,
 } from './types';
 
 function normalizeBoolean(v: string): boolean {
@@ -120,18 +121,46 @@ function csvToObjectsGeneric(content: string): Record<string, string>[] {
   });
 }
 
+/** FIELD_OPTIONS_BY_CONSULTATION.csv の1行から option_values をパース */
+function parseOptionValues(s: string): string[] {
+  if (!s || !String(s).trim()) return [];
+  return String(s)
+    .trim()
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
+/** FIELD_OPTIONS_BY_CONSULTATION.csv から OptionsByConsultation を構築 */
+function buildOptionsByConsultation(csv: string): OptionsByConsultation {
+  const out: OptionsByConsultation = {};
+  const rows = csvToObjectsGeneric(stripBom(csv));
+  for (const row of rows) {
+    const consultation_type = get(row, 'consultation_type').trim();
+    const field_id = get(row, 'field_id').trim();
+    if (!consultation_type || !field_id) continue;
+    const option_values = parseOptionValues(get(row, 'option_values'));
+    if (option_values.length === 0) continue;
+    if (!out[consultation_type]) out[consultation_type] = {};
+    out[consultation_type][field_id] = option_values;
+  }
+  return out;
+}
+
 function stripBom(s: string): string {
   if (!s || s.length === 0) return s;
   return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s;
 }
 
 /**
- * 3つのCSV文字列から EngineConfig を生成
+ * CSV文字列から EngineConfig を生成
+ * @param optionsByConsultationCsv - 省略時は optionsByConsultation は未設定（全選択肢表示）
  */
 export function buildEngineConfig(
   masterFieldsCsv: string,
   fieldSetsCsv: string,
-  rulesCsv: string
+  rulesCsv: string,
+  optionsByConsultationCsv?: string
 ): EngineConfig {
   const fieldsById: Record<string, FieldDef> = {};
   const masterRows = csvToObjectsGeneric(stripBom(masterFieldsCsv));
@@ -160,9 +189,15 @@ export function buildEngineConfig(
   }
   rules.sort((a, b) => a.priority - b.priority);
 
+  const optionsByConsultation =
+    optionsByConsultationCsv && optionsByConsultationCsv.trim()
+      ? buildOptionsByConsultation(optionsByConsultationCsv)
+      : undefined;
+
   return {
     fieldsById,
     fieldSetsBySetId,
     rules,
+    optionsByConsultation,
   };
 }

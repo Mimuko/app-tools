@@ -2,7 +2,13 @@
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { AppHeader, AppFooter, ThemeToggle } from '@shared/components';
-import type { EngineConfig, FieldDef, FieldSetRow, State0Values } from '@/lib/state-engine';
+import type {
+  EngineConfig,
+  FieldDef,
+  FieldSetRow,
+  State0Values,
+  OptionItem,
+} from '@/lib/state-engine';
 import {
   STATE0_FIELD_IDS,
   evaluateRules,
@@ -13,17 +19,14 @@ import {
 import type { RouteResult } from '@/lib/state-engine/rules';
 
 const initialState0: State0Values = {
+  consultation_type: '',
+  ask_type: '',
   request_intent: '',
-  origin: '',
   target_url: '',
-  device: '',
-  phenomenon: [],
-  phenomenon_note: '',
-  compare: [],
-  compare_when: '',
-  compare_url: '',
-  ask_type: [],
-  deadline: '',
+  current_behavior: '',
+  expected_behavior: '',
+  repro_steps: '',
+  repro_env: '',
   attachments: '',
 };
 
@@ -173,12 +176,13 @@ export default function RequestTool() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // 現在のページパスから「アプリのルート」を算出（/tools/request や /tools/qa など下層でも動く）
+    // 開発時は API から取得、本番の静的デプロイ時は engine-config.json を取得
+    const isDev = process.env.NODE_ENV === 'development';
     const appRoot =
       typeof window !== 'undefined'
         ? window.location.pathname.replace(/\/tools\/[^/]+\/?$/, '').replace(/\/$/, '') || ''
         : process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    const url = `${appRoot}/engine-config.json`;
+    const url = isDev ? '/api/engine-config' : `${appRoot}/engine-config.json`;
     setLoadError(null);
 
     const controller = new AbortController();
@@ -232,6 +236,15 @@ export default function RequestTool() {
     if (result) {
       setRouteResult(result);
       setStopMissing([]);
+      if (result.route === 'STATE1') {
+        setState1Values((prev) => ({
+          ...prev,
+          repro_steps: state0.repro_steps,
+          repro_env: state0.repro_env,
+          current_behavior: state0.current_behavior,
+          expected_behavior: state0.expected_behavior,
+        }));
+      }
     }
   }, [state0, config]);
 
@@ -276,10 +289,60 @@ export default function RequestTool() {
     setGeneratedText('');
   }, []);
 
-  const state0Fields = useMemo(() => {
+  const state0Fields = useMemo((): FieldDef[] => {
     if (!config) return [];
-    return STATE0_FIELD_IDS.map((id) => config.fieldsById[id]).filter(Boolean);
-  }, [config]);
+    let key: string;
+    if (!state0.consultation_type) {
+      key = 'STATE0';
+    } else if (
+      state0.consultation_type === 'change_consult' &&
+      state0.ask_type === 'fix_request'
+    ) {
+      key = 'STATE0_change_consult_fix';
+    } else {
+      key = `STATE0_${state0.consultation_type}`;
+    }
+    const state0Set = config.fieldSetsBySetId[key];
+    const baseDefs: FieldDef[] = state0Set?.length
+      ? state0Set
+          .map((row) => {
+            const def = config.fieldsById[row.field_id];
+            if (!def) return null;
+            const required =
+              row.required_override !== null && row.required_override !== undefined
+                ? row.required_override
+                : def.required;
+            return { ...def, required };
+          })
+          .filter((d): d is FieldDef => Boolean(d))
+      : STATE0_FIELD_IDS.map((id) => config.fieldsById[id]).filter(
+          (d): d is FieldDef => Boolean(d)
+        );
+    const overrides = config.optionsByConsultation?.[state0.consultation_type || ''];
+    if (!overrides) return baseDefs;
+    return baseDefs.map((def) => {
+      const allowed = overrides[def.field_id];
+      if (!allowed?.length || !def.options?.length) return def;
+      const filtered: OptionItem[] = allowed
+        .map((v) => def.options.find((o) => o.value === v))
+        .filter((o): o is OptionItem => Boolean(o));
+      return { ...def, options: filtered.length > 0 ? filtered : def.options };
+    });
+  }, [config, state0.consultation_type, state0.ask_type]);
+
+  useEffect(() => {
+    if (state0.consultation_type !== 'change_consult') return;
+    const updates: Partial<State0Values> = {};
+    if (state0.request_intent === 'bug_fix' || state0.request_intent === 'revert_spec') {
+      updates.request_intent = '';
+    }
+    if (state0.ask_type === 'investigate' || state0.ask_type === 'rollback_check') {
+      updates.ask_type = '';
+    }
+    if (Object.keys(updates).length > 0) {
+      setState0((prev) => ({ ...prev, ...updates }));
+    }
+  }, [state0.consultation_type]);
 
   const currentSetRows = useMemo((): FieldSetRow[] => {
     if (!config || !routeResult) return [];
@@ -332,7 +395,7 @@ export default function RequestTool() {
 
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            まず「依頼整理」を入力して送信し、表示されたフォームで依頼文を生成できます。
+            「依頼内容」を入力して送信すると、依頼文を生成できます。
           </p>
           <button onClick={resetAll} className="btn-secondary">
             リセット
@@ -347,21 +410,32 @@ export default function RequestTool() {
                 依頼整理（必須）
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                対象・依頼の種類・依頼内容を入力し、送信してください。
+                相談タイプ・今欲しい対応・対象などを入力し、送信してください。
               </p>
               <div className="space-y-4">
                 {state0Fields.map((def) => (
-                  <FieldRender
-                    key={def.field_id}
-                    def={def}
-                    value={
-                      (def.input_type === 'checkbox' || def.input_type === 'checkbox_multiple')
-                        ? (state0[def.field_id as keyof State0Values] as string[] ?? [])
-                        : (state0[def.field_id as keyof State0Values] as string) ?? ''
-                    }
-                    required={def.required}
-                    onChange={(v) => updateState0(def.field_id as keyof State0Values, v)}
-                  />
+                  <div key={def.field_id}>
+                    <FieldRender
+                      def={def}
+                      value={
+                        (def.input_type === 'checkbox' || def.input_type === 'checkbox_multiple')
+                          ? (state0[def.field_id as keyof State0Values] as string[] ?? [])
+                          : (state0[def.field_id as keyof State0Values] as string) ?? ''
+                      }
+                      required={def.required}
+                      onChange={(v) => updateState0(def.field_id as keyof State0Values, v)}
+                    />
+                    {def.field_id === 'ask_type' &&
+                      state0.ask_type &&
+                      (['investigate', 'confirm_spec', 'rollback_check'].includes(state0.ask_type) ||
+                        ['estimate_fix', 'fix_request'].includes(state0.ask_type)) && (
+                      <p className="mt-2 text-xs text-primary-600 dark:text-primary-400">
+                        {['investigate', 'confirm_spec', 'rollback_check'].includes(state0.ask_type)
+                          ? '→ この選択で「原因確認依頼」に進みます'
+                          : '→ この選択で「修正依頼」に進みます'}
+                      </p>
+                    )}
+                  </div>
                 ))}
               </div>
               {warnings.length > 0 && (
@@ -404,8 +478,11 @@ export default function RequestTool() {
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   まず原因を確認する
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                   仕様か不具合かを確認し、正しい状態を揃えます
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                  依頼整理で入力した内容が反映されています。必要なら修正し、根拠や影響範囲を追記してください。
                 </p>
                 <div className="space-y-4">
                   {currentSetInputRows.map((row) => {
@@ -439,8 +516,7 @@ export default function RequestTool() {
                   そのまま修正できる
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  {config.fieldsById['phase']?.options?.find((o) => o.value === 'implementation')?.label ??
-                    '修正内容と完了の条件が決まっている状態です'}
+                  修正内容と完了の条件が決まっている状態です
                 </p>
                 <div className="space-y-4">
                   {currentSetInputRows.map((row) => {

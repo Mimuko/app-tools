@@ -26,6 +26,26 @@ function valueToLabel(def: FieldDef | undefined, value: string | string[]): stri
   return labels.join('、');
 }
 
+/**
+ * 「〜をお願いします」に続けて自然な文言に変換する。
+ * 選択肢ラベルが「〜がほしい」等で終わる場合は、ここで別表現にマッピングする。
+ */
+const REQUEST_PHRASE_BY_ASK_TYPE: Record<string, string> = {
+  investigate: '原因の確認',
+  confirm_spec: '仕様の確認',
+  estimate_fix: '修正工数の算出',
+  fix_request: '修正の反映',
+  rollback_check: '元に戻せるか確認',
+};
+
+function toRequestPhraseList(askType: string | string[], askTypeDef?: FieldDef): string {
+  const arr = Array.isArray(askType) ? askType : askType ? [askType] : [];
+  const phrases = arr
+    .map((v) => REQUEST_PHRASE_BY_ASK_TYPE[v] ?? askTypeDef?.options.find((o) => o.value === v)?.label ?? v)
+    .filter(Boolean);
+  return phrases.join('、');
+}
+
 /** URL・テキストをそのまま返す（リンクはURL形式のまま記載） */
 function backlogUrl(s: string): string {
   return String(s).trim();
@@ -43,43 +63,63 @@ function plainBlock(s: string): string {
   return String(s).trim();
 }
 
+/** 複数行の場合はコロン後に改行、1行の場合はコロン後に続ける。箇条書き用に配列で返す */
+function bulletLine(label: string, value: string): string[] {
+  const v = String(value ?? '').trim();
+  if (!v) return [`- ${label}：（未入力）`];
+  if (v.includes('\n')) {
+    return [`- ${label}：`, ...v.split(/\r?\n/)];
+  }
+  return [`- ${label}：${v}`];
+}
+
 export function buildInvestigationOutput(
   state0: State0Values,
   state1Values: FormValues,
   fieldsById?: Record<string, FieldDef>
 ): string {
-  const originDef = fieldsById?.origin;
-  const deviceDef = fieldsById?.device;
+  const consultationTypeDef = fieldsById?.consultation_type;
   const requestIntentDef = fieldsById?.request_intent;
   const askTypeDef = fieldsById?.ask_type;
 
+  const requestIntentLabel =
+    state0.consultation_type === 'spec_check' && !str(state0.request_intent)
+      ? (valueToLabel(consultationTypeDef, 'spec_check') || '仕様かどうか確認したい')
+      : valueToLabel(requestIntentDef, state0.request_intent);
+  const requestPhraseList = toRequestPhraseList(state0.ask_type, askTypeDef);
+
+  const reproSteps = str(state0.repro_steps) || str(state1Values.repro_steps);
+  const reproEnv = str(state0.repro_env) || str(state1Values.repro_env);
+  const currentBehavior = str(state0.current_behavior) || str(state1Values.current_behavior);
+  const expectedBehavior = str(state0.expected_behavior) || str(state1Values.expected_behavior);
+
   const lines: string[] = [
     '* 原因確認依頼',
+    '** 依頼種別',
+    '- 原因確認',
+    '',
+    '** お願いしたいこと',
+    requestIntentLabel
+      ? `${requestIntentLabel}ため、${requestPhraseList || '（依頼内容未選択）'}をお願いします。`
+      : (requestPhraseList ? `以下をお願いします：${requestPhraseList}` : '（依頼内容未選択）'),
+    '',
     '** 概要',
+    `- 相談タイプ：${valueToLabel(consultationTypeDef, state0.consultation_type) || '（未選択）'}`,
+    `- 今回の変更・対応内容：${state0.consultation_type === 'spec_check' && !str(state0.request_intent) ? (valueToLabel(consultationTypeDef, 'spec_check') || '仕様かどうか確認したい') : (valueToLabel(requestIntentDef, state0.request_intent) || '（未選択）')}`,
+    `- 今欲しい対応：${valueToLabel(askTypeDef, state0.ask_type) || '（未選択）'}`,
     `- 対象：${state0.target_url ? backlogUrl(state0.target_url) : '（未入力）'}`,
-    `- 依頼の種類：${valueToLabel(requestIntentDef, state0.request_intent)}`,
-    `- 依頼元：${valueToLabel(originDef, state0.origin)}`,
-    `- 端末：${valueToLabel(deviceDef, state0.device)}`,
-    ...(state0.phenomenon_note
-      ? [`- 現在の挙動（補足）：${plainBlock(state0.phenomenon_note)}`]
-      : []),
-    `- 依頼内容：${valueToLabel(askTypeDef, state0.ask_type)}`,
-    `- 期限：${str(state0.deadline) || '未定'}`,
-    ...(state0.attachments ? [`- 参考：${plainBlock(state0.attachments)}`] : []),
+    ...(str(state0.attachments) ? bulletLine('参考', str(state0.attachments)) : []),
     '** 再現手順・挙動',
-    state1Values.repro_steps
-      ? (toBacklogList(plainBlock(str(state1Values.repro_steps))) || '- （未入力）')
-      : '- （未入力）',
-    `- 現在の挙動：${plainBlock(str(state1Values.current_behavior)) || '（未入力）'}`,
-    `- 期待する挙動：${plainBlock(str(state1Values.expected_behavior)) || '（未入力）'}`,
+    reproSteps ? (toBacklogList(plainBlock(reproSteps)) || '- （未入力）') : '- （未入力）',
+    ...bulletLine('再現環境（ブラウザ・OS・本番/STG環境）', reproEnv),
+    ...bulletLine('現在の挙動', currentBehavior),
+    ...bulletLine('期待する挙動', expectedBehavior),
     ...(state1Values.spec_source
-      ? ['', `- 根拠（分かる範囲）：${plainBlock(str(state1Values.spec_source))}`]
+      ? ['', ...bulletLine('根拠（分かる範囲）', str(state1Values.spec_source))]
       : []),
     ...(state1Values.impact_scope
-      ? ['', `- 影響範囲（分かる範囲）：${plainBlock(str(state1Values.impact_scope))}`]
+      ? ['', ...bulletLine('影響範囲（分かる範囲）', str(state1Values.impact_scope))]
       : []),
-    '** 依頼事項（調査してほしいこと）',
-    '上記のとおり、原因の切り分け（仕様か不具合か）および必要な対応方針の整理をお願いします。',
   ];
   return lines.filter((line) => line !== undefined).join('\n');
 }
@@ -89,34 +129,40 @@ export function buildImplementationOutput(
   state2Values: FormValues,
   fieldsById?: Record<string, FieldDef>
 ): string {
-  const originDef = fieldsById?.origin;
-  const deviceDef = fieldsById?.device;
+  const consultationTypeDef = fieldsById?.consultation_type;
   const requestIntentDef = fieldsById?.request_intent;
   const askTypeDef = fieldsById?.ask_type;
 
   const reqUrl = str(state2Values.req_url_spec);
 
+  const requestIntentLabel =
+    state0.consultation_type === 'spec_check' && !str(state0.request_intent)
+      ? (valueToLabel(consultationTypeDef, 'spec_check') || '仕様かどうか確認したい')
+      : valueToLabel(requestIntentDef, state0.request_intent);
+  const requestPhraseList = toRequestPhraseList(state0.ask_type, askTypeDef);
+
   const lines: string[] = [
     '* 修正依頼',
+    '** 依頼種別',
+    '- 修正依頼',
+    '',
+    '** お願いしたいこと',
+    requestIntentLabel
+      ? `${requestIntentLabel}ため、${requestPhraseList || '（依頼内容未選択）'}をお願いします。`
+      : (requestPhraseList ? `以下をお願いします：${requestPhraseList}` : '（依頼内容未選択）'),
+    '',
     '** 概要',
+    `- 相談タイプ：${valueToLabel(consultationTypeDef, state0.consultation_type) || '（未選択）'}`,
+    `- 今回の変更・対応内容：${state0.consultation_type === 'spec_check' && !str(state0.request_intent) ? (valueToLabel(consultationTypeDef, 'spec_check') || '仕様かどうか確認したい') : (valueToLabel(requestIntentDef, state0.request_intent) || '（未選択）')}`,
+    `- 今欲しい対応：${valueToLabel(askTypeDef, state0.ask_type) || '（未選択）'}`,
     `- 対象：${state0.target_url ? backlogUrl(state0.target_url) : '（未入力）'}`,
     `- 要件URL：${reqUrl ? backlogUrl(reqUrl) : '（未入力）'}`,
-    `- 依頼の種類：${valueToLabel(requestIntentDef, state0.request_intent)}`,
-    `- 依頼元：${valueToLabel(originDef, state0.origin)}`,
-    `- 端末：${valueToLabel(deviceDef, state0.device)}`,
-    ...(state0.phenomenon_note
-      ? [`- 現在の挙動（補足）：${plainBlock(state0.phenomenon_note)}`]
-      : []),
-    `- 依頼内容：${valueToLabel(askTypeDef, state0.ask_type)}`,
-    `- 期限：${str(state0.deadline) || '未定'}`,
-    ...(state0.attachments ? [`- 参考：${plainBlock(state0.attachments)}`] : []),
+    ...(str(state0.attachments) ? bulletLine('参考', str(state0.attachments)) : []),
     '** 完了条件・確認観点',
-    `- 完了条件：${plainBlock(str(state2Values.done_definition)) || '（未入力）'}`,
+    ...bulletLine('完了条件', str(state2Values.done_definition)),
     ...(state2Values.qa_points
-      ? [`- 確認観点：${plainBlock(str(state2Values.qa_points))}`]
+      ? bulletLine('確認観点', str(state2Values.qa_points))
       : []),
-    '** 依頼事項（修正してほしいこと）',
-    '上記の要件・完了条件に基づき、修正の反映をお願いします。',
   ];
   return lines.filter((line) => line !== undefined).join('\n');
 }
@@ -125,18 +171,20 @@ export function buildDirectorSummary(
   state0: State0Values,
   fieldsById?: Record<string, FieldDef>
 ): string {
-  const originDef = fieldsById?.origin;
-  const deviceDef = fieldsById?.device;
+  const consultationTypeDef = fieldsById?.consultation_type;
   const requestIntentDef = fieldsById?.request_intent;
   const askTypeDef = fieldsById?.ask_type;
 
+  const requestIntentDisplay =
+    state0.consultation_type === 'spec_check' && !str(state0.request_intent)
+      ? (valueToLabel(consultationTypeDef, 'spec_check') || '仕様かどうか確認したい')
+      : valueToLabel(requestIntentDef, state0.request_intent);
+
   const lines: string[] = [
     `- 対象：${state0.target_url ? backlogUrl(state0.target_url) : ''}`,
-    `- 依頼の種類：${valueToLabel(requestIntentDef, state0.request_intent)}`,
-    `- 依頼元：${valueToLabel(originDef, state0.origin)} / 端末：${valueToLabel(deviceDef, state0.device)}`,
-    ...(state0.phenomenon_note ? [`- 現在の挙動（補足）：${plainBlock(state0.phenomenon_note)}`] : []),
-    `- 依頼内容：${valueToLabel(askTypeDef, state0.ask_type)}`,
-    ...(state0.deadline ? [`- 期限：${str(state0.deadline)}`] : []),
+    `- 相談タイプ：${valueToLabel(consultationTypeDef, state0.consultation_type)}`,
+    `- 今回の変更・対応内容：${requestIntentDisplay}`,
+    `- 今欲しい対応：${valueToLabel(askTypeDef, state0.ask_type)}`,
   ];
   return lines.filter(Boolean).join('\n');
 }

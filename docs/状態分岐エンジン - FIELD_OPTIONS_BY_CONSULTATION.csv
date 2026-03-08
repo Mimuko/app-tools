@@ -1,0 +1,3 @@
+consultation_type,field_id,option_values,notes
+change_consult,request_intent,"display_change,feature_change,need_consult",変更・改善系のみ（不具合修正・以前の仕様に戻すは非表示）
+change_consult,ask_type,"confirm_spec,estimate_fix,fix_request",仕様確認・見積・修正のいずれか（原因確認・元に戻せるか確認は非表示）

@@ -17,21 +17,16 @@ function isEmpty(s: string | undefined): boolean {
   return s === undefined || String(s).trim() === '';
 }
 
-function hasRequestIntent(v: State0Values, value: string): boolean {
-  return String(v.request_intent ?? '').trim() === value;
-}
-
-function hasRequestIntentAny(v: State0Values, values: string[]): boolean {
-  const intent = String(v.request_intent ?? '').trim();
-  return values.includes(intent);
+function hasAskTypeAny(v: State0Values, values: string[]): boolean {
+  const ask = String(v.ask_type ?? '').trim();
+  return values.includes(ask);
 }
 
 const predicates: Record<string, (v: State0Values) => boolean> = {
   R_STOP_NO_URL: (v) => isEmpty(v.target_url),
-  R_STOP_NO_INTENT: (v) => isEmpty(v.request_intent),
-  R_S2_DISPLAY_CHANGE: (v) => hasRequestIntent(v, 'display_change'),
-  R_S1_INTENT: (v) =>
-    hasRequestIntentAny(v, ['feature_change', 'bug_fix', 'revert_spec', 'need_consult']),
+  R_STOP_NO_ASK_TYPE: (v) => isEmpty(v.ask_type),
+  R_S1_ASK_TYPE: (v) => hasAskTypeAny(v, ['investigate', 'confirm_spec', 'rollback_check']),
+  R_S2_ASK_TYPE: (v) => hasAskTypeAny(v, ['estimate_fix', 'fix_request']),
   R_DEFAULT_S1: () => true,
 };
 

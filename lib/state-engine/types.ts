@@ -39,21 +39,27 @@ export interface RuleDef {
   notes: string;
 }
 
+/** consultation_type ごとのフィールド別「表示してよい選択肢の value 一覧」。未定義なら全選択肢表示 */
+export type OptionsByConsultation = Record<string, Record<string, string[]>>;
+
 export interface EngineConfig {
   fieldsById: Record<string, FieldDef>;
   fieldSetsBySetId: Record<string, FieldSetRow[]>;
   rules: RuleDef[];
+  /** consultation_type → field_id → option value[]（表示順）。空ならその組み合わせは全選択肢 */
+  optionsByConsultation?: OptionsByConsultation;
 }
 
-/** STATE0で使うフィールドID（依頼整理） */
+/** STATE0で使うフィールドID（依頼整理）。並びは FIELD_SETS の STATE0 を優先可 */
 export const STATE0_FIELD_IDS = [
-  'request_intent',
-  'origin',
-  'target_url',
-  'device',
-  'phenomenon_note',
+  'consultation_type',
   'ask_type',
-  'deadline',
+  'request_intent',
+  'target_url',
+  'current_behavior',
+  'expected_behavior',
+  'repro_steps',
+  'repro_env',
   'attachments',
 ] as const;
 
@@ -67,16 +73,13 @@ export interface RouteResult {
 
 /** STATE0の入力値（フォーム値） */
 export interface State0Values {
+  consultation_type: string;
+  ask_type: string;
   request_intent: string;
-  origin: string;
   target_url: string;
-  device: string;
-  phenomenon: string[];
-  phenomenon_note: string;
-  compare: string[];
-  compare_when: string;
-  compare_url: string;
-  ask_type: string[];
-  deadline: string;
+  current_behavior: string;
+  expected_behavior: string;
+  repro_steps: string;
+  repro_env: string;
   attachments: string;
 }

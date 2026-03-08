@@ -14,13 +14,28 @@ const FILES = {
   master: '状態分岐エンジン - MASTER_FIELDS.csv',
   fieldSets: '状態分岐エンジン - FIELD_SETS.csv',
   rules: '状態分岐エンジン - RULES.csv',
+  optionsByConsultation: '状態分岐エンジン - FIELD_OPTIONS_BY_CONSULTATION.csv',
 } as const;
 
 function main() {
   const masterFieldsCsv = readFileSync(join(DOCS_DIR, FILES.master), ENCODING);
   const fieldSetsCsv = readFileSync(join(DOCS_DIR, FILES.fieldSets), ENCODING);
   const rulesCsv = readFileSync(join(DOCS_DIR, FILES.rules), ENCODING);
-  const config = buildEngineConfig(masterFieldsCsv, fieldSetsCsv, rulesCsv);
+  let optionsByConsultationCsv: string | undefined;
+  try {
+    optionsByConsultationCsv = readFileSync(
+      join(DOCS_DIR, FILES.optionsByConsultation),
+      ENCODING
+    );
+  } catch {
+    optionsByConsultationCsv = undefined;
+  }
+  const config = buildEngineConfig(
+    masterFieldsCsv,
+    fieldSetsCsv,
+    rulesCsv,
+    optionsByConsultationCsv
+  );
   if (!existsSync(OUT_DIR)) {
     mkdirSync(OUT_DIR, { recursive: true });
   }

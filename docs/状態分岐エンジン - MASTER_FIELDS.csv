@@ -1,9 +1,13 @@
 field_id,label,input_type,options (value|label per line),required (true/false),help_text,output_key,notes
+consultation_type,今回の相談はどれに近いですか？,radio,"bug_possible|不具合の可能性がある
+spec_check|仕様かどうか確認したい
+change_consult|変更・改善を検討したい
+unknown|まだ整理できていない",TRUE,一番近いものを選んでください,相談タイプ,
 origin,依頼元,radio,"client|クライアント
 internal|社内別部署
 self|自分で気になった
 other|その他",TRUE,どこから来た依頼かを選択（迷ったら一番近いもの）,依頼元,
-target_url,対象URL/画面,text,,TRUE,対象ページURL、または画面名/ページ名を入力してください,対象,
+target_url,対象URL/画面,text,,TRUE,どのページ・画面の話かが分かるURL、または画面名を入力してください,対象,
 device,端末,radio,"pc|PC
 sp|SP
 both|両方
@@ -12,7 +16,7 @@ request_intent,今回、どんな変更・対応をしたいですか？,radio,"
 feature_change|機能を追加・変更したい
 bug_fix|不具合を修正したい
 revert_spec|以前の仕様に戻したい
-need_consult|まだ整理できていない／相談したい",TRUE,一番近いものを1つ選んでください（迷ったら"相談したい"でOK）,依頼の種類,
+need_consult|まだ整理できていない／相談したい",TRUE,内容に一番近いものを選んでください（この項目は分岐には使わない）,今回の変更・対応内容,
 phenomenon,今どうなっていますか？,checkbox,"display|期待した表示にならない
 search|検索/絞り込みが効かない
 suggest|入力補助（サジェスト等）が動かない
@@ -25,17 +29,19 @@ unknown_spec|仕様通りか分からない
 none|比較対象なし",TRUE,当てはまるものを選択してください（複数可）,比較,
 compare_when,（以前はできた）時期（任意）,text,,FALSE,例：2024年頃／リニューアル前／いつから、など分かる範囲で,比較（時期）,
 compare_url,（他ページではできる）URL（任意）,text,,FALSE,参考ページのURLがあれば入力してください,比較（参考URL）,
-ask_type,今ほしい対応,checkbox,"investigate|原因の切り分け（調査）
-confirm_spec|仕様の確認
-rollback|元に戻せるか確認
-estimate_fix|修正の見積がほしい",TRUE,今回ほしい対応を選択してください（複数可）,依頼内容,
+ask_type,今欲しい対応,radio,"investigate|原因を確認したい
+confirm_spec|仕様を確認したい
+estimate_fix|修正の見積がほしい
+fix_request|修正してほしい
+rollback_check|元に戻せるか確認したい",TRUE,この時点で何をしてほしいかを選んでください,今欲しい対応,
 deadline,期限（任意）,text,,FALSE,例：◯/◯まで／今週中／未定、など,期限,
 attachments,参考（スクショ/動画/資料URL）（任意）,textarea,,FALSE,スクショURL、動画、資料リンクなど（なくてもOK）,参考,
 director_summary,依頼文（コピペ用・自動生成）,output,,FALSE,生成された依頼文をBacklogに貼り付けます,（生成）依頼文,出力エリア（コピー）
 route,次のステップ（自動判定）,output,,FALSE,入力内容から、次に進むステップを判定します,（内部）ルート,実装側制御用
-repro_steps,再現手順,textarea,,TRUE,例：URL→プルダウン選択→検索→結果0件、など,再現手順,
-current_behavior,今の挙動（詳細）,textarea,,TRUE,実際に起きている挙動を具体的に,現在の挙動,
-expected_behavior,期待する挙動（仮でOK）,textarea,,TRUE,『こうなってほしい』を仮でOKなので書いてください,期待する挙動,
+repro_steps,何をしたらその状態になりますか？（操作手順）,textarea,,TRUE,"例：トップページを開く → 会員一覧をクリック → 検索すると0件になる。「表示の通り」だけだと開発側が再現しづらくなります。操作の流れを短くでも書いてください",再現手順,
+repro_env,どの環境で確認しましたか？,textarea,,TRUE,例：Chrome／Windows11／本番サイト など。ブラウザ・OS・本番サイトかテスト環境かの区別が分かればOKです,再現環境,
+current_behavior,今、どんな状態ですか？,textarea,,TRUE,今の画面やシステムの状態をそのまま書いてください（実際に起きていることを具体的に）,現在の挙動,
+expected_behavior,どうなってほしいですか？（理想の状態）,textarea,,TRUE,本来どうあるべきか・どうしてほしいかを書いてください（仮でOK）,期待する挙動,
 spec_source,根拠（分かる範囲）,textarea,,FALSE,例：過去の挙動／要件定義／クライアントの明言、など,仕様根拠,
 impact_scope,影響範囲（分かる範囲）,textarea,,FALSE,例：会員一覧のみ／検索UI共通、など（分からなければ空でOK）,影響範囲（仮）,
 investigation_output,原因確認依頼文（コピペ用・自動生成）,output,,FALSE,生成された文面をBacklogに貼り付けます,（生成）調査依頼文,

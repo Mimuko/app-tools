@@ -296,7 +296,7 @@ export default function RequestTool() {
       key = 'STATE0';
     } else if (
       state0.consultation_type === 'change_consult' &&
-      state0.ask_type === 'fix_request'
+      (state0.ask_type === 'fix_request' || state0.ask_type === 'estimate_fix')
     ) {
       key = 'STATE0_change_consult_fix';
     } else {
@@ -419,7 +419,7 @@ export default function RequestTool() {
                       def={def}
                       value={
                         (def.input_type === 'checkbox' || def.input_type === 'checkbox_multiple')
-                          ? (state0[def.field_id as keyof State0Values] as string[] ?? [])
+                          ? ((state0[def.field_id as keyof State0Values] as unknown) as string[] ?? [])
                           : (state0[def.field_id as keyof State0Values] as string) ?? ''
                       }
                       required={def.required}

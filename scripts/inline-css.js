@@ -19,6 +19,21 @@ function findHtmlFiles(dir, fileList = []) {
   return fileList;
 }
 
+// HTML内の絶対パス（basePath付きの場合あり）から、out 内の実ファイルパスを解決する
+// Next の static export では basePath が付いた参照でも、実体は out/_next/... に出力される
+function resolveCssFilePath(outDir, hrefPath) {
+  const relativePath = hrefPath.startsWith('/') ? hrefPath.substring(1) : hrefPath;
+  const fullPath = path.join(outDir, relativePath);
+  if (fs.existsSync(fullPath)) return fullPath;
+  const segments = relativePath.split('/').filter(Boolean);
+  for (let i = 1; i < segments.length; i++) {
+    const withoutPrefix = path.join(...segments.slice(i));
+    const candidate = path.join(outDir, withoutPrefix);
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
 // 絶対パスを相対パスに変換
 function convertToRelativePath(absolutePath, htmlFile, outDir) {
   if (!absolutePath.startsWith('/')) {
@@ -64,24 +79,20 @@ function inlineCSS() {
     
     for (const match of cssMatches) {
       const cssPath = match[1];
-      // 絶対パスを相対パスに変換
-      const relativePath = cssPath.startsWith('/') 
-        ? cssPath.substring(1) 
-        : cssPath;
-      const fullCssPath = path.join(outDir, relativePath);
-      
-      if (fs.existsSync(fullCssPath)) {
+      const fullCssPath = resolveCssFilePath(outDir, cssPath);
+
+      if (fullCssPath) {
         // CSSファイルを読み込む
         const cssContent = fs.readFileSync(fullCssPath, 'utf8');
-        
+
         // <link>タグを<style>タグに置き換え
         const styleTag = `<style>${cssContent}</style>`;
         html = html.replace(match[0], styleTag);
         modified = true;
-        
+
         console.log(`Inlined CSS: ${cssPath} -> ${path.relative(outDir, htmlFile)}`);
       } else {
-        console.warn(`CSS file not found: ${fullCssPath}`);
+        console.warn(`CSS file not found: ${path.join(outDir, cssPath.startsWith('/') ? cssPath.substring(1) : cssPath)}`);
       }
     }
     

@@ -34,7 +34,7 @@ STATE0_change_consult,STATE0,expected_behavior,6,TRUE,
 STATE0_change_consult,STATE0,repro_steps,7,TRUE,
 STATE0_change_consult,STATE0,repro_env,8,TRUE,
 STATE0_change_consult,STATE0,attachments,9,FALSE,
-STATE0_change_consult_fix,STATE0,consultation_type,1,TRUE,変更・改善→修正してほしい（操作手順なし）
+STATE0_change_consult_fix,STATE0,consultation_type,1,TRUE,変更・改善→修正してほしい／見積がほしい（操作手順なし）
 STATE0_change_consult_fix,STATE0,ask_type,2,TRUE,
 STATE0_change_consult_fix,STATE0,request_intent,3,TRUE,
 STATE0_change_consult_fix,STATE0,target_url,4,TRUE,

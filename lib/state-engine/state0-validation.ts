@@ -50,12 +50,13 @@ export function validateState0(v: State0Values): ValidationResult {
   if (isEmpty(v.expected_behavior)) {
     missing.push(FIELD_LABELS.expected_behavior ?? '期待する挙動');
   }
-  const isChangeConsultFix =
-    v.consultation_type === 'change_consult' && v.ask_type === 'fix_request';
-  if (!isChangeConsultFix && isEmpty(v.repro_steps)) {
+  const isChangeConsultFixOrEstimate =
+    v.consultation_type === 'change_consult' &&
+    (v.ask_type === 'fix_request' || v.ask_type === 'estimate_fix');
+  if (!isChangeConsultFixOrEstimate && isEmpty(v.repro_steps)) {
     missing.push(FIELD_LABELS.repro_steps ?? '再現手順');
   }
-  if (!isChangeConsultFix && isEmpty(v.repro_env)) {
+  if (!isChangeConsultFixOrEstimate && isEmpty(v.repro_env)) {
     missing.push(FIELD_LABELS.repro_env ?? '再現環境');
   }
 

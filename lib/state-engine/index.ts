@@ -8,4 +8,6 @@ export {
   buildInvestigationOutput,
   buildImplementationOutput,
   buildDirectorSummary,
+  buildRequirementOutput,
+  buildProductionOutput,
 } from './templates';

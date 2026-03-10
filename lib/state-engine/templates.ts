@@ -7,6 +7,7 @@
 
 import type { State0Values } from './types';
 import type { FieldDef } from './types';
+import type { RequestTypeFormValues } from '@/lib/request-type-form';
 
 type FormValues = Record<string, string | string[]>;
 
@@ -163,6 +164,76 @@ export function buildImplementationOutput(
     ...(state2Values.qa_points
       ? bulletLine('確認観点', str(state2Values.qa_points))
       : []),
+  ];
+  return lines.filter((line) => line !== undefined).join('\n');
+}
+
+/** 依頼タイプ別フォーム用：要件整理 / 要件定義の出力（Backlog記法・既存テイストに統一） */
+export function buildRequirementOutput(values: RequestTypeFormValues): string {
+  const s = (v: string) => String(v ?? '').trim();
+  const typeLabel =
+    values.include_client_negotiation === 'yes'
+      ? '要件整理 / 要件定義（クライアント折衝含む）'
+      : '要件整理 / 要件定義';
+  const summaryText = s(values.summary);
+  const requestPhrase = summaryText
+    ? `${summaryText}のため、要件整理・相談をお願いします。`
+    : '要件整理・相談をお願いします。';
+  const lines: string[] = [
+    '* 要件整理依頼',
+    '** 依頼種別',
+    `- ${typeLabel}`,
+    '',
+    '** お願いしたいこと',
+    requestPhrase,
+    '',
+    '** 概要',
+    `- 案件名：${s(values.project_name) || '（未入力）'}`,
+    `- 対象：${s(values.target_url) ? backlogUrl(s(values.target_url)) : '（未入力）'}`,
+    ...bulletLine('依頼内容', summaryText),
+    ...bulletLine('背景 / 目的', s(values.background)),
+    ...bulletLine('今の状況', s(values.current_state)),
+    ...bulletLine('変更理由', s(values.change_reason)),
+    ...bulletLine('未確定事項', s(values.undecided_items)),
+    ...bulletLine('影響範囲', s(values.impact_scope)),
+    ...bulletLine('クライアント確認が必要なこと', s(values.client_confirmation)),
+    `- 期限：${s(values.deadline) || '（未入力）'}`,
+    `- 優先度：${s(values.priority) || '（未入力）'}`,
+    `- 関係者：${s(values.stakeholders) || '（未入力）'}`,
+  ];
+  return lines.filter((line) => line !== undefined).join('\n');
+}
+
+/** 依頼タイプ別フォーム用：制作進行の出力（Backlog記法・既存テイストに統一） */
+export function buildProductionOutput(values: RequestTypeFormValues): string {
+  const s = (v: string) => String(v ?? '').trim();
+  const summaryText = s(values.summary);
+  const implContent = s(values.implementation_content);
+  const requestPhrase = summaryText
+    ? `${summaryText}のため、実装をお願いします。`
+    : '実装をお願いします。';
+  const lines: string[] = [
+    '* 制作進行依頼',
+    '** 依頼種別',
+    '- 制作進行',
+    '',
+    '** お願いしたいこと',
+    requestPhrase,
+    '',
+    '** 概要',
+    `- 案件名：${s(values.project_name) || '（未入力）'}`,
+    `- 対象：${s(values.target_url) ? backlogUrl(s(values.target_url)) : '（未入力）'}`,
+    ...bulletLine('依頼内容', summaryText),
+    ...bulletLine('背景 / 目的', s(values.background)),
+    ...bulletLine('確定済み仕様', s(values.fixed_spec)),
+    `- デザイン / 仕様資料：${s(values.design_spec_url) ? backlogUrl(s(values.design_spec_url)) : '（未入力）'}`,
+    ...bulletLine('実装内容', implContent),
+    `- 担当制作会社：${s(values.production_company) || '（未入力）'}`,
+    ...bulletLine('確認フロー', s(values.confirmation_flow)),
+    `- リリース希望日：${s(values.release_wish_date) || '（未入力）'}`,
+    `- 期限：${s(values.deadline) || '（未入力）'}`,
+    `- 優先度：${s(values.priority) || '（未入力）'}`,
+    `- 関係者：${s(values.stakeholders) || '（未入力）'}`,
   ];
   return lines.filter((line) => line !== undefined).join('\n');
 }

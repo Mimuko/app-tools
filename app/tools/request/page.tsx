@@ -15,7 +15,21 @@ import {
   validateState0,
   buildInvestigationOutput,
   buildImplementationOutput,
+  buildRequirementOutput,
+  buildProductionOutput,
 } from '@/lib/state-engine';
+import {
+  type RequestType,
+  type RequestTypeFormValues,
+  REQUEST_TYPE_OPTIONS,
+  CLIENT_NEGOTIATION_OPTIONS,
+  initialRequestTypeFormValues,
+  COMMON_FIELDS,
+  REQUIREMENT_FIELDS,
+  PRODUCTION_FIELDS,
+  REQUIRED_FIELD_IDS,
+  validateRequestTypeForm,
+} from '@/lib/request-type-form';
 import type { RouteResult } from '@/lib/state-engine/rules';
 
 const initialState0: State0Values = {
@@ -166,6 +180,10 @@ export default function RequestTool() {
   const [config, setConfig] = useState<EngineConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [requestType, setRequestType] = useState<RequestType | ''>('');
+  const [requestTypeFormValues, setRequestTypeFormValues] = useState<RequestTypeFormValues>(
+    initialRequestTypeFormValues
+  );
   const [state0, setState0] = useState<State0Values>(initialState0);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
   const [stopMissing, setStopMissing] = useState<string[]>([]);
@@ -174,6 +192,7 @@ export default function RequestTool() {
   const [state2Values, setState2Values] = useState<FormValues>({});
   const [generatedText, setGeneratedText] = useState('');
   const [copied, setCopied] = useState(false);
+  const [requestTypeFormErrors, setRequestTypeFormErrors] = useState<string[]>([]);
 
   useEffect(() => {
     // 開発時は API から取得、本番の静的デプロイ時は engine-config.json を取得
@@ -270,6 +289,27 @@ export default function RequestTool() {
     setGeneratedText(text);
   }, [state0, state2Values, config?.fieldsById]);
 
+  const updateRequestTypeForm = useCallback(
+    (fieldId: keyof RequestTypeFormValues, value: string) => {
+      setRequestTypeFormValues((prev) => ({ ...prev, [fieldId]: value }));
+    },
+    []
+  );
+
+  const generateRequestTypeOutput = useCallback(() => {
+    const validation = validateRequestTypeForm(requestTypeFormValues);
+    if (!validation.valid) {
+      setRequestTypeFormErrors(validation.missing);
+      return;
+    }
+    setRequestTypeFormErrors([]);
+    if (requestType === 'requirement') {
+      setGeneratedText(buildRequirementOutput(requestTypeFormValues));
+    } else if (requestType === 'production') {
+      setGeneratedText(buildProductionOutput(requestTypeFormValues));
+    }
+  }, [requestType, requestTypeFormValues]);
+
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(generatedText);
@@ -281,6 +321,9 @@ export default function RequestTool() {
   }, [generatedText]);
 
   const resetAll = useCallback(() => {
+    setRequestType('');
+    setRequestTypeFormValues(initialRequestTypeFormValues);
+    setRequestTypeFormErrors([]);
     setState0(initialState0);
     setRouteResult(null);
     setStopMissing([]);
@@ -387,7 +430,7 @@ export default function RequestTool() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <AppHeader
           title="実装依頼 生成ツール"
-          subtitle="依頼整理から原因確認・修正依頼文を生成します"
+          subtitle="依頼内容に応じて、要件整理・制作進行・不具合調査・修正依頼文を生成します"
           useTailwind={true}
         >
           <ThemeToggle useTailwind={true} />
@@ -404,7 +447,164 @@ export default function RequestTool() {
 
         <div id="form-section" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
-            {/* STATE0: 依頼整理（必須） */}
+            {/* 依頼内容 */}
+            <div className="card border-2 border-primary-200 dark:border-primary-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                依頼内容
+              </h2>
+              <div className="space-y-2">
+                <div className="flex flex-col gap-2">
+                  {REQUEST_TYPE_OPTIONS.map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="request-type"
+                        value={opt.value}
+                        checked={requestType === opt.value}
+                        onChange={() => setRequestType(opt.value)}
+                        className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 要件整理 / 制作進行フォーム */}
+            {(requestType === 'requirement' || requestType === 'production') && (
+              <div className="card border-2 border-primary-200 dark:border-primary-800">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                  {requestType === 'requirement' ? '要件整理 / 要件定義' : '制作進行'}
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  案件名・対象・依頼内容・期限は必須です。その他は分かる範囲で入力してください。
+                </p>
+                {requestType === 'requirement' && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      クライアント折衝
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                      {CLIENT_NEGOTIATION_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.value}
+                          className="inline-flex items-center gap-2 cursor-pointer"
+                        >
+                          <input
+                            type="radio"
+                            name="client-negotiation"
+                            value={opt.value}
+                            checked={
+                              requestTypeFormValues.include_client_negotiation === opt.value
+                            }
+                            onChange={() =>
+                              updateRequestTypeForm('include_client_negotiation', opt.value)
+                            }
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {opt.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="space-y-4">
+                  {COMMON_FIELDS.map((f) => (
+                    <div key={f.id}>
+                      <label
+                        htmlFor={`rt-${f.id}`}
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                      >
+                        {f.label}
+                        {REQUIRED_FIELD_IDS.includes(f.id) && (
+                          <span className="text-red-500 ml-1">*</span>
+                        )}
+                      </label>
+                      {f.helpText && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{f.helpText}</p>
+                      )}
+                      {f.inputType === 'textarea' ? (
+                        <textarea
+                          id={`rt-${f.id}`}
+                          value={requestTypeFormValues[f.id]}
+                          onChange={(e) => updateRequestTypeForm(f.id, e.target.value)}
+                          rows={3}
+                          placeholder={f.placeholder}
+                          className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500"
+                        />
+                      ) : (
+                        <input
+                          id={`rt-${f.id}`}
+                          type="text"
+                          value={requestTypeFormValues[f.id]}
+                          onChange={(e) => updateRequestTypeForm(f.id, e.target.value)}
+                          placeholder={f.placeholder}
+                          className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500"
+                        />
+                      )}
+                    </div>
+                  ))}
+                  {(requestType === 'requirement' ? REQUIREMENT_FIELDS : PRODUCTION_FIELDS).map(
+                    (f) => (
+                      <div key={f.id}>
+                        <label
+                          htmlFor={`rt-${f.id}`}
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          {f.label}
+                        </label>
+                        {f.helpText && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{f.helpText}</p>
+                        )}
+                        {f.inputType === 'textarea' ? (
+                          <textarea
+                            id={`rt-${f.id}`}
+                            value={requestTypeFormValues[f.id]}
+                            onChange={(e) => updateRequestTypeForm(f.id, e.target.value)}
+                            rows={3}
+                            placeholder={f.placeholder}
+                            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500"
+                          />
+                        ) : (
+                          <input
+                            id={`rt-${f.id}`}
+                            type="text"
+                            value={requestTypeFormValues[f.id]}
+                            onChange={(e) => updateRequestTypeForm(f.id, e.target.value)}
+                            placeholder={f.placeholder}
+                            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 text-sm placeholder-gray-400 dark:placeholder-gray-500"
+                          />
+                        )}
+                      </div>
+                    )
+                  )}
+                </div>
+                <div className="mt-4">
+                  <button onClick={generateRequestTypeOutput} className="btn-primary">
+                    送信
+                  </button>
+                  {requestTypeFormErrors.length > 0 && (
+                    <div className="mt-3 p-3 rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200">
+                      <p className="font-medium">以下の必須項目を入力してください</p>
+                      <ul className="mt-1 list-disc list-inside">
+                        {requestTypeFormErrors.map((m) => (
+                          <li key={m}>{m}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STATE0: 依頼整理（必須） - 原因確認・修正依頼用 */}
+            {requestType === 'legacy' && (
             <div className="card border-2 border-primary-200 dark:border-primary-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
                 依頼整理（必須）
@@ -451,9 +651,10 @@ export default function RequestTool() {
                 </button>
               </div>
             </div>
+            )}
 
             {/* STOP: 入力不足 */}
-            {routeResult?.route === 'STOP' && (
+            {requestType === 'legacy' && routeResult?.route === 'STOP' && (
               <div className="card border-2 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20">
                 <h3 className="text-base font-semibold text-red-800 dark:text-red-200">
                   入力不足
@@ -473,7 +674,7 @@ export default function RequestTool() {
             )}
 
             {/* STATE1: まず原因を確認する */}
-            {routeResult?.route === 'STATE1' && (
+            {requestType === 'legacy' && routeResult?.route === 'STATE1' && (
               <div className="card border-2 border-primary-300 dark:border-primary-700 bg-primary-50/50 dark:bg-primary-900/10">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   まず原因を確認する
@@ -510,7 +711,7 @@ export default function RequestTool() {
             )}
 
             {/* STATE2: そのまま修正できる */}
-            {routeResult?.route === 'STATE2' && (
+            {requestType === 'legacy' && routeResult?.route === 'STATE2' && (
               <div className="card border-2 border-step2-300 dark:border-step2-700 bg-step2-50/50 dark:bg-step2-900/10">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   そのまま修正できる
@@ -546,7 +747,28 @@ export default function RequestTool() {
 
           {/* 右: 生成結果 */}
           <div className="lg:sticky lg:top-4 self-start">
-            {(routeResult?.route === 'STATE1' || routeResult?.route === 'STATE2') ? (
+            {requestType === 'requirement' || requestType === 'production' ? (
+              <div className="card">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {requestType === 'requirement' ? '要件整理 / 要件定義' : '制作進行'} 依頼文
+                  </p>
+                  <button
+                    onClick={handleCopy}
+                    disabled={!generatedText}
+                    className="btn-primary text-xs disabled:opacity-50"
+                  >
+                    {copied ? 'コピー済み' : 'コピー'}
+                  </button>
+                </div>
+                <textarea
+                  readOnly
+                  value={generatedText}
+                  placeholder="左のフォームを入力し「送信」を押すとここに表示されます"
+                  className="w-full h-72 p-3 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 resize-none"
+                />
+              </div>
+            ) : (routeResult?.route === 'STATE1' || routeResult?.route === 'STATE2') ? (
               <div className="card">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -570,7 +792,9 @@ export default function RequestTool() {
             ) : (
               <div className="card border border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  依頼整理を送信すると、ここに原因確認依頼文または修正依頼文が表示されます。
+                  {requestType === 'legacy'
+                    ? '依頼整理を送信すると、ここに原因確認依頼文または修正依頼文が表示されます。'
+                    : '依頼タイプを選択し、フォームを入力して送信するとここに依頼文が表示されます。'}
                 </p>
               </div>
             )}
@@ -579,7 +803,7 @@ export default function RequestTool() {
 
         <AppFooter useTailwind={true} className="mt-12">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-            本ツールは、依頼整理と状態分岐に基づいて実装依頼内容を効率的に生成することを目的としています
+            本ツールは、依頼内容に応じて要件整理・制作進行・不具合調査・修正依頼文を効率的に生成することを目的としています
           </p>
         </AppFooter>
       </div>

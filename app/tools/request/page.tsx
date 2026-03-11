@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { AppHeader, AppFooter, ThemeToggle } from '@shared/components';
 import type {
   EngineConfig,
@@ -17,6 +17,7 @@ import {
   buildImplementationOutput,
   buildRequirementOutput,
   buildProductionOutput,
+  generateBacklogTitleFromBody,
 } from '@/lib/state-engine';
 import {
   type RequestType,
@@ -194,6 +195,41 @@ export default function RequestTool() {
   const [copied, setCopied] = useState(false);
   const [requestTypeFormErrors, setRequestTypeFormErrors] = useState<string[]>([]);
 
+  const generatedTitleCandidates = useMemo(
+    () => generateBacklogTitleFromBody(generatedText),
+    [generatedText]
+  );
+  const [selectedTitleIndex, setSelectedTitleIndex] = useState(0);
+  const selectedTitle = generatedTitleCandidates[selectedTitleIndex] ?? generatedTitleCandidates[0] ?? '';
+  const [titleCopied, setTitleCopied] = useState(false);
+  const handleCopyTitle = useCallback(async () => {
+    if (!selectedTitle) return;
+    try {
+      await navigator.clipboard.writeText(selectedTitle);
+      setTitleCopied(true);
+      setTimeout(() => setTitleCopied(false), 1500);
+    } catch {
+      setTitleCopied(false);
+    }
+  }, [selectedTitle]);
+  useEffect(() => {
+    setSelectedTitleIndex(0);
+  }, [generatedText]);
+
+  // 生成時に常に最新の入力値を参照するため ref で保持（React の非同期更新でクロージャが古い値を参照するのを防ぐ）
+  const state0Ref = useRef<State0Values>(state0);
+  const state1ValuesRef = useRef<FormValues>(state1Values);
+  const state2ValuesRef = useRef<FormValues>(state2Values);
+  useEffect(() => {
+    state0Ref.current = state0;
+  }, [state0]);
+  useEffect(() => {
+    state1ValuesRef.current = state1Values;
+  }, [state1Values]);
+  useEffect(() => {
+    state2ValuesRef.current = state2Values;
+  }, [state2Values]);
+
   useEffect(() => {
     // 開発時は API から取得、本番の静的デプロイ時は engine-config.json を取得
     const isDev = process.env.NODE_ENV === 'development';
@@ -256,38 +292,58 @@ export default function RequestTool() {
       setRouteResult(result);
       setStopMissing([]);
       if (result.route === 'STATE1') {
-        setState1Values((prev) => ({
-          ...prev,
-          repro_steps: state0.repro_steps,
-          repro_env: state0.repro_env,
-          current_behavior: state0.current_behavior,
-          expected_behavior: state0.expected_behavior,
-        }));
+        setState1Values((prev) => {
+          const next = {
+            ...prev,
+            repro_steps: state0.repro_steps,
+            repro_env: state0.repro_env,
+            current_behavior: state0.current_behavior,
+            expected_behavior: state0.expected_behavior,
+          };
+          state1ValuesRef.current = next;
+          return next;
+        });
       }
     }
   }, [state0, config]);
 
   const updateState0 = useCallback((fieldId: keyof State0Values, value: string | string[]) => {
-    setState0((prev) => ({ ...prev, [fieldId]: value }));
+    setState0((prev) => {
+      const next = { ...prev, [fieldId]: value };
+      state0Ref.current = next;
+      return next;
+    });
   }, []);
 
   const setState1 = useCallback((fieldId: string, value: string | string[]) => {
-    setState1Values((prev) => ({ ...prev, [fieldId]: value }));
+    setState1Values((prev) => {
+      const next = { ...prev, [fieldId]: value };
+      state1ValuesRef.current = next;
+      return next;
+    });
   }, []);
 
   const setState2 = useCallback((fieldId: string, value: string | string[]) => {
-    setState2Values((prev) => ({ ...prev, [fieldId]: value }));
+    setState2Values((prev) => {
+      const next = { ...prev, [fieldId]: value };
+      state2ValuesRef.current = next;
+      return next;
+    });
   }, []);
 
   const generateState1 = useCallback(() => {
-    const text = buildInvestigationOutput(state0, state1Values, config?.fieldsById);
+    const latestState0 = state0Ref.current;
+    const latestState1 = state1ValuesRef.current;
+    const text = buildInvestigationOutput(latestState0, latestState1, config?.fieldsById);
     setGeneratedText(text);
-  }, [state0, state1Values, config?.fieldsById]);
+  }, [config?.fieldsById]);
 
   const generateState2 = useCallback(() => {
-    const text = buildImplementationOutput(state0, state2Values, config?.fieldsById);
+    const latestState0 = state0Ref.current;
+    const latestState2 = state2ValuesRef.current;
+    const text = buildImplementationOutput(latestState0, latestState2, config?.fieldsById);
     setGeneratedText(text);
-  }, [state0, state2Values, config?.fieldsById]);
+  }, [config?.fieldsById]);
 
   const updateRequestTypeForm = useCallback(
     (fieldId: keyof RequestTypeFormValues, value: string) => {
@@ -325,10 +381,13 @@ export default function RequestTool() {
     setRequestTypeFormValues(initialRequestTypeFormValues);
     setRequestTypeFormErrors([]);
     setState0(initialState0);
+    state0Ref.current = initialState0;
     setRouteResult(null);
     setStopMissing([]);
     setState1Values({});
     setState2Values({});
+    state1ValuesRef.current = {};
+    state2ValuesRef.current = {};
     setGeneratedText('');
   }, []);
 
@@ -761,6 +820,38 @@ export default function RequestTool() {
                     {copied ? 'コピー済み' : 'コピー'}
                   </button>
                 </div>
+                {generatedTitleCandidates.length > 0 && (
+                  <div className="mb-3 p-2 rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                      Backlog課題タイトル（候補から選択）
+                    </p>
+                    <ul className="space-y-2 mb-2">
+                      {generatedTitleCandidates.map((title, i) => (
+                        <li key={i}>
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="title-candidate"
+                              checked={selectedTitleIndex === i}
+                              onChange={() => setSelectedTitleIndex(i)}
+                              className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            />
+                            <span className="text-sm text-gray-900 dark:text-gray-100 break-words flex-1">
+                              {title}
+                            </span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={handleCopyTitle}
+                      className="btn-secondary text-xs"
+                    >
+                      {titleCopied ? 'コピー済み' : '選択したタイトルをコピー'}
+                    </button>
+                  </div>
+                )}
                 <textarea
                   readOnly
                   value={generatedText}
@@ -782,6 +873,38 @@ export default function RequestTool() {
                     {copied ? 'コピー済み' : 'コピー'}
                   </button>
                 </div>
+                {generatedTitleCandidates.length > 0 && (
+                  <div className="mb-3 p-2 rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                      Backlog課題タイトル（候補から選択）
+                    </p>
+                    <ul className="space-y-2 mb-2">
+                      {generatedTitleCandidates.map((title, i) => (
+                        <li key={i}>
+                          <label className="flex items-start gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="title-candidate-legacy"
+                              checked={selectedTitleIndex === i}
+                              onChange={() => setSelectedTitleIndex(i)}
+                              className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            />
+                            <span className="text-sm text-gray-900 dark:text-gray-100 break-words flex-1">
+                              {title}
+                            </span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={handleCopyTitle}
+                      className="btn-secondary text-xs"
+                    >
+                      {titleCopied ? 'コピー済み' : '選択したタイトルをコピー'}
+                    </button>
+                  </div>
+                )}
                 <textarea
                   readOnly
                   value={generatedText}

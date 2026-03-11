@@ -10,4 +10,5 @@ export {
   buildDirectorSummary,
   buildRequirementOutput,
   buildProductionOutput,
+  generateBacklogTitleFromBody,
 } from './templates';

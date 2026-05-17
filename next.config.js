@@ -11,6 +11,25 @@ const nextConfig = {
     unoptimized: true, // 静的エクスポートでは画像最適化は無効
   },
   trailingSlash: true, // 静的ホスティングとの互換性のため
+  // 旧URL（judgment → request）。本番静的 export は public/tools/judgment/index.html + ホスト設定
+  ...(!isStaticExport
+    ? {
+        async redirects() {
+          return [
+            {
+              source: '/tools/judgment',
+              destination: '/tools/request/',
+              permanent: true,
+            },
+            {
+              source: '/tools/judgment/:path*',
+              destination: '/tools/request/:path*',
+              permanent: true,
+            },
+          ]
+        },
+      }
+    : {}),
   // 静的エクスポート時は out ディレクトリに出力
   ...(isStaticExport ? { distDir: 'out' } : {}),
   // パフォーマンス最適化

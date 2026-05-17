@@ -6,8 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "postbuild": "node scripts/inline-css.js && npx tsx scripts/export-engine-config.ts",
-    "export": "next build",
-    "static": "next build",
     "start": "next start",
     "lint": "next lint"
   },

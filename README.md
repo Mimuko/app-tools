@@ -208,39 +208,29 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 
 ```
 app-tools/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # ルートレイアウト
-│   ├── page.tsx            # ホームページ（/toolsにリダイレクト）
-│   ├── globals.css         # グローバルスタイル
-│   └── tools/              # ツールページ
+├── app/
+│   ├── api/engine-config/  # 開発時の設定 API（本番は engine-config.json）
+│   ├── layout.tsx
+│   ├── page.tsx            # /tools へリダイレクト
+│   └── tools/
 │       ├── page.tsx        # ツール一覧
-│       ├── request/        # 実装依頼生成ツール
-│       └── qa/              # 公開前確認チェックリスト
-├── components/             # 共通コンポーネント
-│   ├── Form.tsx            # フォームコンポーネント
-│   ├── FormSection.tsx     # フォームセクション
-│   └── Output.tsx          # 出力表示コンポーネント
-├── lib/                    # ユーティリティ関数
-│   ├── generateBacklog.ts  # Backlogテキスト生成
-│   ├── generateSlack.ts    # Slackテキスト生成
-│   ├── validation.ts       # バリデーション
-│   └── visibility.ts       # フィールド表示制御
-├── shared/                 # 共有コンポーネント・ライブラリ
-│   ├── components/         # 共有コンポーネント
-│   │   ├── AppHeader.tsx   # アプリヘッダー
-│   │   ├── AppFooter.tsx   # アプリフッター
-│   │   └── ThemeToggle.tsx # テーマ切り替え
-│   └── lib/                # 共有ライブラリ
-│       └── theme.tsx        # テーマ管理
-├── types/                  # TypeScript型定義
-│   └── form.ts             # フォームデータ型
-├── scripts/                # ビルドスクリプト
-│   └── inline-css.js       # CSSインライン化
-├── netlify.toml            # Netlify設定
-├── next.config.js          # Next.js設定
-├── tailwind.config.ts      # Tailwind CSS設定
-└── tsconfig.json           # TypeScript設定
+│       ├── request/        # 実装依頼生成（状態分岐エンジン）
+│       └── qa/             # 公開前確認チェックリスト
+│   （旧 `/tools/judgment` は `public/tools/judgment/` およびホスト設定で `/tools/request/` へ転送）
+├── docs/state-engine/      # エンジン定義 CSV（ビルドで JSON 化）
+├── lib/
+│   ├── state-engine/       # CSV パース・ルール評価・出力テンプレート
+│   └── request-type-form.ts
+├── shared/                 # ヘッダー・フッター・テーマ
+├── scripts/
+│   ├── inline-css.js
+│   └── export-engine-config.ts
+├── netlify.toml
+├── next.config.js
+└── tsconfig.json
 ```
+
+状態分岐エンジンのマスタデータは `docs/state-engine/*.csv` を編集し、`npm run build` で `out/engine-config.json` に反映されます。
 
 ## ライセンス
 

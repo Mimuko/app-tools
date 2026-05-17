@@ -1,0 +1,71 @@
+import { COGNITIVE_LOAD_CONFIG } from './constants';
+import { Panel } from './Panel';
+import type { AssigneeLoad } from '../types';
+
+interface AssigneeLoadPanelProps {
+  loads: AssigneeLoad[];
+}
+
+export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
+  return (
+    <Panel
+      title="認知・判断負荷"
+      hint="確認待ち · 未返信（社内最終） · 要確認 — ディレクターのみ集計"
+      className="lg:col-span-2"
+    >
+      {loads.length === 0 ? (
+        <p className="text-sm text-slate-500">担当者データはありません。</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-cyan-900/30 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+                <th className="pb-3 pr-4 font-normal">担当</th>
+                <th className="pb-3 pr-3 text-center font-normal">確認待ち</th>
+                <th className="pb-3 pr-3 text-center font-normal">未返信</th>
+                <th className="pb-3 pr-3 text-center font-normal">要確認</th>
+                <th className="pb-3 pr-3 text-center font-normal">要注目</th>
+                <th className="pb-3 font-normal">負荷</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loads.map((load) => {
+                const cog = COGNITIVE_LOAD_CONFIG[load.cognitiveLoad];
+                return (
+                  <tr key={load.id} className="border-b border-cyan-900/15 last:border-0">
+                    <td className="py-3 pr-4">
+                      <p className="font-medium text-slate-200">{load.name}</p>
+                      <p className="text-xs text-slate-500">{load.roleLabel}</p>
+                      {load.suggestedNext && (
+                        <p className="mt-1 text-[10px] leading-snug text-cyan-700/90">
+                          次: {load.suggestedNext}
+                        </p>
+                      )}
+                    </td>
+                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-cyan-300/90">
+                      {load.awaitingConfirmationCount}
+                    </td>
+                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-amber-300/80">
+                      {load.unrepliedIssueCount}
+                    </td>
+                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-slate-300">
+                      {load.needsReviewCount}
+                    </td>
+                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-rose-300/80">
+                      {load.attentionIssueCount}
+                    </td>
+                    <td className="py-3">
+                      <span className={`text-xs font-medium ${cog.textClass}`}>
+                        {cog.label}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Panel>
+  );
+}

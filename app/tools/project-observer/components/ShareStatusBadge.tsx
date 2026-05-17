@@ -17,7 +17,8 @@ export function ShareStatusBadge({
 
   return (
     <div
-      className={`inline-flex flex-col gap-1 rounded-full border px-3.5 py-1.5 ${config.borderClass} bg-[#0c1219]/80`}
+      className={`inline-flex flex-col gap-1 rounded-full border px-3.5 py-1.5 ${config.borderClass}`}
+      style={{ backgroundColor: 'var(--obs-badge-bg)' }}
       title={config.meaning}
     >
       <span className="inline-flex items-center gap-2">
@@ -25,13 +26,13 @@ export function ShareStatusBadge({
           className={`rounded-full ${isSmall ? 'h-2.5 w-2.5' : 'h-3 w-3'} ${config.dotClass}`}
         />
         <span
-          className={`font-mono uppercase tracking-wider text-slate-300 ${isSmall ? 'text-sm' : 'text-base'}`}
+          className={`font-mono uppercase tracking-wider obs-text-secondary ${isSmall ? 'text-sm' : 'text-base'}`}
         >
           {config.label}
         </span>
       </span>
       {showMeaning && !isSmall && (
-        <span className="max-w-xs text-sm leading-snug text-slate-500">{config.meaning}</span>
+        <span className="max-w-xs text-sm leading-snug obs-text-muted">{config.meaning}</span>
       )}
     </div>
   );

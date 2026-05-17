@@ -13,7 +13,7 @@ export function StatusReasonsPanel({ reasons, activeStatus }: StatusReasonsPanel
 
   return (
     <Panel title="判定の根拠" hint="要注目 > 注意 > 安定 — 最も優先度の高い状態を採用">
-      <p className="mb-3 text-sm text-slate-500">
+      <p className="mb-3 text-sm obs-text-muted">
         更新があっても仕様未FIXなどがあれば「安定」にはしません。
       </p>
       <ul className="space-y-2">
@@ -34,8 +34,8 @@ function ReasonRow({ reason, emphasized }: { reason: StatusReason; emphasized?: 
     <li
       className={`flex gap-2 rounded-md border px-3 py-2 text-base ${
         emphasized
-          ? 'border-cyan-800/40 bg-cyan-950/20 text-slate-200'
-          : 'border-slate-800/50 text-slate-500'
+          ? 'border-cyan-500/35 bg-cyan-50 obs-text-primary dark:border-cyan-800/40 dark:bg-cyan-950/20'
+          : 'obs-surface-inset obs-text-muted'
       }`}
     >
       <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${cfg.dotClass}`} />

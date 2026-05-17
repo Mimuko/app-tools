@@ -39,33 +39,30 @@ export default async function ProjectObserverPage() {
       <DataFreshnessBanner dataObservedAt={dataObservedAt} />
 
       {live && (
-        <p className="mb-4 rounded border border-emerald-900/40 bg-emerald-950/20 px-3 py-2 text-sm text-emerald-300/90">
+        <p className="obs-live-banner mb-4 rounded px-3 py-2 text-sm">
           データソース: {getDataSourceLabel()}（{projects.length} プロジェクト同期済み）
         </p>
       )}
 
-      <p className="mb-6 max-w-2xl text-base leading-relaxed text-slate-500">
+      <p className="mb-8 max-w-2xl text-base leading-relaxed obs-text-muted">
         完了率や工数ではなく、状態・更新・確認待ち・次アクション・認識共有を観測します。
       </p>
 
-      <StatusLegend />
       <FleetSummary projects={projects} />
 
       {fleetPrompts.length > 0 && (
-        <div className="mb-10">
+        <div className="obs-section-secondary">
           <DirectorPromptsPanel prompts={fleetPrompts} title="チーム全体 — 優先確認" />
         </div>
       )}
 
       <FleetAssigneeOverview snapshots={assigneeSnapshots} />
 
+      <StatusLegend />
+
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-mono text-sm uppercase tracking-[0.15em] text-cyan-600/80">
-          プロジェクト全体計測
-        </h2>
-        <span className="font-mono text-sm text-slate-600">
-          {projects.length} PROJECTS
-        </span>
+        <h2 className="obs-heading">プロジェクト全体計測</h2>
+        <span className="font-mono text-sm obs-text-faint">{projects.length} PROJECTS</span>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -74,14 +71,11 @@ export default async function ProjectObserverPage() {
         ))}
       </div>
 
-      <footer className="mt-10 border-t border-cyan-900/20 pt-6 text-center">
-        <p className="text-sm text-slate-600">
+      <footer className="obs-divider mt-10 border-t pt-6 text-center">
+        <p className="text-sm obs-text-faint">
           {getDataSourceLabel()} · 初回表示は Backlog API 取得のため数十秒かかることがあります
         </p>
-        <Link
-          href="/tools"
-          className="mt-2 inline-block text-sm text-cyan-600/70 hover:text-cyan-500"
-        >
+        <Link href="/tools" className="obs-link mt-2 inline-block text-sm">
           ツール一覧へ戻る
         </Link>
       </footer>

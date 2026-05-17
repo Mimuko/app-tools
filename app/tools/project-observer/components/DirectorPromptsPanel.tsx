@@ -14,39 +14,37 @@ interface DirectorPromptsPanelProps {
 
 function PromptCard({ prompt: p }: { prompt: DirectorPrompt }) {
   const issueUrl = p.issueUrl;
-  const cardClass = `block rounded-md border px-4 py-3 transition-colors ${
+  const cardClass = [
+    'block rounded-md border px-4 py-3 transition-colors',
     p.priority === 'high'
-      ? 'border-rose-500/30 bg-rose-950/20'
-      : 'border-slate-700/40 bg-[#0d131c]'
-  } ${
-    issueUrl
-      ? 'hover:border-cyan-500/40 hover:bg-[#101820] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500/60'
-      : ''
-  }`;
+      ? 'border-rose-500/35 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-950/20'
+      : 'obs-prompt-card',
+    issueUrl ? 'obs-prompt-card--link' : '',
+  ].join(' ');
 
   const body = (
     <>
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span
           className={`font-mono uppercase tracking-wider ${
-            p.priority === 'high' ? 'text-rose-400' : 'text-slate-500'
+            p.priority === 'high' ? 'text-rose-700 dark:text-rose-400' : 'obs-text-muted'
           }`}
         >
           {p.priority === 'high' ? '優先' : '確認'}
         </span>
-        <span className="text-slate-600">{SOURCE_LABEL[p.source]}</span>
-        <span className={`font-mono ${issueUrl ? 'text-cyan-400' : 'text-cyan-600/70'}`}>
+        <span className="obs-text-faint">{SOURCE_LABEL[p.source]}</span>
+        <span className={`font-mono ${issueUrl ? 'obs-accent' : 'obs-heading-muted'}`}>
           {p.issueKey}
           {issueUrl && (
-            <span className="ml-1.5 text-slate-500" aria-hidden>
+            <span className="ml-1.5 obs-text-faint" aria-hidden>
               ↗
             </span>
           )}
         </span>
       </div>
-      <p className="mt-2 text-base text-slate-200">{p.summary}</p>
+      <p className="mt-2 text-base obs-text-primary">{p.summary}</p>
       {p.forDirector && (
-        <p className="mt-1 text-sm text-slate-500">担当: {p.forDirector}</p>
+        <p className="mt-1 text-sm obs-text-muted">担当: {p.forDirector}</p>
       )}
     </>
   );
@@ -79,7 +77,7 @@ export function DirectorPromptsPanel({
   return (
     <Panel title={title} hint="副目的: 次に何を確認・優先すべきか（PoCはルールベース）">
       {sorted.length === 0 ? (
-        <p className="text-base text-slate-500">優先して確認すべき論点はありません。</p>
+        <p className="text-base obs-text-muted">優先して確認すべき論点はありません。</p>
       ) : (
         <ol className="space-y-3">
           {sorted.map((p) => (

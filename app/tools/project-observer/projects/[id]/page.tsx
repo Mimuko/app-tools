@@ -54,7 +54,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <DataFreshnessBanner dataObservedAt={project.dataObservedAt} />
 
       {isUsingLiveBacklog() && (
-        <p className="mb-4 text-sm text-emerald-400/80">
+        <p className="obs-live-banner mb-4 rounded px-3 py-2 text-sm">
           Backlog 実データ · {project.id}
         </p>
       )}
@@ -66,12 +66,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         sharingObservation={project.sharingObservation}
       />
 
-      <div className="mb-8 rounded-lg border border-cyan-900/30 bg-gradient-to-r from-cyan-950/30 to-transparent px-5 py-4">
-        <p className="font-mono text-sm uppercase tracking-widest text-cyan-600/70">
-          観測メモ
-        </p>
-        <p className="mt-2 text-base leading-relaxed text-slate-300">{project.observerNote}</p>
-        <p className="mt-3 font-mono text-sm text-slate-600">
+      <div
+        className="obs-surface-muted mb-8 rounded-lg px-5 py-4"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, var(--obs-accent-soft), transparent)',
+        }}
+      >
+        <p className="obs-heading-muted">観測メモ</p>
+        <p className="mt-2 text-base leading-relaxed obs-text-secondary">{project.observerNote}</p>
+        <p className="mt-3 font-mono text-sm obs-text-faint">
           課題更新 {formatRelativeTime(project.lastIssueUpdatedAt)} · 観測{' '}
           {formatRelativeTime(project.dataObservedAt)}
         </p>
@@ -102,7 +106,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <footer className="mt-10 text-center">
         <Link
           href="/tools/project-observer/"
-          className="font-mono text-sm uppercase tracking-widest text-cyan-600/70 hover:text-cyan-500"
+          className="obs-link font-mono text-sm uppercase tracking-widest"
         >
           ← 一覧に戻る
         </Link>
@@ -114,13 +118,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 function StatPill({ label, value }: { label: string; value: number }) {
   const emphasized = value > 0;
   return (
-    <div className="rounded-md border border-cyan-900/25 bg-[#0a1018]/80 px-3 py-2 text-center">
+    <div className="obs-surface-muted rounded-md px-3 py-2 text-center">
       <p
-        className={`font-mono text-xl tabular-nums ${emphasized ? 'text-cyan-300/90' : 'text-slate-600'}`}
+        className={`font-mono text-xl tabular-nums ${emphasized ? 'obs-metric-value' : 'obs-metric-value--muted'}`}
       >
         {value}
       </p>
-      <p className="text-sm uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-sm uppercase tracking-wider obs-text-muted">{label}</p>
     </div>
   );
 }

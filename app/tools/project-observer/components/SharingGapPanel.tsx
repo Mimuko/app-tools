@@ -12,7 +12,7 @@ export function SharingGapPanel({ signals }: SharingGapPanelProps) {
       hint="3営業日以上の共有途切れ — 停滞の独立表示はしません"
     >
       {signals.length === 0 ? (
-        <p className="text-base text-slate-500">
+        <p className="text-base obs-text-muted">
           共有不足のシグナルは検出されていません。
         </p>
       ) : (
@@ -20,11 +20,11 @@ export function SharingGapPanel({ signals }: SharingGapPanelProps) {
           {signals.map((s) => (
             <li
               key={s.id}
-              className="rounded-md border border-amber-900/25 bg-amber-950/15 px-4 py-3 text-base text-amber-100/90"
+              className="rounded-md border border-amber-500/30 bg-amber-50 px-4 py-3 text-base text-amber-900 dark:border-amber-900/25 dark:bg-amber-950/15 dark:text-amber-100/90"
             >
               {s.label}
               {s.daysSilent != null && (
-                <span className="ml-2 font-mono text-sm text-slate-500">
+                <span className="ml-2 font-mono text-sm obs-text-muted">
                   {s.daysSilent}日
                 </span>
               )}

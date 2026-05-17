@@ -49,9 +49,9 @@ export const NEXT_ACTION_CONFIG: Record<
   NextActionClarity,
   { label: string; className: string }
 > = {
-  clear: { label: '明記あり', className: 'text-emerald-400/90' },
-  partial: { label: '一部のみ', className: 'text-amber-400/90' },
-  unclear: { label: '明記なし', className: 'text-rose-400/90' },
+  clear: { label: '明記あり', className: 'text-emerald-700 dark:text-emerald-400/90' },
+  partial: { label: '一部のみ', className: 'text-amber-700 dark:text-amber-400/90' },
+  unclear: { label: '明記なし', className: 'text-rose-700 dark:text-rose-400/90' },
 };
 
 export const PROCEED_SAFETY_CONFIG: Record<
@@ -61,17 +61,20 @@ export const PROCEED_SAFETY_CONFIG: Record<
   safe: {
     label: '進行してよい',
     description: '認識が揃い、共有が継続している',
-    className: 'border-emerald-500/30 bg-emerald-950/20 text-emerald-200',
+    className:
+      'border-emerald-500/35 bg-emerald-50 text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-950/20 dark:text-emerald-200',
   },
   careful: {
     label: '慎重に',
     description: '共有・確認を挟んだ方がよい',
-    className: 'border-amber-500/30 bg-amber-950/20 text-amber-200',
+    className:
+      'border-amber-500/35 bg-amber-50 text-amber-900 dark:border-amber-500/30 dark:bg-amber-950/20 dark:text-amber-200',
   },
   hold: {
     label: '判断待ち',
     description: '要件・認識の整理を優先',
-    className: 'border-rose-500/30 bg-rose-950/20 text-rose-200',
+    className:
+      'border-rose-500/35 bg-rose-50 text-rose-900 dark:border-rose-500/30 dark:bg-rose-950/20 dark:text-rose-200',
   },
 };
 
@@ -79,10 +82,22 @@ export const COGNITIVE_LOAD_CONFIG: Record<
   CognitiveLoadLevel,
   { label: string; barClass: string; textClass: string }
 > = {
-  high: { label: '負荷 高', barClass: 'bg-rose-400', textClass: 'text-rose-300' },
-  elevated: { label: '負荷 やや高', barClass: 'bg-amber-400', textClass: 'text-amber-300' },
-  moderate: { label: '負荷 中', barClass: 'bg-cyan-400', textClass: 'text-cyan-300' },
-  light: { label: '負荷 低', barClass: 'bg-emerald-400', textClass: 'text-emerald-300' },
+  high: { label: '負荷 高', barClass: 'bg-rose-400', textClass: 'text-rose-700 dark:text-rose-300' },
+  elevated: {
+    label: '負荷 やや高',
+    barClass: 'bg-amber-400',
+    textClass: 'text-amber-700 dark:text-amber-300',
+  },
+  moderate: {
+    label: '負荷 中',
+    barClass: 'bg-cyan-400',
+    textClass: 'text-cyan-700 dark:text-cyan-300',
+  },
+  light: {
+    label: '負荷 低',
+    barClass: 'bg-emerald-400',
+    textClass: 'text-emerald-700 dark:text-emerald-300',
+  },
 };
 
 export const CONTEXT_NOTE_CATEGORY: Record<ContextNote['category'], { label: string }> = {
@@ -92,11 +107,16 @@ export const CONTEXT_NOTE_CATEGORY: Record<ContextNote['category'], { label: str
 };
 
 export const STATE_KIND_STYLES: Record<CurrentStateKind, string> = {
-  undecided: 'border-slate-500/40 bg-slate-500/10 text-slate-300',
-  client_pending: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-200',
-  provisional: 'border-violet-500/40 bg-violet-500/10 text-violet-200',
-  implementation_risk: 'border-amber-500/40 bg-amber-500/10 text-amber-200',
-  ops_concern: 'border-rose-500/30 bg-rose-500/10 text-rose-200',
+  undecided:
+    'border-slate-500/40 bg-slate-100 text-slate-800 dark:bg-slate-500/10 dark:text-slate-300',
+  client_pending:
+    'border-cyan-500/40 bg-cyan-50 text-cyan-900 dark:bg-cyan-500/10 dark:text-cyan-200',
+  provisional:
+    'border-violet-500/40 bg-violet-50 text-violet-900 dark:bg-violet-500/10 dark:text-violet-200',
+  implementation_risk:
+    'border-amber-500/40 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200',
+  ops_concern:
+    'border-rose-500/30 bg-rose-50 text-rose-900 dark:bg-rose-500/10 dark:text-rose-200',
 };
 
 export const SIGNAL_LABELS: Record<ConcernComment['signal'], string> = {

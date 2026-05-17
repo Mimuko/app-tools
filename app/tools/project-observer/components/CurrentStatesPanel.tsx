@@ -10,7 +10,7 @@ export function CurrentStatesPanel({ states }: CurrentStatesPanelProps) {
   return (
     <Panel title="認識上の論点" hint="要件・合意・暫定・リスクの整理（断定ではありません）">
       {states.length === 0 ? (
-        <p className="text-base text-slate-500">特記すべき状態は検出されていません。</p>
+        <p className="text-base obs-text-muted">特記すべき状態は検出されていません。</p>
       ) : (
         <ul className="space-y-3">
           {states.map((state) => (

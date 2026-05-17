@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@shared/lib/theme';
+import { Providers } from '@shared/components/Providers';
 
 const notoSansJP = Noto_Sans_JP({
   weight: ['400', '500', '600', '700'],
@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`${notoSansJP.variable} font-sans`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

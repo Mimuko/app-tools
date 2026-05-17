@@ -3,6 +3,7 @@ import {
   loadProjectDetail,
   loadAllProjectIds,
 } from '../lib/load-projects';
+import { enrichDirectorPrompts } from '../lib/enrich-prompts';
 import type { DirectorPrompt, FleetAssigneeSnapshot, ProjectDetail, ProjectSummary } from '../types';
 import { isDirector } from '../lib/observation/config';
 
@@ -25,10 +26,12 @@ export async function getDataObservedAt(): Promise<string> {
 
 export async function getFleetDirectorPrompts(): Promise<DirectorPrompt[]> {
   const projects = await loadAllProjects();
-  return projects
-    .flatMap((p) => p.directorPrompts)
-    .filter((p) => p.priority === 'high')
-    .slice(0, 6);
+  return enrichDirectorPrompts(
+    projects
+      .flatMap((p) => p.directorPrompts)
+      .filter((p) => p.priority === 'high')
+      .slice(0, 6),
+  );
 }
 
 export async function getFleetAssigneeSnapshots(): Promise<FleetAssigneeSnapshot[]> {

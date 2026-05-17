@@ -1,0 +1,9 @@
+/* Project Observer — 可読性向けのベースタイポグラフィ */
+.observer-console {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.observer-console main {
+  font-size: 1.0625rem; /* 17px — 本文をわずかに大きく */
+}

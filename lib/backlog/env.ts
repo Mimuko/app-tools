@@ -1,8 +1,13 @@
-export function getBacklogApiBase(): string {
+export function getBacklogSpaceOrigin(): string {
   const space = process.env.BACKLOG_SPACE?.trim();
   if (!space) return '';
   const base = space.startsWith('http') ? space : `https://${space}.backlog.jp`;
-  return `${base.replace(/\/$/, '')}/api/v2`;
+  return base.replace(/\/$/, '');
+}
+
+export function getBacklogApiBase(): string {
+  const origin = getBacklogSpaceOrigin();
+  return origin ? `${origin}/api/v2` : '';
 }
 
 export function getBacklogApiKey(): string {

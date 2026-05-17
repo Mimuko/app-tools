@@ -46,8 +46,10 @@ export interface DirectorPrompt {
   source: DirectorPromptSource;
   issueKey: string;
   summary: string;
-  /** 確認を促すディレクター（PoC: 名前） */
-  forDirector: string;
+  /** 課題担当（ディレクターチーム＝観測スコープ内の Backlog 担当者名） */
+  forDirector?: string;
+  /** サーバーで付与 — Backlog 課題詳細 URL */
+  issueUrl?: string;
 }
 
 export interface ProjectSummary {
@@ -109,6 +111,8 @@ export interface ObservedIssue {
   id: string;
   issueKey: string;
   title: string;
+  /** Backlog 課題の担当者表示名 */
+  assigneeName?: string | null;
   shareStatus: ShareStatus;
   /** 観測理由（短文） */
   reasons: string[];

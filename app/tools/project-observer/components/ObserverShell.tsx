@@ -30,12 +30,12 @@ export function ObserverShell({
   children,
   title,
   subtitle,
-  backHref = '/tools/project-observer',
-  backLabel = '観測一覧',
+  backHref = '/tools/project-observer/',
+  backLabel = '一覧',
   actions,
 }: ObserverShellProps) {
   return (
-    <div className="dark min-h-screen bg-[#060a10] text-slate-200">
+    <div className="observer-console dark min-h-screen bg-[#060a10] text-lg leading-relaxed text-slate-200">
       <GridBackground />
 
       <header className="relative border-b border-cyan-900/30 bg-[#080d14]/80 backdrop-blur-md">
@@ -43,20 +43,20 @@ export function ObserverShell({
           <div className="flex items-center gap-4">
             <Link
               href={backHref}
-              className="font-mono text-xs uppercase tracking-widest text-cyan-500/80 transition-colors hover:text-cyan-400"
+              className="font-mono text-sm uppercase tracking-widest text-cyan-500/80 transition-colors hover:text-cyan-400"
             >
               ← {backLabel}
             </Link>
             <div className="hidden h-4 w-px bg-cyan-800/50 sm:block" />
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan-600/70">
-                Project Observer
+              <p className="font-mono text-sm uppercase tracking-[0.2em] text-cyan-600/70">
+                朝会支援UI
               </p>
-              <h1 className="text-lg font-semibold tracking-tight text-slate-100 sm:text-xl">
+              <h1 className="text-xl font-semibold tracking-tight text-slate-100 sm:text-2xl">
                 {title}
               </h1>
               {subtitle && (
-                <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>
+                <p className="mt-0.5 text-base text-slate-500">{subtitle}</p>
               )}
             </div>
           </div>
@@ -64,7 +64,7 @@ export function ObserverShell({
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
+      <main className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">{children}</main>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { syncProjectFromBacklog } from '@/lib/backlog/sync-project';
@@ -16,6 +18,7 @@ import type { ProjectObservationExtras } from './observation/types';
 import type { ProjectSignals } from './observation/types';
 
 let cached: { at: number; projects: ProjectDetail[] } | null = null;
+let loadInFlight: Promise<ProjectDetail[]> | null = null;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const SNAPSHOT_PATH = path.join(
@@ -44,10 +47,17 @@ function loadFromSnapshot(): ProjectDetail[] | null {
 }
 
 function useSnapshotFirst(): boolean {
-  return (
-    process.env.BACKLOG_USE_SNAPSHOT === 'true' ||
-    process.env.NODE_ENV === 'production'
-  );
+  if (process.env.BACKLOG_USE_SNAPSHOT === 'true') return true;
+  if (process.env.NODE_ENV === 'production') return true;
+  // 開発時は snapshot があれば API を叩かない（429・初回数十秒待ちを回避）
+  if (
+    process.env.NODE_ENV === 'development' &&
+    process.env.BACKLOG_USE_LIVE_IN_DEV !== 'true' &&
+    existsSync(SNAPSHOT_PATH)
+  ) {
+    return true;
+  }
+  return false;
 }
 
 async function loadFromBacklog(): Promise<ProjectDetail[]> {
@@ -83,7 +93,7 @@ function loadFromMock(): ProjectDetail[] {
   );
 }
 
-export async function loadAllProjects(): Promise<ProjectDetail[]> {
+async function loadAllProjectsUncached(): Promise<ProjectDetail[]> {
   if (shouldUseBacklogMock()) {
     return loadFromMock();
   }
@@ -107,6 +117,15 @@ export async function loadAllProjects(): Promise<ProjectDetail[]> {
     if (snap?.length) return snap;
     return loadFromMock();
   }
+}
+
+/** 同時リクエストで Backlog API が多重実行されないよう dedupe */
+export async function loadAllProjects(): Promise<ProjectDetail[]> {
+  if (loadInFlight) return loadInFlight;
+  loadInFlight = loadAllProjectsUncached().finally(() => {
+    loadInFlight = null;
+  });
+  return loadInFlight;
 }
 
 export async function loadProjectSummaries() {
@@ -134,5 +153,7 @@ export function getDataSourceLabel(): string {
 }
 
 export function isUsingLiveBacklog(): boolean {
-  return !shouldUseBacklogMock();
+  if (shouldUseBacklogMock()) return false;
+  if (useSnapshotFirst() && existsSync(SNAPSHOT_PATH)) return false;
+  return true;
 }

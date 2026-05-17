@@ -1,5 +1,5 @@
 /**
- * 案件観測コンソール — 観測仕様（Backlog連携前の合意値）
+ * 朝会支援UI — 観測仕様（Backlog連携前の合意値）
  * Backlogがマスタ。本ツールは認知しやすく整理するレイヤー。
  */
 export const OBSERVATION_CONFIG = {
@@ -62,4 +62,13 @@ export const DIRECTOR_TEAM: readonly {
 
 export function isDirector(backlogUserName: string): boolean {
   return DIRECTOR_TEAM.some((d) => d.backlogName === backlogUserName);
+}
+
+/** 観測スコープ内のディレクターが課題担当のときのみ Backlog 表示名を返す */
+export function getInScopeAssigneeName(
+  backlogAssigneeName: string | null | undefined,
+): string | null {
+  const name = backlogAssigneeName?.trim();
+  if (!name || !isDirector(name)) return null;
+  return name;
 }

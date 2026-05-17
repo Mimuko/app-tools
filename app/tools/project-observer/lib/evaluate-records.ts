@@ -9,9 +9,11 @@ import {
   resolveShareStatus,
   sortByShareStatus,
 } from './observation/evaluate';
+import { getInScopeAssigneeName } from './observation/config';
 import type { ProjectObservationExtras } from './observation/types';
 import type { ProjectSignals } from './observation/types';
 import type { DirectorPrompt, ProjectDetail, ProjectSummary } from '../types';
+import { enrichDirectorPrompts } from './enrich-prompts';
 
 export function evaluateProjectRecord(
   rawSignals: Omit<ProjectSignals, 'dataObservedAt'>,
@@ -66,7 +68,7 @@ export function evaluateProjectRecord(
     assigneeLoads,
     observedIssues: extras.observedIssues,
     stopSignals,
-    directorPrompts,
+    directorPrompts: enrichDirectorPrompts(directorPrompts),
     concernComments: extras.concernComments,
     riskTimeline: extras.riskTimeline,
   };
@@ -92,13 +94,16 @@ function buildDirectorPromptsForProject(
   const fromIssues: Omit<DirectorPrompt, 'id'>[] = extras.observedIssues
     .filter((i) => i.shareStatus !== 'stable')
     .slice(0, 3)
-    .map((issue) => ({
-      priority: issue.shareStatus === 'attention' ? ('high' as const) : ('medium' as const),
-      source: 'status_change' as const,
-      issueKey: issue.issueKey,
-      summary: `${issue.title} — ${issue.reasons.join('、')}`,
-      forDirector: extras.assigneeLoads[0]?.name ?? '担当ディレクター',
-    }));
+    .map((issue) => {
+      const forDirector = getInScopeAssigneeName(issue.assigneeName) ?? undefined;
+      return {
+        priority: issue.shareStatus === 'attention' ? ('high' as const) : ('medium' as const),
+        source: 'status_change' as const,
+        issueKey: issue.issueKey,
+        summary: `${issue.title} — ${issue.reasons.join('、')}`,
+        ...(forDirector ? { forDirector } : {}),
+      };
+    });
 
   return buildPromptList([...fromIssues, ...fromAssignee].slice(0, 5));
 }

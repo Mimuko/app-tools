@@ -14,12 +14,12 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
       className="lg:col-span-2"
     >
       {loads.length === 0 ? (
-        <p className="text-sm text-slate-500">担当者データはありません。</p>
+        <p className="text-base text-slate-500">担当者データはありません。</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left text-sm">
+          <table className="w-full min-w-[560px] text-left text-base">
             <thead>
-              <tr className="border-b border-cyan-900/30 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-cyan-900/30 font-mono text-sm uppercase tracking-wider text-slate-500">
                 <th className="pb-3 pr-4 font-normal">担当</th>
                 <th className="pb-3 pr-3 text-center font-normal">確認待ち</th>
                 <th className="pb-3 pr-3 text-center font-normal">未返信</th>
@@ -35,9 +35,9 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
                   <tr key={load.id} className="border-b border-cyan-900/15 last:border-0">
                     <td className="py-3 pr-4">
                       <p className="font-medium text-slate-200">{load.name}</p>
-                      <p className="text-xs text-slate-500">{load.roleLabel}</p>
+                      <p className="text-sm text-slate-500">{load.roleLabel}</p>
                       {load.suggestedNext && (
-                        <p className="mt-1 text-[10px] leading-snug text-cyan-700/90">
+                        <p className="mt-1 text-sm leading-snug text-cyan-700/90">
                           次: {load.suggestedNext}
                         </p>
                       )}
@@ -55,7 +55,7 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
                       {load.attentionIssueCount}
                     </td>
                     <td className="py-3">
-                      <span className={`text-xs font-medium ${cog.textClass}`}>
+                      <span className={`text-sm font-medium ${cog.textClass}`}>
                         {cog.label}
                       </span>
                     </td>

@@ -74,15 +74,15 @@ function SummaryTile({
     <div
       className={`rounded-lg border border-cyan-900/25 bg-[#0a1018]/80 px-4 py-3 ${className}`}
     >
-      <p className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
+      <p className="font-mono text-sm uppercase tracking-widest text-slate-500">
         {label}
       </p>
       <p
-        className={`mt-1 font-mono tabular-nums ${accent} ${small ? 'text-xl' : 'text-2xl'}`}
+        className={`mt-1 font-mono tabular-nums ${accent} ${small ? 'text-2xl' : 'text-3xl'}`}
       >
         {value}
       </p>
-      <p className="mt-1 text-[10px] text-slate-600">{hint}</p>
+      <p className="mt-1 text-sm text-slate-600">{hint}</p>
     </div>
   );
 }

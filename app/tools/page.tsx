@@ -43,20 +43,6 @@ export default function ToolsPage() {
               利用する →
             </div>
           </Link>
-
-          <Link
-            href="/tools/project-observer"
-            className="block bg-gray-900 p-8 rounded-lg shadow-md hover:shadow-lg transition-all border-2 border-cyan-900/40 hover:border-cyan-500/50 md:col-span-2"
-          >
-            <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-500/80 mb-2">
-              POC · 観測型
-            </p>
-            <h2 className="text-2xl font-bold text-slate-100 mb-3">Project Observer</h2>
-            <p className="text-slate-400 mb-4">
-              進捗管理ではなく「安全に進められるか・認識が揃っているか」を観測するダッシュボード（モック）
-            </p>
-            <div className="text-cyan-400 font-medium">観測コンソールを開く →</div>
-          </Link>
         </div>
       </div>
     </div>

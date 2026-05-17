@@ -160,6 +160,7 @@ export async function syncProjectFromBacklog(
         id: String(issue.id),
         issueKey: issue.issueKey,
         title: issue.summary,
+        assigneeName: issue.assignee?.name ?? null,
         shareStatus: issueStatus,
         reasons: issueReasons(scan),
         awaitingConfirmation: Boolean(directorId && issueStatus !== 'stable'),

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import './observer.css';
 
 export const metadata: Metadata = {
-  title: 'Project Observer',
-  description: '案件の状況共有・認識整理ダッシュボード（POC）',
+  title: '朝会支援UI',
+  description: '朝会向け — 状況共有・認識同期・負荷の可視化',
 };
 
-/** このツール領域は常にダークテーマで表示 */
 export default function ProjectObserverLayout({ children }: { children: ReactNode }) {
-  return <div className="dark">{children}</div>;
+  return children;
 }

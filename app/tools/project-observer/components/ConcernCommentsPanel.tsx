@@ -18,7 +18,7 @@ export function ConcernCommentsPanel({ comments }: ConcernCommentsPanelProps) {
   return (
     <Panel title="懸念のあるコメント" hint="Backlog上の発言から拾ったシグナル">
       {comments.length === 0 ? (
-        <p className="text-sm text-slate-500">直近の懸念コメントはありません。</p>
+        <p className="text-base text-slate-500">直近の懸念コメントはありません。</p>
       ) : (
         <ul className="space-y-4">
           {comments.map((comment) => (
@@ -26,10 +26,10 @@ export function ConcernCommentsPanel({ comments }: ConcernCommentsPanelProps) {
               key={comment.id}
               className="rounded-md border border-slate-700/50 bg-[#0d131c] px-4 py-3"
             >
-              <blockquote className="border-l-2 border-cyan-700/50 pl-3 text-sm leading-relaxed text-slate-300">
+              <blockquote className="border-l-2 border-cyan-700/50 pl-3 text-base leading-relaxed text-slate-300">
                 「{comment.excerpt}」
               </blockquote>
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                 <span
                   className={`rounded border px-2 py-0.5 font-mono uppercase tracking-wider ${SIGNAL_STYLES[comment.signal]}`}
                 >

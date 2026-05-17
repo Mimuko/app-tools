@@ -19,7 +19,7 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-left text-base">
             <thead>
-              <tr className="obs-divider border-b font-mono text-sm uppercase tracking-wider obs-text-muted">
+              <tr className="obs-divider border-b text-sm uppercase tracking-wider obs-text-muted">
                 <th className="pb-3 pr-4 font-normal">担当</th>
                 <th className="pb-3 pr-3 text-center font-normal">確認待ち</th>
                 <th className="pb-3 pr-3 text-center font-normal">未返信</th>
@@ -42,16 +42,16 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
                         </p>
                       )}
                     </td>
-                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-cyan-700 dark:text-cyan-300/90">
+                    <td className="py-3 pr-3 text-center tabular-nums text-cyan-700 dark:text-cyan-300/90">
                       {load.awaitingConfirmationCount}
                     </td>
-                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-amber-700 dark:text-amber-300/80">
+                    <td className="py-3 pr-3 text-center tabular-nums text-amber-700 dark:text-amber-300/80">
                       {load.unrepliedIssueCount}
                     </td>
-                    <td className="py-3 pr-3 text-center font-mono tabular-nums obs-text-secondary">
+                    <td className="py-3 pr-3 text-center tabular-nums obs-text-secondary">
                       {load.needsReviewCount}
                     </td>
-                    <td className="py-3 pr-3 text-center font-mono tabular-nums text-rose-700 dark:text-rose-300/80">
+                    <td className="py-3 pr-3 text-center tabular-nums text-rose-700 dark:text-rose-300/80">
                       {load.attentionIssueCount}
                     </td>
                     <td className="py-3">

@@ -31,7 +31,7 @@ export function ConcernCommentsPanel({ comments }: ConcernCommentsPanelProps) {
               </blockquote>
               <div className="mt-3 flex flex-wrap items-center gap-2 text-sm obs-text-muted">
                 <span
-                  className={`rounded border px-2 py-0.5 font-mono uppercase tracking-wider ${SIGNAL_STYLES[comment.signal]}`}
+                  className={`rounded border px-2 py-0.5 uppercase tracking-wider ${SIGNAL_STYLES[comment.signal]}`}
                 >
                   {SIGNAL_LABELS[comment.signal]}
                 </span>
@@ -39,7 +39,7 @@ export function ConcernCommentsPanel({ comments }: ConcernCommentsPanelProps) {
                 <span>·</span>
                 <span>{comment.author}</span>
                 <span>·</span>
-                <span className="font-mono">{formatDateTime(comment.postedAt)}</span>
+                <span>{formatDateTime(comment.postedAt)}</span>
               </div>
             </li>
           ))}

@@ -24,7 +24,7 @@ export function SharingGapPanel({ signals }: SharingGapPanelProps) {
             >
               {s.label}
               {s.daysSilent != null && (
-                <span className="ml-2 font-mono text-sm obs-text-muted">
+                <span className="ml-2 text-sm obs-text-muted">
                   {s.daysSilent}日
                 </span>
               )}

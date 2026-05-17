@@ -52,7 +52,11 @@ export default async function ProjectObserverPage() {
 
       {fleetPrompts.length > 0 && (
         <div className="obs-section-secondary">
-          <DirectorPromptsPanel prompts={fleetPrompts} title="チーム全体 — 優先確認" />
+          <DirectorPromptsPanel
+            prompts={fleetPrompts}
+            title="チーム全体 — 優先確認"
+            pageSize={6}
+          />
         </div>
       )}
 
@@ -62,7 +66,7 @@ export default async function ProjectObserverPage() {
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="obs-heading">プロジェクト全体計測</h2>
-        <span className="font-mono text-sm obs-text-faint">{projects.length} PROJECTS</span>
+        <span className="text-sm obs-text-faint">{projects.length} PROJECTS</span>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

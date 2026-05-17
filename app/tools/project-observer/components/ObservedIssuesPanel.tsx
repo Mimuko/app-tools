@@ -22,7 +22,7 @@ export function ObservedIssuesPanel({ issues }: ObservedIssuesPanelProps) {
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${st.dotClass}`} />
-                  <span className="font-mono text-sm obs-heading-muted">{issue.issueKey}</span>
+                  <span className="text-sm obs-heading-muted">{issue.issueKey}</span>
                   <span className="text-sm obs-text-muted">{st.label}</span>
                 </div>
                 <p className="mt-2 text-base font-medium obs-text-primary">{issue.title}</p>

@@ -12,7 +12,7 @@ export function DataFreshnessBanner({ dataObservedAt }: DataFreshnessBannerProps
         <p className="obs-heading-muted">データ鮮度</p>
         <p className="mt-1 text-base obs-text-secondary">
           観測時刻:{' '}
-          <span className="font-mono obs-accent">{formatDateTime(dataObservedAt)}</span>
+          <span className="obs-accent">{formatDateTime(dataObservedAt)}</span>
         </p>
       </div>
       <div className="text-right text-sm leading-relaxed obs-text-muted">

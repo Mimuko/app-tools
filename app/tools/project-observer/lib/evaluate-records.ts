@@ -10,6 +10,7 @@ import {
   sortByShareStatus,
 } from './observation/evaluate';
 import { getInScopeAssigneeName } from './observation/config';
+import { isExcludedObservationIssueTitle } from './observation/issue-exclusions';
 import type { ProjectObservationExtras } from './observation/types';
 import type { ProjectSignals } from './observation/types';
 import type { DirectorPrompt, ProjectDetail, ProjectSummary } from '../types';
@@ -108,6 +109,37 @@ function buildDirectorPromptsForProject(
   return buildPromptList([...fromIssues, ...fromAssignee].slice(0, 5));
 }
 
+function pruneExcludedIssuesFromRecord(record: {
+  signals: Omit<ProjectSignals, 'dataObservedAt'>;
+  extras: ProjectObservationExtras;
+}): {
+  signals: Omit<ProjectSignals, 'dataObservedAt'>;
+  extras: ProjectObservationExtras;
+} {
+  const observedIssues = record.extras.observedIssues.filter(
+    (i) => !isExcludedObservationIssueTitle(i.title),
+  );
+  const excludedKeys = new Set(
+    record.extras.observedIssues
+      .filter((i) => isExcludedObservationIssueTitle(i.title))
+      .map((i) => i.issueKey),
+  );
+
+  return {
+    ...record,
+    extras: {
+      ...record.extras,
+      observedIssues,
+      concernComments: record.extras.concernComments.filter(
+        (c) => !excludedKeys.has(c.issueKey),
+      ),
+      riskTimeline: record.extras.riskTimeline.filter(
+        (e) => !isExcludedObservationIssueTitle(e.title),
+      ),
+    },
+  };
+}
+
 export function evaluateAllRecords(
   records: Array<{
     signals: Omit<ProjectSignals, 'dataObservedAt'>;
@@ -115,7 +147,9 @@ export function evaluateAllRecords(
   }>,
   dataObservedAt: string,
 ): ProjectDetail[] {
-  return records.map((r) => evaluateProjectRecord(r.signals, r.extras, dataObservedAt));
+  return records
+    .map(pruneExcludedIssuesFromRecord)
+    .map((r) => evaluateProjectRecord(r.signals, r.extras, dataObservedAt));
 }
 
 export function sortProjects(projects: ProjectDetail[]): ProjectDetail[] {

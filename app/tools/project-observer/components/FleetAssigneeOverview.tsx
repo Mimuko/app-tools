@@ -39,16 +39,10 @@ function AssigneeCard({
   return (
     <div className="obs-surface-muted rounded-lg px-4 py-3">
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-medium obs-text-primary">{snap.name}</p>
-          <p className="text-sm obs-text-muted">{snap.roleLabel}</p>
-        </div>
+        <p className="font-medium obs-text-primary">{snap.name}</p>
         <span className={`shrink-0 text-sm font-medium ${cog.textClass}`}>{cog.label}</span>
       </div>
-      <p className="mt-2 text-sm leading-relaxed obs-text-faint">
-        {snap.projectNames.join(' / ')}
-      </p>
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-sm tabular-nums">
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm tabular-nums">
         <span className="text-cyan-700 dark:text-cyan-300/80">
           確認待ち {snap.totalAwaitingConfirmation}
         </span>

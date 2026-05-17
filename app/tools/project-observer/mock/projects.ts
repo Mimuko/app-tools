@@ -29,8 +29,7 @@ export async function getFleetDirectorPrompts(): Promise<DirectorPrompt[]> {
   return enrichDirectorPrompts(
     projects
       .flatMap((p) => p.directorPrompts)
-      .filter((p) => p.priority === 'high')
-      .slice(0, 6),
+      .filter((p) => p.priority === 'high'),
   );
 }
 

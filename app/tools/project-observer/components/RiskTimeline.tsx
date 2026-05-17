@@ -27,7 +27,7 @@ export function RiskTimeline({ events }: RiskTimelineProps) {
                 />
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="obs-heading-muted">{kind.label}</span>
-                  <span className="font-mono text-sm obs-text-faint">
+                  <span className="text-sm obs-text-faint">
                     {formatDateTime(event.occurredAt)}
                   </span>
                 </div>

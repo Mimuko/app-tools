@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-05-17T07:33:10.944Z",
+  "observedAt": "2026-05-17T12:48:46.705Z",
   "records": [
     {
       "signals": {
@@ -21,14 +21,8 @@
         "unrepliedIssueCount": 3
       },
       "extras": {
-        "observerNote": "Backlog実データ（NAITOHOUSE_CRH）。アクティブ課題 8 件、コメント解析 8 件。",
-        "currentStates": [
-          {
-            "kind": "client_pending",
-            "label": "次アクション要整理",
-            "note": "主体+行動の明記が必要な課題あり"
-          }
-        ],
+        "observerNote": "Backlog実データ（NAITOHOUSE_CRH）。ディレクター関連アクティブ課題 6 件、コメント解析 6 件。",
+        "currentStates": [],
         "contextNotes": [],
         "assigneeLoads": [
           {
@@ -42,21 +36,7 @@
             "cognitiveLoad": "light"
           }
         ],
-        "observedIssues": [
-          {
-            "id": "20890915",
-            "issueKey": "NAITOHOUSE_CRH-55",
-            "title": "トラス定例｜2026年4月6日 (月)　議事録作成",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
-            "nextActionText": "",
-            "nextActionValid": false
-          }
-        ],
+        "observedIssues": [],
         "concernComments": [],
         "riskTimeline": []
       }
@@ -69,25 +49,100 @@
         "lastIssueUpdatedAt": "2026-05-17T07:10:13Z",
         "businessDaysSinceIssueUpdate": 0,
         "businessDaysSinceComment": 0,
-        "businessDaysSinceStatusChange": 101,
-        "businessDaysSinceAssigneeChange": 101,
+        "businessDaysSinceStatusChange": 83,
+        "businessDaysSinceAssigneeChange": 83,
         "unfixedIssueCount": 0,
-        "provisionalIssueCount": 2,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 0,
+        "awaitingConfirmationCount": 7,
+        "unrepliedIssueCount": 7
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（SHIKI_STATIC_CRH）。ディレクター関連アクティブ課題 10 件、コメント解析 10 件。",
+        "currentStates": [],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "masui",
+            "name": "CRH_増位",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 7,
+            "unrepliedIssueCount": 7,
+            "needsReviewCount": 0,
+            "attentionIssueCount": 0,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    },
+    {
+      "signals": {
+        "projectId": "GPJ_MARKETING_ALL",
+        "name": "★【GPJ様】マーケティングプロジェクト",
+        "clientName": "★【GPJ様】マーケティングプロジェクト",
+        "lastIssueUpdatedAt": "2026-05-15T11:30:15Z",
+        "businessDaysSinceIssueUpdate": 0,
+        "businessDaysSinceComment": 0,
+        "businessDaysSinceStatusChange": 253,
+        "businessDaysSinceAssigneeChange": 253,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 0,
+        "awaitingConfirmationCount": 1,
+        "unrepliedIssueCount": 1
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（GPJ_MARKETING_ALL）。ディレクター関連アクティブ課題 8 件、コメント解析 8 件。",
+        "currentStates": [],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "urabe",
+            "name": "CRH_浦辺良亮",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 1,
+            "unrepliedIssueCount": 1,
+            "needsReviewCount": 0,
+            "attentionIssueCount": 0,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    },
+    {
+      "signals": {
+        "projectId": "PCA_CONSULTING1",
+        "name": "PCA様_コンサルティング",
+        "clientName": "PCA様_コンサルティング",
+        "lastIssueUpdatedAt": "2026-04-08T00:37:41Z",
+        "businessDaysSinceIssueUpdate": 27,
+        "businessDaysSinceComment": 27,
+        "businessDaysSinceStatusChange": 153,
+        "businessDaysSinceAssigneeChange": 153,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
         "requirementsUnsetCount": 0,
         "specUndecidedCount": 0,
         "hasDocumentedNextAction": true,
         "needsReviewCount": 2,
-        "awaitingConfirmationCount": 9,
-        "unrepliedIssueCount": 9
+        "awaitingConfirmationCount": 8,
+        "unrepliedIssueCount": 8
       },
       "extras": {
-        "observerNote": "Backlog実データ（SHIKI_STATIC_CRH）。アクティブ課題 137 件、コメント解析 40 件。",
+        "observerNote": "Backlog実データ（PCA_CONSULTING1）。ディレクター関連アクティブ課題 13 件、コメント解析 13 件。",
         "currentStates": [
-          {
-            "kind": "provisional",
-            "label": "暫定対応",
-            "note": "SHIKI_STATIC_CRH-3679 ほか"
-          },
           {
             "kind": "client_pending",
             "label": "次アクション要整理",
@@ -97,11 +152,11 @@
         "contextNotes": [],
         "assigneeLoads": [
           {
-            "id": "masui",
-            "name": "CRH_増位",
+            "id": "kosugi",
+            "name": "小杉 慶来",
             "roleLabel": "ディレクション",
-            "awaitingConfirmationCount": 9,
-            "unrepliedIssueCount": 9,
+            "awaitingConfirmationCount": 8,
+            "unrepliedIssueCount": 8,
             "needsReviewCount": 2,
             "attentionIssueCount": 2,
             "cognitiveLoad": "light"
@@ -109,144 +164,50 @@
         ],
         "observedIssues": [
           {
-            "id": "20921605",
-            "issueKey": "SHIKI_STATIC_CRH-3679",
-            "title": "[MT]イベントページ 表示ロジックの修正（恒久対応）",
+            "id": "20041999",
+            "issueKey": "PCA_CONSULTING1-449",
+            "title": "受入テスト",
+            "assigneeName": "PCA_yahagi",
             "shareStatus": "attention",
             "reasons": [
-              "暫定対応"
+              "次アクション不明"
+            ],
+            "awaitingConfirmation": false,
+            "unreplied": true,
+            "nextActionText": "",
+            "nextActionValid": false
+          },
+          {
+            "id": "20041968",
+            "issueKey": "PCA_CONSULTING1-443",
+            "title": "受入テスト",
+            "assigneeName": "小杉 慶来",
+            "shareStatus": "attention",
+            "reasons": [
+              "次アクション不明"
             ],
             "awaitingConfirmation": true,
             "unreplied": true,
-            "nextActionText": "** 背景 SHIKI_STATIC_CRH-3669 [MT]イベントページ（/navi/event/）表示・リダイレクト調整 上記課題からの継続対応課題です。 イベントページ（/navi/event/配下）において、現在はMTの再構築結果に依存した表示ロジックとなっており、特定条件下で意図しない表示が発生している。 暫定対応として上記課題にて、生成後HTMLの差し替えにて対応済み。 ** 現状の問題 - 月別ディレクトリ（例：2026_06）単位での出力に対し、表示対象の絞り込みが適切に機能していない可能性 - 全記事を対象に日付条件で表示している構造のため、月単位での意図した制御ができていない ** 対応内容 - MTテンプレート（アーカイブ or インデックス）の特定 - イベント表示条件の見直し（eventStartDate / eventEndDate の扱い含む） - 月単位で正しく記事が出力されるようロジック修正 - 再構築により正しく反映される状態の担保 ** 確認事項 - 現在使用しているテンプレート種別（アーカイブ / インデックス） - イベント記事のデータ構造（カスタムフィールド含む） - 再構築トリガーと出力範囲 ** 完了条件 - 再構築後に手動修正不要で正しい表示となること - 対象月以外の記事が混在しないこと",
-            "nextActionValid": true
-          },
-          {
-            "id": "21025894",
-            "issueKey": "SHIKI_STATIC_CRH-3695",
-            "title": "【202604_増位】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
             "nextActionText": "",
             "nextActionValid": false
           },
           {
-            "id": "20928097",
-            "issueKey": "SHIKI_STATIC_CRH-3682",
-            "title": "【202604_増位】工数管理",
+            "id": "20041963",
+            "issueKey": "PCA_CONSULTING1-442",
+            "title": "表示テスト",
+            "assigneeName": "小杉 慶来",
             "shareStatus": "attention",
             "reasons": [
               "次アクション不明"
             ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
-            "nextActionText": "",
-            "nextActionValid": false
-          },
-          {
-            "id": "20927658",
-            "issueKey": "SHIKI_STATIC_CRH-3681",
-            "title": "【202504_加藤】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
-            "nextActionText": "",
-            "nextActionValid": false
-          },
-          {
-            "id": "20887763",
-            "issueKey": "SHIKI_STATIC_CRH-3672",
-            "title": "【202504_加藤】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
-            "nextActionText": "",
-            "nextActionValid": false
-          },
-          {
-            "id": "20881166",
-            "issueKey": "SHIKI_STATIC_CRH-3671",
-            "title": "【202504_増位】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
+            "awaitingConfirmation": true,
             "unreplied": true,
-            "nextActionText": "",
-            "nextActionValid": false
-          },
-          {
-            "id": "20881165",
-            "issueKey": "SHIKI_STATIC_CRH-3670",
-            "title": "【202503_増位】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": true,
-            "nextActionText": "",
-            "nextActionValid": false
-          },
-          {
-            "id": "20856250",
-            "issueKey": "SHIKI_STATIC_CRH-3668",
-            "title": "【202503_加藤】工数管理",
-            "shareStatus": "attention",
-            "reasons": [
-              "次アクション不明"
-            ],
-            "awaitingConfirmation": false,
-            "unreplied": false,
             "nextActionText": "",
             "nextActionValid": false
           }
         ],
-        "concernComments": [
-          {
-            "id": "c-20921605",
-            "excerpt": "** 背景 SHIKI_STATIC_CRH-3669 [MT]イベントページ（/navi/event/）表示・リダイレクト調整 上記課題からの継続対応課題です。 イベントページ（/navi/event/配下）において、現在はMTの再構築結果に依存した表示ロジックとなっており、特定条件下で意図しない表示が発生している。 暫定対応として上記課題にて、生成後HTMLの差し替えにて対応済み。 ** 現状の問題 - 月別ディレクトリ（例：2026_06）単位での出力に対し、表示対象の絞り込みが適切に機能していない可能性 - 全記事を対象に日付条件で表示している構造のため、月単位での意図した制御ができていない ** 対応内容 - MTテンプレート（アーカイブ or インデックス）の特定 - イベント表示条件の見直し（eventStartDate / eventEndDate の扱い含む） - 月単位で正しく記事が出力されるようロジック修正 - 再構築により正しく反映される状態の担保 ** 確認事項 - 現在使用しているテンプレート種別（アーカイブ / インデックス） - イベント記事のデータ構造（カスタムフィールド含む） - 再構築トリガーと出力範囲 ** 完了条件 - 再構築後に手動修正不要で正しい表示となること - 対象月以外の記事が混在しないこと",
-            "issueKey": "SHIKI_STATIC_CRH-3679",
-            "author": "CRH_増位",
-            "postedAt": "2026-05-14T01:19:48Z",
-            "signal": "provisional"
-          },
-          {
-            "id": "c-20086162",
-            "excerpt": "@CRH_新保くるみ k.shimpo 移行先のAWSの環境に、本番のMTを構築してデータを移行しました。 認証情報等は同じものをご利用いただけます。 コンテンツの更新に問題がないか、ご確認のほどお願いいたします。 移行後は違うURLでご提",
-            "issueKey": "SHIKI_STATIC_CRH-3538",
-            "author": "CRH_新保くるみ k.shimpo",
-            "postedAt": "2026-01-15T02:01:13Z",
-            "signal": "provisional"
-          }
-        ],
-        "riskTimeline": [
-          {
-            "id": "t-20921605",
-            "kind": "provisional_fix",
-            "title": "[MT]イベントページ 表示ロジックの修正（恒久対応）",
-            "description": "** 背景 SHIKI_STATIC_CRH-3669 [MT]イベントページ（/navi/event/）表示・リダイレクト調整 上記課題からの継続対応課題です。 イベントページ（/navi/event/配下）において、現在はMTの再構築結果に依存した表示ロジックとなっており、特定条件下で意図しない表示が発生している。 暫定対応として上記課題にて、生成後HTMLの差し替えにて対応済み。 ** 現状の問題 - 月別ディレクトリ（例：2026_06）単位での出力に対し、表示対象の絞り込みが適切に機能していない可能性 - 全記事を対象に日付条件で表示している構造のため、月単位での意図した制御ができていない ** 対応内容 - MTテンプレート（アーカイブ or インデックス）の特定 - イベント表示条件の見直し（eventStartDate / eventEndDate の扱い含む） - 月単位で正しく記事が出力されるようロジック修正 - 再構築により正しく反映される状態の担保 ** 確認事項 - 現在使用しているテンプレート種別（アーカイブ / インデックス） - イベント記事のデータ構造（カスタムフィールド含む） - 再構築トリガーと出力範囲 ** 完了条件 - 再構築後に手動修正不要で正しい表示となること - 対象月以外の記事が混在しないこと",
-            "occurredAt": "2026-05-14T01:19:48Z"
-          },
-          {
-            "id": "t-20086162",
-            "kind": "provisional_fix",
-            "title": "【AWS側本番】MT動作確認のお願い",
-            "description": "@CRH_新保くるみ k.shimpo 移行先のAWSの環境に、本番のMTを構築してデータを移行しました。 認証情報等は同じものをご利用いただけます。 コンテンツの更新に問題がないか、ご確認のほどお願いいたします。 移行後は違うURLでご提",
-            "occurredAt": "2026-01-15T02:01:13Z"
-          }
-        ]
+        "concernComments": [],
+        "riskTimeline": []
       }
     }
   ]

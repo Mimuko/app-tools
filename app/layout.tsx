@@ -1,17 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
+import { notoSansJP } from './fonts';
 import { Providers } from '@shared/components/Providers';
-
-const notoSansJP = Noto_Sans_JP({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-noto-sans-jp',
-  display: 'swap',
-  preload: true,
-  adjustFontFallback: true,
-  fallback: ['system-ui', 'arial'],
-});
 
 export const metadata: Metadata = {
   title: 'ツール集',

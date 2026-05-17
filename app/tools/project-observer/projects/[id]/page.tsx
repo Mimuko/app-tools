@@ -75,7 +75,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       >
         <p className="obs-heading-muted">観測メモ</p>
         <p className="mt-2 text-base leading-relaxed obs-text-secondary">{project.observerNote}</p>
-        <p className="mt-3 font-mono text-sm obs-text-faint">
+        <p className="mt-3 text-sm obs-text-faint">
           課題更新 {formatRelativeTime(project.lastIssueUpdatedAt)} · 観測{' '}
           {formatRelativeTime(project.dataObservedAt)}
         </p>
@@ -106,7 +106,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <footer className="mt-10 text-center">
         <Link
           href="/tools/project-observer/"
-          className="obs-link font-mono text-sm uppercase tracking-widest"
+          className="obs-link text-sm uppercase tracking-widest"
         >
           ← 一覧に戻る
         </Link>
@@ -120,7 +120,7 @@ function StatPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="obs-surface-muted rounded-md px-3 py-2 text-center">
       <p
-        className={`font-mono text-xl tabular-nums ${emphasized ? 'obs-metric-value' : 'obs-metric-value--muted'}`}
+        className={`text-xl tabular-nums ${emphasized ? 'obs-metric-value' : 'obs-metric-value--muted'}`}
       >
         {value}
       </p>

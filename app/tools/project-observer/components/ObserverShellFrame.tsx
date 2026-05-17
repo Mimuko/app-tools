@@ -65,7 +65,7 @@ export function ObserverShellFrame({
           <div className="flex min-w-0 flex-1 items-center gap-4">
             <Link
               href={backHref}
-              className="obs-link shrink-0 font-mono text-sm uppercase tracking-widest"
+              className="obs-link shrink-0 text-sm uppercase tracking-widest"
             >
               ← {backLabel}
             </Link>

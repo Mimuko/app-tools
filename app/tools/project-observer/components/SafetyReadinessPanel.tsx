@@ -25,7 +25,7 @@ export function SafetyReadinessPanel({
   return (
     <section className="mb-8 grid gap-4 lg:grid-cols-[1fr_1.2fr]">
       <div className={`rounded-lg border px-5 py-4 ${safety.className}`}>
-        <p className="font-mono text-sm uppercase tracking-widest opacity-70">
+        <p className="text-sm uppercase tracking-widest opacity-70">
           いま進めて安全か
         </p>
         <p className="mt-2 text-xl font-semibold">{safety.label}</p>

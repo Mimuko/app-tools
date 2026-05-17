@@ -83,9 +83,9 @@ function SummaryTile({
     <div
       className={`obs-surface-elevated rounded-lg px-4 py-3 ${prominent ? 'py-4' : ''} ${className}`}
     >
-      <p className="font-mono text-sm uppercase tracking-widest obs-text-muted">{label}</p>
+      <p className="text-sm uppercase tracking-widest obs-text-muted">{label}</p>
       <p
-        className={`mt-1 font-mono tabular-nums ${accent} ${small ? 'text-2xl' : prominent ? 'text-4xl font-semibold' : 'text-3xl'}`}
+        className={`mt-1 tabular-nums ${accent} ${small ? 'text-2xl' : prominent ? 'text-4xl font-semibold' : 'text-3xl'}`}
       >
         {value}
       </p>

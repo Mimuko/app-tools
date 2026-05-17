@@ -18,7 +18,7 @@ export function ContextNotesPanel({ notes }: ContextNotesPanelProps) {
               key={note.id}
               className="obs-surface-inset rounded-md px-4 py-3"
             >
-              <p className="font-mono text-sm uppercase tracking-wider obs-text-muted">
+              <p className="text-sm uppercase tracking-wider obs-text-muted">
                 {CONTEXT_NOTE_CATEGORY[note.category].label}
               </p>
               <p className="mt-1 text-base font-medium obs-text-primary">{note.title}</p>

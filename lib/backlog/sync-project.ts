@@ -1,4 +1,8 @@
-import { DIRECTOR_TEAM } from '@/app/tools/project-observer/lib/observation/config';
+import {
+  DIRECTOR_TEAM,
+  isDirectorTeamScopedIssue,
+} from '@/app/tools/project-observer/lib/observation/config';
+import { isExcludedObservationIssueTitle } from '@/app/tools/project-observer/lib/observation/issue-exclusions';
 import type { ProjectObservationExtras } from '@/app/tools/project-observer/lib/observation/types';
 import type { ProjectSignals } from '@/app/tools/project-observer/lib/observation/types';
 import type {
@@ -78,7 +82,23 @@ export async function syncProjectFromBacklog(
   const statusNames = new Map(statuses.map((s) => [s.id, s.name]));
 
   const issues = await getAllIssues(project.id);
-  const activeIssues = issues.filter((i) => !isClosedIssue(i, statusNames));
+  const activeIssues = issues.filter(
+    (i) =>
+      !isClosedIssue(i, statusNames) &&
+      !isExcludedObservationIssueTitle(i.summary) &&
+      isDirectorTeamScopedIssue(i),
+  );
+
+  let lastIssueUpdatedAt = project.archived ? observedAt.toISOString() : '1970-01-01T00:00:00Z';
+  let lastCommentAt: string | null = null;
+  let lastStatusAt = lastIssueUpdatedAt;
+  let lastAssigneeAt = lastIssueUpdatedAt;
+
+  for (const issue of activeIssues) {
+    if (new Date(issue.updated) > new Date(lastIssueUpdatedAt)) {
+      lastIssueUpdatedAt = issue.updated;
+    }
+  }
 
   const issuesForComments = [...activeIssues]
     .sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())
@@ -95,11 +115,6 @@ export async function syncProjectFromBacklog(
     issueScans.push({ issue, scan });
     await new Promise((r) => setTimeout(r, 80));
   }
-
-  let lastIssueUpdatedAt = project.archived ? observedAt.toISOString() : '1970-01-01T00:00:00Z';
-  let lastCommentAt: string | null = null;
-  let lastStatusAt = lastIssueUpdatedAt;
-  let lastAssigneeAt = lastIssueUpdatedAt;
 
   let unfixedIssueCount = 0;
   let provisionalIssueCount = 0;
@@ -247,7 +262,7 @@ export async function syncProjectFromBacklog(
   });
 
   const extras: ProjectObservationExtras = {
-    observerNote: `Backlog実データ（${project.projectKey}）。アクティブ課題 ${activeIssues.length} 件、コメント解析 ${issueScans.length} 件。`,
+    observerNote: `Backlog実データ（${project.projectKey}）。ディレクター関連アクティブ課題 ${activeIssues.length} 件、コメント解析 ${issueScans.length} 件。`,
     currentStates: [...currentStatesMap.values()],
     contextNotes: [],
     assigneeLoads: [...directorLoads.values()].filter(

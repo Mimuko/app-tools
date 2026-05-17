@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import { FONT_MONO_STACK } from './app/font-stacks'
 
 const config: Config = {
   content: [
@@ -10,7 +11,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-noto-sans-jp)', 'sans-serif'],
+        sans: [...FONT_MONO_STACK, 'var(--font-noto-sans-jp)', 'sans-serif'],
+        mono: [...FONT_MONO_STACK],
       },
       colors: {
         primary: {

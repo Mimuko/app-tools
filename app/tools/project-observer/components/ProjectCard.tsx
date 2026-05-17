@@ -25,7 +25,7 @@ function MetricCell({
 
   return (
     <div className="text-center">
-      <p className={`font-mono text-xl tabular-nums ${valueClass}`}>{value}</p>
+      <p className={`text-xl tabular-nums ${valueClass}`}>{value}</p>
       <p className="mt-1 text-sm uppercase tracking-wider obs-text-muted">{label}</p>
     </div>
   );
@@ -43,8 +43,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm obs-text-muted">{project.clientName}</p>
-          <h3 className="obs-title mt-1 text-lg">{project.name}</h3>
+          <h3 className="obs-title text-lg">{project.name}</h3>
         </div>
         <ShareStatusBadge status={project.shareStatus} size="sm" />
       </div>
@@ -61,7 +60,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <MetricCell label="未返信" value={project.unrepliedIssueCount} tone="warn" />
       </div>
 
-      <p className="mt-3 font-mono text-sm obs-text-faint">
+      <p className="mt-3 text-sm obs-text-faint">
         課題更新 {formatRelativeTime(project.lastIssueUpdatedAt)}
       </p>
     </article>

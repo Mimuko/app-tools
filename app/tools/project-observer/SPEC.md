@@ -55,7 +55,7 @@
 | 鮮度 | `DataFreshnessBanner` | 観測時刻・バッチ想定（毎日 6:00 JST） |
 | 凡例 | `StatusLegend` | 共有ステータス・優先ルール |
 | 艦隊サマリー | `FleetSummary` | 全案件の合計指標 |
-| 優先確認 | `DirectorPromptsPanel` | チーム全体の high 優先プロンプト（最大6件） |
+| 優先確認 | `DirectorPromptsPanel` | チーム全体の high 優先プロンプト（初期6件・「もっと見る」で6件ずつ追加） |
 | チーム負荷 | `FleetAssigneeOverview` | ディレクター別の横断負荷 |
 | プロジェクト全体計測 | `ProjectCard` × N | 案件カード（共有ステータス・3指標） |
 
@@ -157,7 +157,27 @@ Backlog 表示名が**完全一致**するユーザーのみ。
 
 定義: `lib/observation/config.ts` の `DIRECTOR_TEAM`。
 
-### 4.2 社内ユーザー判定（未返信など）
+### 4.2 観測対象の課題（担当・登録者）
+
+同期・集計・一覧の対象は、**未完了**かつ次を満たす課題のみ（いずれかで可）:
+
+- **担当者**（`assignee`）の表示名が `DIRECTOR_TEAM` と完全一致
+- **登録者**（`createdUser`）の表示名が `DIRECTOR_TEAM` と完全一致
+
+実装: `isDirectorTeamScopedIssue`（`lib/observation/config.ts`）。Backlog 同期時にフィルタ。
+
+### 4.3 観測対象外の課題（件名）
+
+Backlog 課題の**件名（summary）**に次の文字列を**含む**課題は、集計・一覧・プロンプトのいずれにも含めない。
+
+| 除外文字列 |
+|------------|
+| 工数管理 |
+| 工数計上 |
+
+実装: `lib/observation/issue-exclusions.ts`（Backlog 同期時にフィルタ。スナップショット読込時は観測課題・タイムライン等を再フィルタ）。
+
+### 4.4 社内ユーザー判定（未返信など）
 
 次のいずれか:
 
@@ -263,8 +283,8 @@ UI 表記: **未返信（社内最終コメント）** — クライアント返
 
 ### 8.1 一覧「チーム全体 — 優先確認」
 
-- 全プロジェクトの `directorPrompts` から `priority === 'high'` のみ
-- 最大 **6 件**
+- 全プロジェクトの `directorPrompts` から `priority === 'high'` のみ（件数上限なし）
+- UI は初期 **6 件** 表示。「もっと見る」で **6 件ずつ** 追加、「閉じる」で初期表示に戻す
 - 各カードは **Backlog 課題 URL** へリンク（`issueKey` 使用）
 
 ### 8.2 プロンプト生成

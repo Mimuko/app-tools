@@ -143,7 +143,6 @@ html.dark .observer-console {
 }
 
 .obs-heading {
-  font-family: ui-monospace, monospace;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
@@ -151,7 +150,6 @@ html.dark .observer-console {
 }
 
 .obs-heading-muted {
-  font-family: ui-monospace, monospace;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
@@ -188,7 +186,6 @@ html.dark .observer-console {
 
 /* メトリクス強調 */
 .obs-metric-value {
-  font-family: ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
   color: var(--obs-metric-default);
 }
@@ -216,7 +213,6 @@ html.dark .observer-console {
   padding: 0.5rem 0.875rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  font-family: ui-monospace, monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--obs-text-muted);
@@ -251,4 +247,37 @@ html.dark .observer-console {
 .obs-prompt-card--link:hover {
   border-color: var(--obs-border);
   background-color: var(--obs-prompt-hover);
+}
+
+.obs-prompts-more-btn {
+  border: 1px solid var(--obs-border-subtle);
+  border-radius: 0.375rem;
+  background-color: transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--obs-link);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.obs-prompts-more-btn:hover {
+  border-color: var(--obs-border);
+  background-color: var(--obs-prompt-bg);
+  color: var(--obs-link-hover);
+}
+
+.obs-prompts-more-btn:focus-visible {
+  outline: 2px solid var(--obs-focus-ring);
+  outline-offset: 2px;
+}
+
+.obs-prompts-more-btn--muted {
+  color: var(--obs-text-muted);
+}
+
+.obs-prompts-more-btn--muted:hover {
+  color: var(--obs-text-secondary);
 }

@@ -26,7 +26,7 @@ export function ShareStatusBadge({
           className={`rounded-full ${isSmall ? 'h-2.5 w-2.5' : 'h-3 w-3'} ${config.dotClass}`}
         />
         <span
-          className={`font-mono uppercase tracking-wider obs-text-secondary ${isSmall ? 'text-sm' : 'text-base'}`}
+          className={`uppercase tracking-wider obs-text-secondary ${isSmall ? 'text-sm' : 'text-base'}`}
         >
           {config.label}
         </span>

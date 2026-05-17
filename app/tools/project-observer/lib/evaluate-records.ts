@@ -67,6 +67,7 @@ export function evaluateProjectRecord(
     currentStates: extras.currentStates,
     contextNotes,
     assigneeLoads,
+    directorActionIssues: extras.directorActionIssues ?? [],
     observedIssues: extras.observedIssues,
     stopSignals,
     directorPrompts: enrichDirectorPrompts(directorPrompts),
@@ -125,11 +126,16 @@ function pruneExcludedIssuesFromRecord(record: {
       .map((i) => i.issueKey),
   );
 
+  const directorActionIssues = (record.extras.directorActionIssues ?? []).filter(
+    (i) => !isExcludedObservationIssueTitle(i.title),
+  );
+
   return {
     ...record,
     extras: {
       ...record.extras,
       observedIssues,
+      directorActionIssues,
       concernComments: record.extras.concernComments.filter(
         (c) => !excludedKeys.has(c.issueKey),
       ),

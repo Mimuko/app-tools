@@ -1,3 +1,4 @@
+import { ACTION_LABELS } from '../lib/labels';
 import { formatRelativeTime } from '../lib/format';
 import type { ProjectSummary } from '../types';
 import { SHARE_STATUS_CONFIG } from './constants';
@@ -54,10 +55,16 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </p>
       )}
 
-      <div className="obs-divider mt-4 grid grid-cols-3 gap-2 border-t pt-4">
-        <MetricCell label="要件未確定" value={project.requirementsUnsetCount} tone="warn" />
-        <MetricCell label="確認待ち" value={project.awaitingConfirmationCount} />
-        <MetricCell label="未返信" value={project.unrepliedIssueCount} tone="warn" />
+      <div className="obs-divider mt-4 grid grid-cols-2 gap-2 border-t pt-4">
+        <MetricCell
+          label={ACTION_LABELS.needsConfirmation}
+          value={project.awaitingConfirmationCount}
+        />
+        <MetricCell
+          label={ACTION_LABELS.awaitingReply}
+          value={project.unrepliedIssueCount}
+          tone="warn"
+        />
       </div>
 
       <p className="mt-3 text-sm obs-text-faint">

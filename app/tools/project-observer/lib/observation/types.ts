@@ -3,6 +3,7 @@ import type {
   ConcernComment,
   ContextNote,
   CurrentState,
+  DirectorActionIssue,
   ObservedIssue,
   RiskTimelineEvent,
 } from '../../types';
@@ -40,6 +41,7 @@ export interface ProjectObservationExtras {
   currentStates: CurrentState[];
   contextNotes: ContextNote[];
   assigneeLoads: AssigneeLoad[];
+  directorActionIssues?: DirectorActionIssue[];
   observedIssues: ObservedIssue[];
   concernComments: ConcernComment[];
   riskTimeline: RiskTimelineEvent[];

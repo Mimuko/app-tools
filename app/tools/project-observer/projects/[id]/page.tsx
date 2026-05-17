@@ -16,6 +16,7 @@ import { SafetyReadinessPanel } from '../../components/SafetyReadinessPanel';
 import { ShareStatusBadge } from '../../components/ShareStatusBadge';
 import { SharingGapPanel } from '../../components/SharingGapPanel';
 import { StatusReasonsPanel } from '../../components/StatusReasonsPanel';
+import { ACTION_LABELS } from '../../lib/labels';
 import { formatRelativeTime } from '../../lib/format';
 import { isUsingLiveBacklog } from '../../lib/load-projects';
 import { projectDetailPath } from '../../lib/paths';
@@ -81,11 +82,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </p>
       </div>
 
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:max-w-2xl">
-        <StatPill label="要件未確定" value={project.requirementsUnsetCount} />
-        <StatPill label="確認待ち" value={project.awaitingConfirmationCount} />
-        <StatPill label="未返信" value={project.unrepliedIssueCount} />
-        <StatPill label="要確認" value={project.needsReviewCount} />
+      <div className="mb-8 grid grid-cols-2 gap-3 sm:max-w-md">
+        <StatPill label={ACTION_LABELS.needsConfirmation} value={project.awaitingConfirmationCount} />
+        <StatPill label={ACTION_LABELS.awaitingReply} value={project.unrepliedIssueCount} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">

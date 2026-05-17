@@ -107,6 +107,27 @@ export interface AssigneeLoad {
   suggestedNext?: string;
 }
 
+/** 担当者の「今日の確認アクション」用（案件横断） */
+export interface DirectorActionIssue {
+  issueKey: string;
+  title: string;
+  assigneeName: string;
+  projectId: string;
+  projectName: string;
+  shareStatus: ShareStatus;
+  needsConfirmation: boolean;
+  awaitingReply: boolean;
+  issueUrl?: string;
+}
+
+export interface FleetDirectorAction {
+  assigneeId: string;
+  name: string;
+  needsConfirmationCount: number;
+  awaitingReplyCount: number;
+  issues: DirectorActionIssue[];
+}
+
 export interface ObservedIssue {
   id: string;
   issueKey: string;
@@ -147,6 +168,7 @@ export interface ProjectDetail extends ProjectSummary {
   currentStates: CurrentState[];
   contextNotes: ContextNote[];
   assigneeLoads: AssigneeLoad[];
+  directorActionIssues: DirectorActionIssue[];
   observedIssues: ObservedIssue[];
   stopSignals: StopSignal[];
   directorPrompts: DirectorPrompt[];

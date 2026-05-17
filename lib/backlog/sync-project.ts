@@ -3,6 +3,7 @@ import {
   isDirectorTeamScopedIssue,
 } from '@/app/tools/project-observer/lib/observation/config';
 import { isExcludedObservationIssueTitle } from '@/app/tools/project-observer/lib/observation/issue-exclusions';
+import { isAllowedObservationIssueStatus } from '@/app/tools/project-observer/lib/observation/issue-status-scope';
 import type { ProjectObservationExtras } from '@/app/tools/project-observer/lib/observation/types';
 import type { ProjectSignals } from '@/app/tools/project-observer/lib/observation/types';
 import type {
@@ -10,10 +11,12 @@ import type {
   ConcernComment,
   ContextNote,
   CurrentState,
+  DirectorActionIssue,
   ObservedIssue,
   RiskTimelineEvent,
 } from '@/app/tools/project-observer/types';
 import { businessDaysSince } from './business-days';
+import { findLatestFieldChangeAt, maxIsoDate } from './change-log';
 import {
   getAllIssues,
   getIssueComments,
@@ -31,7 +34,8 @@ import {
 import { stripBacklogMarkup } from './text';
 
 const COMMENT_FETCH_LIMIT = 40;
-const CLOSED_STATUS_NAMES = /完了|処理済|クローズ|closed/i;
+/** changeLog から状態・担当変更を拾うため、シグナル解析より多めに取得 */
+const COMMENT_COUNT_FOR_SYNC = 50;
 
 export interface SyncedProjectRecord {
   signals: Omit<ProjectSignals, 'dataObservedAt'>;
@@ -46,9 +50,8 @@ function isInternalUser(user: { mailAddress?: string; name: string }): boolean {
   return DIRECTOR_TEAM.some((d) => d.backlogName === user.name);
 }
 
-function isClosedIssue(issue: BacklogIssue, statusNames: Map<number, string>): boolean {
-  const name = issue.status?.name ?? statusNames.get(issue.status.id) ?? '';
-  return CLOSED_STATUS_NAMES.test(name);
+function issueStatusName(issue: BacklogIssue, statusNames: Map<number, string>): string {
+  return issue.status?.name ?? statusNames.get(issue.status.id) ?? '';
 }
 
 function initDirectorLoads(): Map<string, AssigneeLoad> {
@@ -82,17 +85,19 @@ export async function syncProjectFromBacklog(
   const statusNames = new Map(statuses.map((s) => [s.id, s.name]));
 
   const issues = await getAllIssues(project.id);
-  const activeIssues = issues.filter(
-    (i) =>
-      !isClosedIssue(i, statusNames) &&
+  const activeIssues = issues.filter((i) => {
+    const status = issueStatusName(i, statusNames);
+    return (
+      isAllowedObservationIssueStatus(status) &&
       !isExcludedObservationIssueTitle(i.summary) &&
-      isDirectorTeamScopedIssue(i),
-  );
+      isDirectorTeamScopedIssue(i)
+    );
+  });
 
   let lastIssueUpdatedAt = project.archived ? observedAt.toISOString() : '1970-01-01T00:00:00Z';
   let lastCommentAt: string | null = null;
-  let lastStatusAt = lastIssueUpdatedAt;
-  let lastAssigneeAt = lastIssueUpdatedAt;
+  let lastStatusAt: string | null = null;
+  let lastAssigneeAt: string | null = null;
 
   for (const issue of activeIssues) {
     if (new Date(issue.updated) > new Date(lastIssueUpdatedAt)) {
@@ -106,13 +111,14 @@ export async function syncProjectFromBacklog(
 
   const issueScans: Array<{
     issue: BacklogIssue;
+    comments: Awaited<ReturnType<typeof getIssueComments>>;
     scan: ReturnType<typeof scanIssue>;
   }> = [];
 
   for (const issue of issuesForComments) {
-    const comments = await getIssueComments(issue.issueKey, 10);
+    const comments = await getIssueComments(issue.issueKey, COMMENT_COUNT_FOR_SYNC);
     const scan = scanIssue(issue, comments, isInternalUser);
-    issueScans.push({ issue, scan });
+    issueScans.push({ issue, comments, scan });
     await new Promise((r) => setTimeout(r, 80));
   }
 
@@ -126,18 +132,19 @@ export async function syncProjectFromBacklog(
 
   const directorLoads = initDirectorLoads();
   const observedIssues: ObservedIssue[] = [];
+  const directorActionIssues: DirectorActionIssue[] = [];
   const concernComments: ConcernComment[] = [];
   const currentStatesMap = new Map<string, CurrentState>();
 
-  for (const { issue, scan } of issueScans) {
+  for (const { issue, comments, scan } of issueScans) {
     if (new Date(issue.updated) > new Date(lastIssueUpdatedAt)) {
       lastIssueUpdatedAt = issue.updated;
     }
     if (scan.lastCommentAt && (!lastCommentAt || scan.lastCommentAt > lastCommentAt)) {
       lastCommentAt = scan.lastCommentAt;
     }
-    lastStatusAt = issue.updated;
-    lastAssigneeAt = issue.updated;
+    lastStatusAt = maxIsoDate(lastStatusAt, findLatestFieldChangeAt(comments, 'status'));
+    lastAssigneeAt = maxIsoDate(lastAssigneeAt, findLatestFieldChangeAt(comments, 'assignee'));
 
     if (scan.unfixed) unfixedIssueCount++;
     if (scan.provisional) provisionalIssueCount++;
@@ -170,6 +177,27 @@ export async function syncProjectFromBacklog(
       if (load) load.attentionIssueCount++;
     }
 
+    const needsConfirmation = Boolean(
+      directorId &&
+        (scan.lastCommentInternal ||
+          issueStatus === 'attention' ||
+          issueStatus === 'caution'),
+    );
+    const awaitingReply = Boolean(directorId && scan.lastCommentInternal);
+
+    if (directorId && (needsConfirmation || awaitingReply)) {
+      directorActionIssues.push({
+        issueKey: issue.issueKey,
+        title: issue.summary,
+        assigneeName: issue.assignee!.name,
+        projectId: project.projectKey,
+        projectName: project.name,
+        shareStatus: issueStatus,
+        needsConfirmation,
+        awaitingReply,
+      });
+    }
+
     if (issueStatus !== 'stable' || isAttentionKeywordHit(stripBacklogMarkup(issue.description))) {
       observedIssues.push({
         id: String(issue.id),
@@ -178,8 +206,8 @@ export async function syncProjectFromBacklog(
         assigneeName: issue.assignee?.name ?? null,
         shareStatus: issueStatus,
         reasons: issueReasons(scan),
-        awaitingConfirmation: Boolean(directorId && issueStatus !== 'stable'),
-        unreplied: scan.lastCommentInternal,
+        awaitingConfirmation: needsConfirmation,
+        unreplied: awaitingReply,
         nextActionText: scan.nextActionText,
         nextActionValid: scan.nextActionValid,
       });
@@ -233,8 +261,14 @@ export async function syncProjectFromBacklog(
     businessDaysSinceComment: lastCommentAt
       ? businessDaysSince(lastCommentAt, observedAt)
       : businessDaysSince(lastIssueUpdatedAt, observedAt),
-    businessDaysSinceStatusChange: businessDaysSince(lastStatusAt, observedAt),
-    businessDaysSinceAssigneeChange: businessDaysSince(lastAssigneeAt, observedAt),
+    businessDaysSinceStatusChange: businessDaysSince(
+      lastStatusAt ?? lastIssueUpdatedAt,
+      observedAt,
+    ),
+    businessDaysSinceAssigneeChange: businessDaysSince(
+      lastAssigneeAt ?? lastIssueUpdatedAt,
+      observedAt,
+    ),
     unfixedIssueCount,
     provisionalIssueCount,
     requirementsUnsetCount,
@@ -274,6 +308,7 @@ export async function syncProjectFromBacklog(
         0,
     ),
     observedIssues: observedIssues.slice(0, 8),
+    directorActionIssues,
     concernComments,
     riskTimeline,
   };

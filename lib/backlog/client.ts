@@ -79,11 +79,19 @@ export interface BacklogIssue {
   createdUser: BacklogUser;
 }
 
+export interface BacklogChangeLogEntry {
+  field: string;
+  newValue?: string | null;
+  originalValue?: string | null;
+}
+
 export interface BacklogComment {
   id: number;
   content: string | null;
   created: string;
+  updated?: string;
   createdUser: BacklogUser;
+  changeLog?: BacklogChangeLogEntry[] | null;
 }
 
 export function getMyself(): Promise<BacklogUser> {

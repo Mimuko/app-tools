@@ -1,5 +1,6 @@
 import { SHARE_STATUS_CONFIG } from './constants';
 import { Panel } from './Panel';
+import { ACTION_LABELS } from '../lib/labels';
 import type { ObservedIssue } from '../types';
 
 interface ObservedIssuesPanelProps {
@@ -38,8 +39,10 @@ export function ObservedIssuesPanel({ issues }: ObservedIssuesPanelProps) {
                   </p>
                 )}
                 <div className="mt-2 flex gap-3 text-sm uppercase tracking-wider obs-text-faint">
-                  {issue.awaitingConfirmation && <span>要確認</span>}
-                  {issue.unreplied && <span>未返信（社内最終）</span>}
+                  {issue.awaitingConfirmation && (
+                    <span>{ACTION_LABELS.needsConfirmation}</span>
+                  )}
+                  {issue.unreplied && <span>{ACTION_LABELS.awaitingReply}</span>}
                 </div>
               </li>
             );

@@ -1,29 +1,34 @@
-/** @type {import('next').NextConfig} */
-const isStaticExport = process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true'
+const fs = require('fs')
+const path = require('path')
 
+const tenantId = (process.env.TENANT_ID || 'crh').trim()
+const tenantConfigPath = path.join(__dirname, 'tenants', tenantId, 'config.ts')
+if (!fs.existsSync(tenantConfigPath)) {
+  throw new Error(
+    `Unknown TENANT_ID="${tenantId}". Expected config at tenants/${tenantId}/config.ts`,
+  )
+}
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 静的エクスポートを有効化（ビルド時に静的ファイルを生成）
-  // 開発環境では無効化するため、環境変数で制御
-  ...(process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true' ? { output: 'export' } : {}),
-  // サブディレクトリに配置する場合のベースパス（本番ビルド時のみ適用、ローカルは localhost:3000）
-  ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH ? { basePath: process.env.BASE_PATH } : {}),
+  // Netlify Next ランタイム（OpenNext）。静的 export は STATIC_EXPORT=true のときのみ
+  ...(process.env.STATIC_EXPORT === 'true' ? { output: 'export', distDir: 'out' } : {}),
+  ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH
+    ? { basePath: process.env.BASE_PATH }
+    : {}),
   images: {
-    unoptimized: true, // 静的エクスポートでは画像最適化は無効
+    unoptimized: process.env.STATIC_EXPORT === 'true',
   },
-  trailingSlash: true, // 静的ホスティングとの互換性のため
-  // 静的エクスポート時は out ディレクトリに出力
-  ...(isStaticExport ? { distDir: 'out' } : {}),
-  // パフォーマンス最適化
+  trailingSlash: true,
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  // 本番環境での最適化
   ...(process.env.NODE_ENV === 'production' && {
     swcMinify: true,
     compiler: {
-      removeConsole: process.env.NODE_ENV === 'production' ? {
+      removeConsole: {
         exclude: ['error', 'warn'],
-      } : false,
+      },
     },
   }),
 }

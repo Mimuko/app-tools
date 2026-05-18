@@ -5,19 +5,24 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node scripts/inline-css.js && npx tsx scripts/export-engine-config.ts",
-    "export": "next build",
-    "static": "next build",
+    "build:crh": "TENANT_ID=crh npm run build",
+    "build:generic": "TENANT_ID=generic npm run build",
+    "build:static": "STATIC_EXPORT=true npm run build && node scripts/inline-css.js && npx tsx scripts/export-engine-config.ts",
+    "export": "npm run build:static",
+    "static": "npm run build:static",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "observer:sync": "npx tsx scripts/sync-project-observer.ts"
   },
   "dependencies": {
     "next": "14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "server-only": "^0.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.11",
     "@types/node": "^20.14.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

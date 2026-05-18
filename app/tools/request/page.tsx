@@ -231,13 +231,11 @@ export default function RequestTool() {
   }, [state2Values]);
 
   useEffect(() => {
-    // 開発時は API から取得、本番の静的デプロイ時は engine-config.json を取得
-    const isDev = process.env.NODE_ENV === 'development';
     const appRoot =
       typeof window !== 'undefined'
         ? window.location.pathname.replace(/\/tools\/[^/]+\/?$/, '').replace(/\/$/, '') || ''
         : process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-    const url = isDev ? '/api/engine-config' : `${appRoot}/engine-config.json`;
+    const url = `${appRoot}/api/engine-config`;
     setLoadError(null);
 
     const controller = new AbortController();

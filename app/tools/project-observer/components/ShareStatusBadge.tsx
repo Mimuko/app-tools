@@ -1,0 +1,39 @@
+import { SHARE_STATUS_CONFIG } from './constants';
+import type { ShareStatus } from '../types';
+
+interface ShareStatusBadgeProps {
+  status: ShareStatus;
+  size?: 'sm' | 'md';
+  showMeaning?: boolean;
+}
+
+export function ShareStatusBadge({
+  status,
+  size = 'md',
+  showMeaning = false,
+}: ShareStatusBadgeProps) {
+  const config = SHARE_STATUS_CONFIG[status];
+  const isSmall = size === 'sm';
+
+  return (
+    <div
+      className={`inline-flex flex-col gap-1 rounded-full border px-3.5 py-1.5 ${config.borderClass}`}
+      style={{ backgroundColor: 'var(--obs-badge-bg)' }}
+      title={config.meaning}
+    >
+      <span className="inline-flex items-center gap-2">
+        <span
+          className={`rounded-full ${isSmall ? 'h-2.5 w-2.5' : 'h-3 w-3'} ${config.dotClass}`}
+        />
+        <span
+          className={`uppercase tracking-wider obs-text-secondary ${isSmall ? 'text-sm' : 'text-base'}`}
+        >
+          {config.label}
+        </span>
+      </span>
+      {showMeaning && !isSmall && (
+        <span className="max-w-xs text-sm leading-snug obs-text-muted">{config.meaning}</span>
+      )}
+    </div>
+  );
+}

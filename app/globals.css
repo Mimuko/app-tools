@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * 英数字: monospace スタック（先勝ち）
+   * 日本語: Noto Sans JP（文字ごとにフォールバック）
+   */
   body {
     @apply transition-colors font-sans bg-gray-50 dark:bg-gray-900;
   }

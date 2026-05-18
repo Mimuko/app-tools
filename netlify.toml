@@ -1,8 +1,13 @@
+# 同一リポジトリ → Netlify 2 プロジェクト（CRH / 汎用）
+# 各サイトの Environment variables:
+#   TENANT_ID=crh | generic
+#   BACKLOG_* （project-observer 用）
+#
+# Next.js は Netlify の OpenNext ランタイムで SSR / Server Components を実行します。
+# publish ディレクトリの指定は不要（プラグインが処理）。
+
 [build]
   command = "npm run build"
-  publish = "out"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

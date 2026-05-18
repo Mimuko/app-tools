@@ -1,17 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Noto_Sans_JP } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@shared/lib/theme';
-
-const notoSansJP = Noto_Sans_JP({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-noto-sans-jp',
-  display: 'swap',
-  preload: true,
-  adjustFontFallback: true,
-  fallback: ['system-ui', 'arial'],
-});
+import { notoSansJP } from './fonts';
+import { Providers } from '@shared/components/Providers';
 
 export const metadata: Metadata = {
   title: 'ツール集',
@@ -34,8 +24,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${notoSansJP.variable} font-sans`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

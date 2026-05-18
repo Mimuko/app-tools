@@ -1,0 +1,283 @@
+/* Project Observer — ライト / ダーク共通デザイントークン */
+
+.observer-console {
+  --obs-bg: #eef2f7;
+  --obs-bg-glow: rgba(8, 145, 178, 0.1);
+  --obs-grid-line: rgba(8, 145, 178, 0.09);
+  --obs-header-bg: rgba(255, 255, 255, 0.92);
+  --obs-surface: #ffffff;
+  --obs-surface-muted: #f8fafc;
+  --obs-surface-inset: #f1f5f9;
+  --obs-surface-elevated: #ffffff;
+  --obs-card-to: #ffffff;
+  --obs-border: rgba(8, 145, 178, 0.22);
+  --obs-border-subtle: rgba(8, 145, 178, 0.14);
+  --obs-text: #0f172a;
+  --obs-text-secondary: #1e293b;
+  --obs-text-muted: #475569;
+  --obs-text-faint: #64748b;
+  --obs-heading: #0e7490;
+  --obs-heading-muted: rgba(14, 116, 144, 0.85);
+  --obs-accent: #0891b2;
+  --obs-accent-soft: rgba(8, 145, 178, 0.12);
+  --obs-link: #0e7490;
+  --obs-link-hover: #0891b2;
+  --obs-disclaimer-bg: #f1f5f9;
+  --obs-disclaimer-border: #cbd5e1;
+  --obs-prompt-bg: #f8fafc;
+  --obs-prompt-hover: #f1f5f9;
+  --obs-badge-bg: rgba(255, 255, 255, 0.95);
+  --obs-metric-default: #0e7490;
+  --obs-metric-muted: #94a3b8;
+  --obs-metric-warn: #be123c;
+  --obs-live-bg: rgba(16, 185, 129, 0.08);
+  --obs-live-border: rgba(5, 150, 105, 0.35);
+  --obs-live-text: #047857;
+  --obs-focus-ring: rgba(8, 145, 178, 0.45);
+  --obs-toggle-bg: #ffffff;
+  --obs-toggle-border: rgba(8, 145, 178, 0.28);
+  --obs-toggle-hover: #f0f9ff;
+
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--obs-text);
+  background-color: var(--obs-bg);
+}
+
+.observer-console[data-theme='dark'],
+html.dark .observer-console {
+  --obs-bg: #060a10;
+  --obs-bg-glow: rgba(34, 211, 238, 0.08);
+  --obs-grid-line: rgba(34, 211, 238, 0.05);
+  --obs-header-bg: rgba(8, 13, 20, 0.88);
+  --obs-surface: rgba(10, 16, 24, 0.94);
+  --obs-surface-muted: rgba(10, 16, 24, 0.72);
+  --obs-surface-inset: #0d131c;
+  --obs-surface-elevated: rgba(12, 18, 28, 0.96);
+  --obs-card-to: #0a1018;
+  --obs-border: rgba(34, 211, 238, 0.2);
+  --obs-border-subtle: rgba(34, 211, 238, 0.12);
+  --obs-text: #e2e8f0;
+  --obs-text-secondary: #cbd5e1;
+  --obs-text-muted: #94a3b8;
+  --obs-text-faint: #64748b;
+  --obs-heading: rgba(34, 211, 238, 0.88);
+  --obs-heading-muted: rgba(34, 211, 238, 0.65);
+  --obs-accent: rgba(34, 211, 238, 0.92);
+  --obs-accent-soft: rgba(34, 211, 238, 0.1);
+  --obs-link: rgba(34, 211, 238, 0.85);
+  --obs-link-hover: #22d3ee;
+  --obs-disclaimer-bg: rgba(15, 23, 42, 0.55);
+  --obs-disclaimer-border: rgba(51, 65, 85, 0.65);
+  --obs-prompt-bg: #0d131c;
+  --obs-prompt-hover: #101820;
+  --obs-badge-bg: rgba(12, 18, 25, 0.88);
+  --obs-metric-default: rgba(103, 232, 249, 0.9);
+  --obs-metric-muted: #475569;
+  --obs-metric-warn: #fda4af;
+  --obs-live-bg: rgba(6, 78, 59, 0.22);
+  --obs-live-border: rgba(16, 185, 129, 0.35);
+  --obs-live-text: rgba(110, 231, 183, 0.95);
+  --obs-focus-ring: rgba(34, 211, 238, 0.5);
+  --obs-toggle-bg: rgba(10, 16, 24, 0.75);
+  --obs-toggle-border: rgba(34, 211, 238, 0.28);
+  --obs-toggle-hover: rgba(34, 211, 238, 0.08);
+}
+
+.observer-console main {
+  font-size: 1.0625rem;
+}
+
+/* レイアウト・サーフェス */
+.obs-page {
+  min-height: 100vh;
+  background-color: var(--obs-bg);
+  color: var(--obs-text);
+}
+
+.obs-header {
+  border-bottom: 1px solid var(--obs-border);
+  background-color: var(--obs-header-bg);
+  backdrop-filter: blur(12px);
+}
+
+.obs-surface {
+  border: 1px solid var(--obs-border);
+  background-color: var(--obs-surface);
+}
+
+.obs-surface-muted {
+  border: 1px solid var(--obs-border-subtle);
+  background-color: var(--obs-surface-muted);
+}
+
+.obs-surface-inset {
+  border: 1px solid var(--obs-border-subtle);
+  background-color: var(--obs-surface-inset);
+}
+
+.obs-surface-elevated {
+  border: 1px solid var(--obs-border);
+  background-color: var(--obs-surface-elevated);
+}
+
+.obs-divider {
+  border-color: var(--obs-border-subtle);
+}
+
+/* タイポグラフィ */
+.obs-text-primary {
+  color: var(--obs-text);
+}
+
+.obs-text-secondary {
+  color: var(--obs-text-secondary);
+}
+
+.obs-text-muted {
+  color: var(--obs-text-muted);
+}
+
+.obs-text-faint {
+  color: var(--obs-text-faint);
+}
+
+.obs-heading {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--obs-heading);
+}
+
+.obs-heading-muted {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--obs-heading-muted);
+}
+
+.obs-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--obs-text);
+}
+
+.obs-accent {
+  color: var(--obs-accent);
+}
+
+.obs-link {
+  color: var(--obs-link);
+  transition: color 0.15s ease;
+}
+
+.obs-link:hover {
+  color: var(--obs-link-hover);
+}
+
+/* セクション階層 — 視線誘導 */
+.obs-section-primary {
+  margin-bottom: 2rem;
+}
+
+.obs-section-secondary {
+  margin-bottom: 2.5rem;
+}
+
+/* メトリクス強調 */
+.obs-metric-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--obs-metric-default);
+}
+
+.obs-metric-value--warn {
+  color: var(--obs-metric-warn);
+}
+
+.obs-metric-value--muted {
+  color: var(--obs-metric-muted);
+}
+
+/* ライブデータバナー */
+.obs-live-banner {
+  border: 1px solid var(--obs-live-border);
+  background-color: var(--obs-live-bg);
+  color: var(--obs-live-text);
+}
+
+/* テーマ切替 */
+.obs-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--obs-text-muted);
+  background-color: var(--obs-toggle-bg);
+  border: 1px solid var(--obs-toggle-border);
+  border-radius: 0.375rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.obs-theme-toggle:hover {
+  background-color: var(--obs-toggle-hover);
+  color: var(--obs-text-secondary);
+}
+
+.obs-theme-toggle:focus-visible {
+  outline: 2px solid var(--obs-focus-ring);
+  outline-offset: 2px;
+}
+
+.obs-theme-toggle svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* プロンプトカード */
+.obs-prompt-card {
+  border-color: var(--obs-border-subtle);
+  background-color: var(--obs-prompt-bg);
+}
+
+.obs-prompt-card--link:hover {
+  border-color: var(--obs-border);
+  background-color: var(--obs-prompt-hover);
+}
+
+.obs-prompts-more-btn {
+  border: 1px solid var(--obs-border-subtle);
+  border-radius: 0.375rem;
+  background-color: transparent;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--obs-link);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.obs-prompts-more-btn:hover {
+  border-color: var(--obs-border);
+  background-color: var(--obs-prompt-bg);
+  color: var(--obs-link-hover);
+}
+
+.obs-prompts-more-btn:focus-visible {
+  outline: 2px solid var(--obs-focus-ring);
+  outline-offset: 2px;
+}
+
+.obs-prompts-more-btn--muted {
+  color: var(--obs-text-muted);
+}
+
+.obs-prompts-more-btn--muted:hover {
+  color: var(--obs-text-secondary);
+}

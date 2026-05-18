@@ -69,41 +69,86 @@ npm run lint
 
 ## ビルド
 
-### 本番ビルド
+### 本番ビルド（Netlify / Next ランタイム）
 
 ```bash
 npm run build
+# テナント指定: npm run build:crh / npm run build:generic
 ```
 
-本番環境では静的エクスポート（`output: 'export'`）が有効になり、`out` ディレクトリにビルド結果が出力されます。
+デフォルトは **Next.js サーバーモード**（Netlify の OpenNext ランタイム向け）です。Server Components・`/api/engine-config` がリクエスト時に動作します。
 
-ビルド後、`scripts/inline-css.js`（CSSのインライン化）と `scripts/export-engine-config.ts`（設定JSONの出力）が自動実行されます。`out/engine-config.json` が生成されるため、**静的デプロイ時は `out` 一式をアップロードすればよく、別ファイルの追加アップロードは不要です**。
-
-### 本番サーバーの起動
+ローカルで本番同等を試す場合:
 
 ```bash
-npm start
+npm run build && npm start
 ```
+
+### 静的 export（Xserver 等・レガシー）
+
+```bash
+npm run build:static
+```
+
+`STATIC_EXPORT=true` で `out/` に静的ファイルを出力します（`inline-css`・`engine-config.json` 生成を含む）。
 
 ## デプロイ
 
-### Netlify
+### Netlify（2サイト / 同一リポジトリ）
 
-本アプリケーションは Netlify にデプロイされています。
+同じコードベースから **Netlify プロジェクトを2つ** 接続します（CRH Private 用と汎用用）。**Next.js ランタイム**（`@netlify/plugin-nextjs`）で SSR / API Routes を実行します。`publish` ディレクトリの手動指定は不要です。
+
+| Netlify プロジェクト | `TENANT_ID` | 主な設定 |
+|---------------------|-------------|----------|
+| CRH（Private） | `crh` | `tenants/crh/config.ts`、スナップショット推奨 |
+| 汎用 | `generic` | `tenants/generic/config.ts`、Backlog はサイトごとの env |
+
+共通設定:
 
 - ビルドコマンド: `npm run build`
-- 公開ディレクトリ: `out`
-- リダイレクト設定: `netlify.toml` でSPA用のリダイレクトを設定
+- プラグイン: `netlify.toml` の `@netlify/plugin-nextjs`
 
-### Xserverなどのレンタルサーバー
+**CRH サイトの例（Environment variables）**
 
-XserverなどのApacheサーバーにも静的ファイルとしてデプロイ可能です。
+```
+TENANT_ID=crh
+BACKLOG_USE_SNAPSHOT=true
+BACKLOG_SPACE=...
+BACKLOG_API_KEY=...
+BACKLOG_PROJECT_IDS=...
+```
+
+スナップショットをリポジトリに含めるか、デプロイ前に `TENANT_ID=crh npm run observer:sync` を実行します。`BACKLOG_USE_LIVE=true` にするとリクエストごとに Backlog API を叩きます（遅延・レート制限に注意）。
+
+**汎用サイトの例**
+
+```
+TENANT_ID=generic
+BACKLOG_SPACE=...
+BACKLOG_API_KEY=...
+BACKLOG_PROJECT_IDS=...
+```
+
+スナップショットが無い場合は **ランタイムで Backlog API** を利用します（今後のセットアップ UI と組み合わせ可能）。
+
+朝会支援UIのスナップショット更新:
+
+```bash
+TENANT_ID=crh npm run observer:sync    # → tenants/crh/data/snapshot.json
+TENANT_ID=generic npm run observer:sync
+```
+
+汎用テナントのディレクター一覧は `tenants/generic/config.ts` の `DIRECTOR_TEAM` を編集します。
+
+### Xserverなどのレンタルサーバー（静的 export）
+
+Xserverなど Apache のみの環境向けに、静的 export を残しています。
 
 #### ルートディレクトリに配置する場合
 
 1. **ビルドの実行**
    ```bash
-   npm run build
+   npm run build:static
    ```
 
 2. **ファイルのアップロード**
@@ -127,7 +172,7 @@ XserverなどのApacheサーバーにも静的ファイルとしてデプロイ�
 
 2. **ビルドの実行**
    ```bash
-   npm run build
+   npm run build:static
    ```
    - Next.jsが自動的に `.env.local` を読み込みます
 
@@ -146,10 +191,10 @@ npm run build
 # Windows (PowerShell)
 $env:BASE_PATH="/crh/request-content-generation-tool"
 $env:NEXT_PUBLIC_BASE_PATH="/crh/request-content-generation-tool"
-npm run build
+npm run build:static
 
 # Linux/Mac
-BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool npm run build
+BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/request-content-generation-tool npm run build:static
 ```
 
 **注意事項:**
@@ -168,8 +213,8 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 | **アップロード先（リモート）** | 上記リモートディレクトリ **直下**。直下に `index.html`・`engine-config.json`・`_next/`・`tools/` などが並ぶ形にする |
 
 **この構成の場合の動き**
-- 実装依頼ツール（`/tools/request/`）は、表示中の URL から「アプリのルート」を自動で判定し、`https://xs080940.xsrv.jp/crh/request-content-generation-tool/engine-config.json` を取得します。`BASE_PATH` 等の環境変数がなくても動作します。
-- ビルド時に `BASE_PATH` を指定すると、Next のリンクやリダイレクトがサブディレクトリ向けになります。指定しなくても設定読み込みは上記の仕組みで動きます。
+- 静的 export 時: 実装依頼ツールは `engine-config.json` を参照（`build:static` で `out/` に生成）。
+- Netlify ランタイム時: `/api/engine-config` を参照（サーバーが CSV から生成）。
 
 アップロード後のイメージ（リモートディレクトリ直下）:
 - `index.html`
@@ -198,7 +243,7 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 
 手動で `out` をアップロードする運用で不具合が出る場合は、**ビルドとデプロイを自動で行うホスティング**の利用を推奨します。
 
-- **Netlify**（README 記載のとおり対応済み）: リポジトリ連携で `npm run build` を実行し、`out` をそのまま公開します。`engine-config.json` もビルド成果物に含まれるため、設定読み込みの問題が起きにくいです。
+- **Netlify**: `npm run build` + Next ランタイム。`/api/engine-config` がサーバー側で動作します。
 - **Vercel**: Next.js 公式のホスティング。静的エクスポートにも対応しています。
 - **GitHub Pages**: Actions でビルド → `out` をデプロイするワークフローにすれば、同様に安定して動作します。
 
@@ -234,6 +279,10 @@ app-tools/
 │       └── theme.tsx        # テーマ管理
 ├── types/                  # TypeScript型定義
 │   └── form.ts             # フォームデータ型
+├── tenants/                # テナント設定（Netlify サイトごと）
+│   ├── crh/                 # CRH 用
+│   └── generic/              # 汎用サイト用
+├── lib/tenant/               # TENANT_ID 解決
 ├── scripts/                # ビルドスクリプト
 │   └── inline-css.js       # CSSインライン化
 ├── netlify.toml            # Netlify設定

@@ -1,0 +1,412 @@
+{
+  "observedAt": "2026-05-17T13:50:04.463Z",
+  "records": [
+    {
+      "signals": {
+        "projectId": "NAITOHOUSE_CRH",
+        "name": "【社内】内藤ハウス",
+        "clientName": "【社内】内藤ハウス",
+        "lastIssueUpdatedAt": "2026-05-15T11:54:40Z",
+        "businessDaysSinceIssueUpdate": 0,
+        "businessDaysSinceComment": 0,
+        "businessDaysSinceStatusChange": 2,
+        "businessDaysSinceAssigneeChange": 3,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 0,
+        "awaitingConfirmationCount": 3,
+        "unrepliedIssueCount": 3
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（NAITOHOUSE_CRH）。ディレクター関連アクティブ課題 6 件、コメント解析 6 件。",
+        "currentStates": [],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "kuge",
+            "name": "久下 しおり",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 3,
+            "unrepliedIssueCount": 3,
+            "needsReviewCount": 0,
+            "attentionIssueCount": 0,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [],
+        "directorActionIssues": [
+          {
+            "issueKey": "NAITOHOUSE_CRH-36",
+            "title": "NAITOHOUSE-190 資料請求の仕組みについて",
+            "assigneeName": "久下 しおり",
+            "projectId": "NAITOHOUSE_CRH",
+            "projectName": "【社内】内藤ハウス",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "NAITOHOUSE_CRH-44",
+            "title": "HubDBの施工事例が下書き（プレビュー）で確認できるようにしたい",
+            "assigneeName": "久下 しおり",
+            "projectId": "NAITOHOUSE_CRH",
+            "projectName": "【社内】内藤ハウス",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "NAITOHOUSE_CRH-50",
+            "title": "トラスLP制作",
+            "assigneeName": "久下 しおり",
+            "projectId": "NAITOHOUSE_CRH",
+            "projectName": "【社内】内藤ハウス",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          }
+        ],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    },
+    {
+      "signals": {
+        "projectId": "SHIKI_STATIC_CRH",
+        "name": "★★四季さん★★【CRH社内】",
+        "clientName": "★★四季さん★★【CRH社内】",
+        "lastIssueUpdatedAt": "2026-05-17T13:38:11Z",
+        "businessDaysSinceIssueUpdate": 0,
+        "businessDaysSinceComment": 0,
+        "businessDaysSinceStatusChange": 0,
+        "businessDaysSinceAssigneeChange": 0,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 0,
+        "awaitingConfirmationCount": 7,
+        "unrepliedIssueCount": 7
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（SHIKI_STATIC_CRH）。ディレクター関連アクティブ課題 10 件、コメント解析 10 件。",
+        "currentStates": [],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "masui",
+            "name": "CRH_増位",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 7,
+            "unrepliedIssueCount": 7,
+            "needsReviewCount": 0,
+            "attentionIssueCount": 0,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [],
+        "directorActionIssues": [
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3662",
+            "title": "ヘッダーのエリア切替機能：インフォメーション一覧ページとの挙動不一致の仕様整理",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3575",
+            "title": "開発関連依頼の詳細",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3701",
+            "title": "はじめての四季：劇場情報・アクセス方法エリアの情報更新対応",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3622",
+            "title": "AWS移行後の権限・ディレクトリ構成整理（技術／運用／組織課題の是正）",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3587",
+            "title": "MTアーカイブ対応 WPでの実装作業",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3676",
+            "title": "GWはみんなで劇団四季へ2026（空席照会ページ）　作成のご依頼",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "SHIKI_STATIC_CRH-3683",
+            "title": "GWはみんなで劇団四季へ2026（空席照会ページ）　作成のご依頼：クローズ作業",
+            "assigneeName": "CRH_増位",
+            "projectId": "SHIKI_STATIC_CRH",
+            "projectName": "★★四季さん★★【CRH社内】",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          }
+        ],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    },
+    {
+      "signals": {
+        "projectId": "GPJ_MARKETING_ALL",
+        "name": "★【GPJ様】マーケティングプロジェクト",
+        "clientName": "★【GPJ様】マーケティングプロジェクト",
+        "lastIssueUpdatedAt": "2026-05-15T11:30:15Z",
+        "businessDaysSinceIssueUpdate": 0,
+        "businessDaysSinceComment": 0,
+        "businessDaysSinceStatusChange": 0,
+        "businessDaysSinceAssigneeChange": 5,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 0,
+        "awaitingConfirmationCount": 1,
+        "unrepliedIssueCount": 1
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（GPJ_MARKETING_ALL）。ディレクター関連アクティブ課題 8 件、コメント解析 8 件。",
+        "currentStates": [],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "urabe",
+            "name": "CRH_浦辺良亮",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 1,
+            "unrepliedIssueCount": 1,
+            "needsReviewCount": 0,
+            "attentionIssueCount": 0,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [],
+        "directorActionIssues": [
+          {
+            "issueKey": "GPJ_MARKETING_ALL-313",
+            "title": "フォーム移設PJ連絡用課題",
+            "assigneeName": "CRH_浦辺良亮",
+            "projectId": "GPJ_MARKETING_ALL",
+            "projectName": "★【GPJ様】マーケティングプロジェクト",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          }
+        ],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    },
+    {
+      "signals": {
+        "projectId": "PCA_CONSULTING1",
+        "name": "PCA様_コンサルティング",
+        "clientName": "PCA様_コンサルティング",
+        "lastIssueUpdatedAt": "2026-04-08T00:37:41Z",
+        "businessDaysSinceIssueUpdate": 27,
+        "businessDaysSinceComment": 27,
+        "businessDaysSinceStatusChange": 48,
+        "businessDaysSinceAssigneeChange": 48,
+        "unfixedIssueCount": 0,
+        "provisionalIssueCount": 0,
+        "requirementsUnsetCount": 0,
+        "specUndecidedCount": 0,
+        "hasDocumentedNextAction": true,
+        "needsReviewCount": 2,
+        "awaitingConfirmationCount": 8,
+        "unrepliedIssueCount": 8
+      },
+      "extras": {
+        "observerNote": "Backlog実データ（PCA_CONSULTING1）。ディレクター関連アクティブ課題 13 件、コメント解析 13 件。",
+        "currentStates": [
+          {
+            "kind": "client_pending",
+            "label": "次アクション要整理",
+            "note": "主体+行動の明記が必要な課題あり"
+          }
+        ],
+        "contextNotes": [],
+        "assigneeLoads": [
+          {
+            "id": "kosugi",
+            "name": "小杉 慶来",
+            "roleLabel": "ディレクション",
+            "awaitingConfirmationCount": 8,
+            "unrepliedIssueCount": 8,
+            "needsReviewCount": 2,
+            "attentionIssueCount": 2,
+            "cognitiveLoad": "light"
+          }
+        ],
+        "observedIssues": [
+          {
+            "id": "20041999",
+            "issueKey": "PCA_CONSULTING1-449",
+            "title": "受入テスト",
+            "assigneeName": "PCA_yahagi",
+            "shareStatus": "attention",
+            "reasons": [
+              "次アクション不明"
+            ],
+            "awaitingConfirmation": false,
+            "unreplied": false,
+            "nextActionText": "",
+            "nextActionValid": false
+          },
+          {
+            "id": "20041968",
+            "issueKey": "PCA_CONSULTING1-443",
+            "title": "受入テスト",
+            "assigneeName": "小杉 慶来",
+            "shareStatus": "attention",
+            "reasons": [
+              "次アクション不明"
+            ],
+            "awaitingConfirmation": true,
+            "unreplied": true,
+            "nextActionText": "",
+            "nextActionValid": false
+          },
+          {
+            "id": "20041963",
+            "issueKey": "PCA_CONSULTING1-442",
+            "title": "表示テスト",
+            "assigneeName": "小杉 慶来",
+            "shareStatus": "attention",
+            "reasons": [
+              "次アクション不明"
+            ],
+            "awaitingConfirmation": true,
+            "unreplied": true,
+            "nextActionText": "",
+            "nextActionValid": false
+          }
+        ],
+        "directorActionIssues": [
+          {
+            "issueKey": "PCA_CONSULTING1-451",
+            "title": "④ボタン＋吹き出し",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-455",
+            "title": "修正",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-450",
+            "title": "修正",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-437",
+            "title": "修正",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-441",
+            "title": "開発",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-444",
+            "title": "修正",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "stable",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-443",
+            "title": "受入テスト",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "attention",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          },
+          {
+            "issueKey": "PCA_CONSULTING1-442",
+            "title": "表示テスト",
+            "assigneeName": "小杉 慶来",
+            "projectId": "PCA_CONSULTING1",
+            "projectName": "PCA様_コンサルティング",
+            "shareStatus": "attention",
+            "needsConfirmation": true,
+            "awaitingReply": true
+          }
+        ],
+        "concernComments": [],
+        "riskTimeline": []
+      }
+    }
+  ]
+}

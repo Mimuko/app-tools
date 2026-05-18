@@ -1,6 +1,6 @@
 /**
  * Backlog → スナップショット JSON（静的ビルド / Netlify 用）
- * Usage: npx tsx scripts/sync-project-observer.ts
+ * Usage: TENANT_ID=crh npx tsx scripts/sync-project-observer.ts
  * Requires .env.local with BACKLOG_* variables
  */
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
@@ -26,8 +26,13 @@ function loadEnvLocal(): void {
 loadEnvLocal();
 
 async function main() {
+  const { getTenantId } = await import('../lib/tenant/registry');
+  const { getTenantSnapshotPath } = await import('../lib/tenant/paths');
   const { syncProjectFromBacklog } = await import('../lib/backlog/sync-project');
   const { getBacklogProjectKeys, isBacklogConfigured } = await import('../lib/backlog/env');
+
+  const tenantId = getTenantId();
+  console.log(`Tenant: ${tenantId}`);
 
   if (!isBacklogConfigured()) {
     console.error('BACKLOG_* env vars are not configured in .env.local');
@@ -43,9 +48,8 @@ async function main() {
     records.push(await syncProjectFromBacklog(key, observedAt));
   }
 
-  const outDir = path.join(process.cwd(), 'app/tools/project-observer/data');
-  mkdirSync(outDir, { recursive: true });
-  const outPath = path.join(outDir, 'snapshot.json');
+  const outPath = getTenantSnapshotPath();
+  mkdirSync(path.dirname(outPath), { recursive: true });
   writeFileSync(
     outPath,
     JSON.stringify({ observedAt: observedAt.toISOString(), records }, null, 2),

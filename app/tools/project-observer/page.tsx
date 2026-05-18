@@ -17,6 +17,8 @@ import {
   getProjectSummaries,
 } from './mock/projects';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectObserverPage() {
   const projects = await getProjectSummaries();
   const actionableProjects = projects.filter((p) => p.shareStatus !== 'stable');

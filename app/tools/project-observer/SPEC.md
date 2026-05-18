@@ -101,31 +101,34 @@ flowchart TD
 | 環境 | 優先データ源 |
 |------|----------------|
 | `BACKLOG_USE_MOCK=true` または API 未設定 | モック |
-| `NODE_ENV=production` または `BACKLOG_USE_SNAPSHOT=true` | `data/snapshot.json` → 失敗時 API → モック |
-| 開発（`npm run dev`） | Backlog API（5分キャッシュ）→ スナップショット → モック |
+| `tenants/{TENANT_ID}/data/snapshot.json` あり、または `BACKLOG_USE_SNAPSHOT=true` | スナップショット → 失敗時 API → モック |
+| 上記以外（Netlify ランタイム等） | Backlog API（5分メモリキャッシュ）→ スナップショット → モック |
+| `BACKLOG_USE_LIVE=true` | スナップショットを無視して API 優先 |
 
 ### 3.2 環境変数
 
 | 変数 | 必須 | 説明 |
 |------|------|------|
+| `TENANT_ID` | Netlify ごと | `crh` / `generic`（既定: `crh`） |
 | `BACKLOG_SPACE` | 実データ時 | `https://xxx.backlog.jp` またはスペース ID |
 | `BACKLOG_API_KEY` | 実データ時 | API キー |
 | `BACKLOG_PROJECT_IDS` | 実データ時 | カンマ区切り projectKey |
 | `BACKLOG_INTERNAL_EMAIL_DOMAIN` | 任意 | 社内判定用（既定: `creativehope.jp`） |
 | `BACKLOG_USE_MOCK` | 任意 | `true` でモック強制 |
 | `BACKLOG_USE_SNAPSHOT` | 任意 | `true` でスナップショット優先 |
+| `BACKLOG_USE_LIVE` | 任意 | `true` でランタイム API 優先 |
 
-### 3.3 静的デプロイ前の同期
+### 3.3 デプロイ（Netlify Next ランタイム）
 
 ```bash
-npm run observer:sync
+TENANT_ID=crh npm run observer:sync   # 任意: スナップショット更新
 npm run build
 ```
 
-- `scripts/sync-project-observer.ts` が Backlog から取得し `app/tools/project-observer/data/snapshot.json` に書き出す
-- 静的エクスポート（`output: 'export'`）ではビルド時に API を叩かない運用を想定
-- **`/projects/[id]` はビルド時に `snapshot.json` の projectKey だけ HTML 化される**（古い `out/` を配信すると 404）
+- **Netlify**: `@netlify/plugin-nextjs` で SSR。`/tools/project-observer` は `force-dynamic`
+- `scripts/sync-project-observer.ts` → `tenants/{TENANT_ID}/data/snapshot.json`
 - URL は **`trailingSlash: true`** のため末尾 `/` 必須（例: `.../projects/NAITOHOUSE_CRH/`）
+- 静的 export が必要な場合のみ `npm run build:static`（Xserver 等）
 
 ### 3.4 Backlog 同期の制限（PoC）
 

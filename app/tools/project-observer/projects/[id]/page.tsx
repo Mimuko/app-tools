@@ -20,16 +20,12 @@ import { ACTION_LABELS } from '../../lib/labels';
 import { formatRelativeTime } from '../../lib/format';
 import { isUsingLiveBacklog } from '../../lib/load-projects';
 import { projectDetailPath } from '../../lib/paths';
-import { getProjectIdsForStaticParams } from '../../lib/static-params';
 import { getProjectDetail } from '../../mock/projects';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: { id: string };
-}
-
-export async function generateStaticParams() {
-  const ids = await getProjectIdsForStaticParams();
-  return ids.map((id) => ({ id }));
 }
 
 export async function generateMetadata({ params }: PageProps) {

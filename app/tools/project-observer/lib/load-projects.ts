@@ -16,24 +16,25 @@ import type { ProjectDetail } from '../types';
 import { rawProjects } from '../mock/raw-projects';
 import type { ProjectObservationExtras } from './observation/types';
 import type { ProjectSignals } from './observation/types';
+import { getTenantSnapshotPath } from '@/lib/tenant/paths';
 
 let cached: { at: number; projects: ProjectDetail[] } | null = null;
 let loadInFlight: Promise<ProjectDetail[]> | null = null;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
-const SNAPSHOT_PATH = path.join(
-  process.cwd(),
-  'app/tools/project-observer/data/snapshot.json',
-);
+function snapshotPath(): string {
+  return getTenantSnapshotPath();
+}
 
 function observationNow(): string {
   return new Date().toISOString();
 }
 
 function loadFromSnapshot(): ProjectDetail[] | null {
-  if (!existsSync(SNAPSHOT_PATH)) return null;
+  const file = snapshotPath();
+  if (!existsSync(file)) return null;
   try {
-    const raw = JSON.parse(readFileSync(SNAPSHOT_PATH, 'utf8')) as {
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as {
       observedAt: string;
       records: Array<{
         signals: Omit<ProjectSignals, 'dataObservedAt'>;
@@ -47,14 +48,13 @@ function loadFromSnapshot(): ProjectDetail[] | null {
 }
 
 function useSnapshotFirst(): boolean {
+  if (process.env.BACKLOG_USE_LIVE === 'true') return false;
   if (process.env.BACKLOG_USE_SNAPSHOT === 'true') return true;
-  if (process.env.NODE_ENV === 'production') return true;
-  // 開発時は snapshot があれば API を叩かない（429・初回数十秒待ちを回避）
-  if (
-    process.env.NODE_ENV === 'development' &&
-    process.env.BACKLOG_USE_LIVE_IN_DEV !== 'true' &&
-    existsSync(SNAPSHOT_PATH)
-  ) {
+  // スナップショットファイルがあれば優先（CRH: sync 後デプロイ / 開発時の 429 回避）
+  if (existsSync(snapshotPath())) {
+    if (process.env.NODE_ENV === 'development') {
+      return process.env.BACKLOG_USE_LIVE_IN_DEV !== 'true';
+    }
     return true;
   }
   return false;
@@ -146,7 +146,7 @@ export async function loadAllProjectIds(): Promise<string[]> {
 export function getDataSourceLabel(): string {
   if (shouldUseBacklogMock()) return 'モック';
   const host = getBacklogApiBase().replace(/\/api\/v2$/, '').replace(/^https?:\/\//, '');
-  if (useSnapshotFirst() && existsSync(SNAPSHOT_PATH)) {
+  if (useSnapshotFirst() && existsSync(snapshotPath())) {
     return `Backlogスナップショット（${host}）`;
   }
   return `Backlog 実データ（${host}）`;
@@ -154,6 +154,6 @@ export function getDataSourceLabel(): string {
 
 export function isUsingLiveBacklog(): boolean {
   if (shouldUseBacklogMock()) return false;
-  if (useSnapshotFirst() && existsSync(SNAPSHOT_PATH)) return false;
+  if (useSnapshotFirst() && existsSync(snapshotPath())) return false;
   return true;
 }

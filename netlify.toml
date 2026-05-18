@@ -1,7 +1,8 @@
 # Netlify 2 プロジェクト（CRH / 汎用）— 同一リポジトリ
 #
-# サイト設定で Publish directory が `out` のままだとデプロイ失敗します。
-#   Site configuration → Build & deploy → Publish directory → 空欄（未設定）
+# Publish directory は `.next`（リポジトリルート `.` や `out` だとプラグインが失敗します）
+#   Site configuration → Build & deploy → Publish directory → `.next`
+#   または UI を空欄にし、本ファイルの publish を優先させる
 #
 # Environment variables（サイトごと）:
 #   TENANT_ID=crh | generic
@@ -9,6 +10,7 @@
 
 [build]
   command = "npm run build"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20.18.0"

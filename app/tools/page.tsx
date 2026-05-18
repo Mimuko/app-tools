@@ -1,6 +1,12 @@
 import Link from 'next/link';
+import { getTenantId } from '@/lib/tenant/registry';
+
+const toolCardClassName =
+  'block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-all border-2 border-gray-200 dark:border-gray-700 hover:border-primary-500 dark:hover:border-primary-400';
 
 export default function ToolsPage() {
+  const isCrhTenant = getTenantId() === 'crh';
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -14,10 +20,7 @@ export default function ToolsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Link
-            href="/tools/request"
-            className="block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-all border-2 border-gray-200 dark:border-gray-700 hover:border-primary-500 dark:hover:border-primary-400"
-          >
+          <Link href="/tools/request" className={toolCardClassName}>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               実装依頼生成ツール
             </h2>
@@ -29,10 +32,7 @@ export default function ToolsPage() {
             </div>
           </Link>
 
-          <Link
-            href="/tools/qa"
-            className="block bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-all border-2 border-gray-200 dark:border-gray-700 hover:border-primary-500 dark:hover:border-primary-400"
-          >
+          <Link href="/tools/qa" className={toolCardClassName}>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               公開前確認チェックリスト
             </h2>
@@ -43,6 +43,20 @@ export default function ToolsPage() {
               利用する →
             </div>
           </Link>
+
+          {isCrhTenant && (
+            <Link href="/tools/project-observer/" className={toolCardClassName}>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                朝会支援UI
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Backlog の情報をもとに、複数プロジェクトの状況把握と朝会での確認・優先付けを支援します
+              </p>
+              <div className="text-primary-600 dark:text-primary-400 font-medium">
+                利用する →
+              </div>
+            </Link>
+          )}
         </div>
       </div>
     </div>

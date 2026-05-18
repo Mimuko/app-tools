@@ -107,7 +107,7 @@ npm run build:static
 
 - ビルドコマンド: `npm run build`
 - プラグイン: `netlify.toml` の `@netlify/plugin-nextjs`
-- **Publish directory**: 未設定（空欄）。`out` のままだと「Deploy directory 'out' does not exist」で失敗します
+- **Publish directory**: **`.next`**（リポジトリルート `.` / 空欄で base と同じ扱いになるとプラグインエラー）。`out` は使わない
 - **Build settings**: `/*` → `/index.html` の SPA リダイレクトは入れない（Next ルーティングと競合）
 
 **CRH サイトの例（Environment variables）**

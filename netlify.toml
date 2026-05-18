@@ -1,13 +1,32 @@
-# 同一リポジトリ → Netlify 2 プロジェクト（CRH / 汎用）
-# 各サイトの Environment variables:
-#   TENANT_ID=crh | generic
-#   BACKLOG_* （project-observer 用）
+# Netlify 2 プロジェクト（CRH / 汎用）— 同一リポジトリ
 #
-# Next.js は Netlify の OpenNext ランタイムで SSR / Server Components を実行します。
-# publish ディレクトリの指定は不要（プラグインが処理）。
+# サイト設定で Publish directory が `out` のままだとデプロイ失敗します。
+#   Site configuration → Build & deploy → Publish directory → 空欄（未設定）
+#
+# Environment variables（サイトごと）:
+#   TENANT_ID=crh | generic
+#   BACKLOG_* （project-observer）
 
 [build]
   command = "npm run build"
 
+[build.environment]
+  NODE_VERSION = "20.18.0"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# 旧 URL（refactor/repo-cleanup 由来）。Next ランタイムでも netlify.toml で有効。
+[[redirects]]
+  from = "/tools/judgment"
+  to = "/tools/request/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/judgment/*"
+  to = "/tools/request/:splat"
+  status = 301
+  force = true
+
+# 注意: `/*` → `/index.html` の SPA フォールバックは Next.js と競合するため入れない

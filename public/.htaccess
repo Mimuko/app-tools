@@ -9,7 +9,10 @@ DirectoryIndex index.html
 # リライトエンジンの有効化
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  
+
+  # 旧URL: 判断・依頼整理 → 実装依頼生成ツール
+  RewriteRule ^tools/judgment/?$ tools/request/ [R=301,L]
+
   # ルートのindex.htmlにアクセスした場合、同じディレクトリ内のtools/にリダイレクト
   # サブディレクトリに配置している場合でも正しく動作するように相対パスでリダイレクト
   RewriteCond %{REQUEST_URI} ^(.*/)?index\.html$ [OR]

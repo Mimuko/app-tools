@@ -253,11 +253,11 @@ BASE_PATH=/crh/request-content-generation-tool NEXT_PUBLIC_BASE_PATH=/crh/reques
 
 ```
 app-tools/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # ルートレイアウト
-│   ├── page.tsx            # ホームページ（/toolsにリダイレクト）
-│   ├── globals.css         # グローバルスタイル
-│   └── tools/              # ツールページ
+├── app/
+│   ├── api/engine-config/  # 開発時の設定 API（本番は engine-config.json）
+│   ├── layout.tsx
+│   ├── page.tsx            # /tools へリダイレクト
+│   └── tools/
 │       ├── page.tsx        # ツール一覧
 │       ├── request/        # 実装依頼生成ツール
 │       └── qa/              # 公開前確認チェックリスト
@@ -290,6 +290,8 @@ app-tools/
 ├── tailwind.config.ts      # Tailwind CSS設定
 └── tsconfig.json           # TypeScript設定
 ```
+
+状態分岐エンジンのマスタデータは `docs/state-engine/*.csv` を編集し、`npm run build` で `out/engine-config.json` に反映されます。
 
 ## ライセンス
 

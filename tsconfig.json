@@ -39,8 +39,6 @@
     "out/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "qa-generation-tool",
-    "request-content-generation-tool"
+    "node_modules"
   ]
 }

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:netlify": "node scripts/netlify-build.js",
     "build:crh": "TENANT_ID=crh npm run build",
     "build:generic": "TENANT_ID=generic npm run build",
     "build:static": "STATIC_EXPORT=true npm run build && node scripts/inline-css.js && npx tsx scripts/export-engine-config.ts",

@@ -9,7 +9,8 @@
 #   BACKLOG_* （project-observer）
 
 [build]
-  command = "npm run build"
+  # UI の Build command より netlify.toml が優先される。CRH のみ sync は build:netlify 内で TENANT_ID 判定
+  command = "npm run build:netlify"
   publish = ".next"
 
 [build.environment]

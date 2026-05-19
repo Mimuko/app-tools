@@ -1,0 +1,27 @@
+# CRH Netlify サイト向け: 毎朝 6:00 JST に Build Hook で
+# npm run observer:sync && npm run build を実行させる
+#
+# 必要な Repository variable: NETLIFY_CRH_BUILD_HOOK
+# Settings → Secrets and variables → Actions → Variables
+
+name: CRH daily observer sync
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+      timezone: Asia/Tokyo
+  workflow_dispatch:
+
+jobs:
+  trigger-netlify-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify build (CRH)
+        env:
+          BUILD_HOOK_URL: ${{ vars.NETLIFY_CRH_BUILD_HOOK }}
+        run: |
+          if [ -z "$BUILD_HOOK_URL" ]; then
+            echo "::error::NETLIFY_CRH_BUILD_HOOK repository variable is not set"
+            exit 1
+          fi
+          curl -fsS -X POST -d {} "$BUILD_HOOK_URL"

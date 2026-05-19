@@ -1,7 +1,7 @@
 export function ObservationDisclaimer() {
   return (
     <p
-      className="mb-6 rounded-md border px-4 py-3 text-sm leading-relaxed obs-text-muted"
+      className="mb-6 rounded-md border px-4 py-3 obs-body-sm leading-relaxed obs-text-muted"
       style={{
         borderColor: 'var(--obs-disclaimer-border)',
         backgroundColor: 'var(--obs-disclaimer-bg)',

@@ -262,14 +262,12 @@ export function buildSharingObservation(
 }
 
 export function computeCognitiveLoad(load: {
-  awaitingConfirmationCount: number;
-  unrepliedIssueCount: number;
+  needsConfirmationCount: number;
   needsReviewCount: number;
+  attentionIssueCount: number;
 }): CognitiveLoadLevel {
   const total =
-    load.awaitingConfirmationCount +
-    load.unrepliedIssueCount +
-    load.needsReviewCount;
+    load.needsConfirmationCount + load.needsReviewCount + load.attentionIssueCount;
   if (total >= OBSERVATION_CONFIG.loadHighThreshold) return 'high';
   if (total >= OBSERVATION_CONFIG.loadElevatedThreshold) return 'elevated';
   if (total >= 2) return 'moderate';

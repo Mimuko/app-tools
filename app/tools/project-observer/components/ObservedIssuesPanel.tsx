@@ -1,6 +1,6 @@
 import { SHARE_STATUS_CONFIG } from './constants';
 import { Panel } from './Panel';
-import { ACTION_LABELS } from '../lib/labels';
+import { ACTION_LABELS, ACTION_TAG_CLASS } from '../lib/labels';
 import type { ObservedIssue } from '../types';
 
 interface ObservedIssuesPanelProps {
@@ -9,7 +9,7 @@ interface ObservedIssuesPanelProps {
 
 export function ObservedIssuesPanel({ issues }: ObservedIssuesPanelProps) {
   return (
-    <Panel title="観測された課題" hint="未対応の新規課題は要注目に含めません">
+    <Panel title="観測された課題" hint="危険状態＋コメント記法。未対応の新規課題は要注目に含めません">
       {issues.length === 0 ? (
         <p className="text-base obs-text-muted">要約すべき課題シグナルはありません。</p>
       ) : (
@@ -28,21 +28,30 @@ export function ObservedIssuesPanel({ issues }: ObservedIssuesPanelProps) {
                 </div>
                 <p className="mt-2 text-base font-medium obs-text-primary">{issue.title}</p>
                 <p className="mt-1 text-sm obs-text-muted">{issue.reasons.join(' · ')}</p>
-                {issue.nextActionText != null && (
-                  <p
-                    className={`mt-2 text-sm ${
-                      issue.nextActionValid ? 'text-emerald-500/90' : 'text-amber-400/90'
-                    }`}
-                  >
-                    次アクション: 「{issue.nextActionText}」
-                    {issue.nextActionValid ? ' ✓' : ' — 主体+行動が不足'}
+                {issue.nextActionText && (
+                  <p className="mt-2 obs-body-sm text-emerald-700 dark:text-emerald-300/90">
+                    {ACTION_LABELS.nextAction}: {issue.nextActionText}
                   </p>
                 )}
-                <div className="mt-2 flex gap-3 text-sm uppercase tracking-wider obs-text-faint">
-                  {issue.awaitingConfirmation && (
-                    <span>{ACTION_LABELS.needsConfirmation}</span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {issue.needsConfirmation && (
+                    <span className={ACTION_TAG_CLASS.needsConfirmation}>
+                      {ACTION_LABELS.needsConfirmation}
+                    </span>
                   )}
-                  {issue.unreplied && <span>{ACTION_LABELS.awaitingReply}</span>}
+                  {issue.externalWait && (
+                    <span className={ACTION_TAG_CLASS.externalWait}>
+                      {ACTION_LABELS.externalWait}
+                    </span>
+                  )}
+                  {issue.internalWait && (
+                    <span className={ACTION_TAG_CLASS.internalWait}>
+                      {ACTION_LABELS.internalWait}
+                    </span>
+                  )}
+                  {issue.hasNextAction && (
+                    <span className={ACTION_TAG_CLASS.nextAction}>{ACTION_LABELS.nextAction}</span>
+                  )}
                 </div>
               </li>
             );

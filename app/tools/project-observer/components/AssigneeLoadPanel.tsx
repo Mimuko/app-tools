@@ -1,4 +1,4 @@
-import { ACTION_LABELS } from '../lib/labels';
+import { ACTION_LABELS, SECTION_HEADINGS } from '../lib/labels';
 import { Panel } from './Panel';
 import type { AssigneeLoad } from '../types';
 
@@ -9,23 +9,26 @@ interface AssigneeLoadPanelProps {
 export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
   return (
     <Panel
-      title="今日の確認アクション"
-      hint={`${ACTION_LABELS.needsConfirmation} · ${ACTION_LABELS.awaitingReply} — ディレクターのみ`}
+      title={SECTION_HEADINGS.directorAssignedIssues}
+      hint={`担当者がディレクター · ${ACTION_LABELS.needsConfirmation} · ${ACTION_LABELS.externalWait} · ${ACTION_LABELS.internalWait}`}
       className="lg:col-span-2"
     >
       {loads.length === 0 ? (
-        <p className="text-base obs-text-muted">担当者データはありません。</p>
+        <p className="obs-body obs-text-muted">担当者データはありません。</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[320px] text-left text-base">
+          <table className="w-full min-w-[420px] text-left obs-body">
             <thead>
-              <tr className="obs-divider border-b text-sm uppercase tracking-wider obs-text-muted">
-                <th className="pb-3 pr-4 font-normal">担当</th>
-                <th className="pb-3 pr-3 text-center font-normal">
+              <tr className="obs-divider border-b obs-eyebrow obs-text-muted">
+                <th className="pb-3 pr-4 font-normal normal-case">担当</th>
+                <th className="pb-3 pr-3 text-center font-normal normal-case">
                   {ACTION_LABELS.needsConfirmation}
                 </th>
-                <th className="pb-3 pr-3 text-center font-normal">
-                  {ACTION_LABELS.awaitingReply}
+                <th className="pb-3 pr-3 text-center font-normal normal-case">
+                  {ACTION_LABELS.externalWait}
+                </th>
+                <th className="pb-3 pr-3 text-center font-normal normal-case">
+                  {ACTION_LABELS.internalWait}
                 </th>
               </tr>
             </thead>
@@ -35,16 +38,19 @@ export function AssigneeLoadPanel({ loads }: AssigneeLoadPanelProps) {
                   <td className="py-3 pr-4">
                     <p className="font-medium obs-text-primary">{load.name}</p>
                     {load.suggestedNext && (
-                      <p className="mt-1 text-sm leading-snug obs-accent">
+                      <p className="mt-1 obs-body-sm leading-snug obs-accent">
                         次: {load.suggestedNext}
                       </p>
                     )}
                   </td>
-                  <td className="py-3 pr-3 text-center tabular-nums text-cyan-700 dark:text-cyan-300/90">
-                    {load.awaitingConfirmationCount}
+                  <td className="py-3 pr-3 text-center tabular-nums text-amber-800 dark:text-amber-200/90">
+                    {load.needsConfirmationCount}
                   </td>
-                  <td className="py-3 pr-3 text-center tabular-nums text-amber-700 dark:text-amber-300/80">
-                    {load.unrepliedIssueCount}
+                  <td className="py-3 pr-3 text-center tabular-nums obs-metric-value--external">
+                    {load.externalWaitCount}
+                  </td>
+                  <td className="py-3 pr-3 text-center tabular-nums obs-metric-value--internal">
+                    {load.internalWaitCount}
                   </td>
                 </tr>
               ))}

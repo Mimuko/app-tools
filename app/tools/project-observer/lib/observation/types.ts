@@ -28,12 +28,11 @@ export interface ProjectSignals {
   specUndecidedCount: number;
   /** 案件として次アクションが明記されているか */
   hasDocumentedNextAction: boolean;
-  /** 担当が社内ディレクターかつ注意/要注目の課題 — 要確認 */
   needsReviewCount: number;
-  /** 確認待ち（社内が投げたまま） */
-  awaitingConfirmationCount: number;
-  /** 最終コメントが社内ユーザ — 未返信 */
-  unrepliedIssueCount: number;
+  needsConfirmationCount: number;
+  externalWaitCount: number;
+  internalWaitCount: number;
+  statusUnrecordedCount: number;
 }
 
 export interface ProjectObservationExtras {

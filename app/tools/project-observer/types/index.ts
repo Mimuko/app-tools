@@ -58,8 +58,14 @@ export interface ProjectSummary {
   clientName: string;
   shareStatus: ShareStatus;
   requirementsUnsetCount: number;
-  awaitingConfirmationCount: number;
-  unrepliedIssueCount: number;
+  /** ディレクター判断が必要な課題数 */
+  needsConfirmationCount: number;
+  /** 外部待ち（整理済み待機） */
+  externalWaitCount: number;
+  /** 社内待ち（整理済み待機） */
+  internalWaitCount: number;
+  /** コメント記法が未記載のディレクター担当課題数 */
+  statusUnrecordedCount: number;
   needsReviewCount: number;
   attentionIssueCount: number;
   nextActionClarity: NextActionClarity;
@@ -94,20 +100,21 @@ export interface ContextNote {
 
 export type CognitiveLoadLevel = 'high' | 'elevated' | 'moderate' | 'light';
 
-/** 負荷 = 確認待ち + 未返信 + 要確認（課題数・工数は主指標にしない） */
+/** 負荷 = 要確認 + 要注目系（待機は危険カウントに含めない） */
 export interface AssigneeLoad {
   id: string;
   name: string;
   roleLabel: string;
-  awaitingConfirmationCount: number;
-  unrepliedIssueCount: number;
+  needsConfirmationCount: number;
+  externalWaitCount: number;
+  internalWaitCount: number;
   needsReviewCount: number;
   attentionIssueCount: number;
   cognitiveLoad: CognitiveLoadLevel;
   suggestedNext?: string;
 }
 
-/** 担当者の「今日の確認アクション」用（案件横断） */
+/** 担当者別の割り当て課題（案件横断・コメント記法あり） */
 export interface DirectorActionIssue {
   issueKey: string;
   title: string;
@@ -116,7 +123,16 @@ export interface DirectorActionIssue {
   projectName: string;
   shareStatus: ShareStatus;
   needsConfirmation: boolean;
-  awaitingReply: boolean;
+  externalWait: boolean;
+  internalWait: boolean;
+  hasNextAction: boolean;
+  /** コメント記法なし（要整理課題） */
+  needsOrganization: boolean;
+  /** `要確認：` の本文 */
+  needsReviewNote?: string | null;
+  waitingExternalNote?: string | null;
+  waitingInternalNote?: string | null;
+  nextActionNote?: string | null;
   issueUrl?: string;
 }
 
@@ -124,7 +140,9 @@ export interface FleetDirectorAction {
   assigneeId: string;
   name: string;
   needsConfirmationCount: number;
-  awaitingReplyCount: number;
+  externalWaitCount: number;
+  internalWaitCount: number;
+  needsOrganizationCount: number;
   issues: DirectorActionIssue[];
 }
 
@@ -137,9 +155,14 @@ export interface ObservedIssue {
   shareStatus: ShareStatus;
   /** 観測理由（短文） */
   reasons: string[];
-  awaitingConfirmation: boolean;
-  unreplied: boolean;
-  /** 課題上の次アクション記載 */
+  needsConfirmation: boolean;
+  externalWait: boolean;
+  internalWait: boolean;
+  hasNextAction: boolean;
+  needsReviewNote?: string | null;
+  waitingExternalNote?: string | null;
+  waitingInternalNote?: string | null;
+  /** `次アクション：` の本文（記法） */
   nextActionText?: string;
   nextActionValid?: boolean;
 }
@@ -181,8 +204,9 @@ export interface FleetAssigneeSnapshot {
   name: string;
   roleLabel: string;
   projectNames: string[];
-  totalAwaitingConfirmation: number;
-  totalUnreplied: number;
+  totalNeedsConfirmation: number;
+  totalExternalWait: number;
+  totalInternalWait: number;
   totalNeedsReview: number;
   totalAttentionIssues: number;
   cognitiveLoad: CognitiveLoadLevel;

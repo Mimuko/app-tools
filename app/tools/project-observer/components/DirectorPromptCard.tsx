@@ -18,9 +18,9 @@ export function DirectorPromptCard({ prompt: p }: { prompt: DirectorPrompt }) {
 
   const body = (
     <>
-      <div className="flex flex-wrap items-center gap-2 text-sm">
+      <div className="flex flex-wrap items-center gap-2 obs-caption">
         <span
-          className={`uppercase tracking-wider ${
+          className={`obs-eyebrow ${
             p.priority === 'high' ? 'text-rose-700 dark:text-rose-400' : 'obs-text-muted'
           }`}
         >
@@ -36,9 +36,9 @@ export function DirectorPromptCard({ prompt: p }: { prompt: DirectorPrompt }) {
           )}
         </span>
       </div>
-      <p className="mt-2 text-base obs-text-primary">{p.summary}</p>
+      <p className="mt-2.5 obs-body font-medium leading-snug obs-text-primary">{p.summary}</p>
       {p.forDirector && (
-        <p className="mt-1 text-sm obs-text-muted">担当: {p.forDirector}</p>
+        <p className="mt-1.5 obs-body-sm obs-text-muted">担当: {p.forDirector}</p>
       )}
     </>
   );

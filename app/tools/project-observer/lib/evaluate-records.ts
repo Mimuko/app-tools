@@ -39,8 +39,10 @@ export function evaluateProjectRecord(
     clientName: signals.clientName,
     shareStatus,
     requirementsUnsetCount: signals.requirementsUnsetCount,
-    awaitingConfirmationCount: signals.awaitingConfirmationCount,
-    unrepliedIssueCount: signals.unrepliedIssueCount,
+    needsConfirmationCount: signals.needsConfirmationCount,
+    externalWaitCount: signals.externalWaitCount,
+    internalWaitCount: signals.internalWaitCount,
+    statusUnrecordedCount: signals.statusUnrecordedCount,
     needsReviewCount: signals.needsReviewCount,
     attentionIssueCount: countAttentionIssues(signals),
     nextActionClarity,
@@ -84,7 +86,7 @@ function buildDirectorPromptsForProject(
     .filter((a) => a.suggestedNext)
     .map((a) => ({
       priority:
-        a.needsReviewCount + a.unrepliedIssueCount > 2
+        a.needsReviewCount + a.needsConfirmationCount > 2
           ? ('high' as const)
           : ('medium' as const),
       source: 'assignee_change' as const,

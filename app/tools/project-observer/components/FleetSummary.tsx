@@ -12,9 +12,9 @@ export function FleetSummary({ projects }: FleetSummaryProps) {
 
   return (
     <section className="obs-section-primary" aria-label="チーム状態">
-      <div className="mb-3">
-        <h2 className="obs-heading">チーム状態</h2>
-        <p className="mt-1 text-sm obs-text-muted">案件として危険か — 要注目・注意のみ</p>
+      <div className="mb-4">
+        <h2 className="obs-heading">Backlogごとのプロジェクト状態</h2>
+        <p className="mt-1.5 obs-section-lead">要注目・注意のみ</p>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:max-w-lg">
         <SummaryTile
@@ -51,13 +51,13 @@ function SummaryTile({
 }) {
   return (
     <div className={`obs-surface-elevated rounded-lg px-4 py-3 ${prominent ? 'py-4' : ''}`}>
-      <p className="text-sm uppercase tracking-widest obs-text-muted">{label}</p>
+      <p className="obs-eyebrow obs-text-muted">{label}</p>
       <p
-        className={`mt-1 tabular-nums ${accent} ${prominent ? 'text-4xl font-semibold' : 'text-3xl'}`}
+        className={`mt-1.5 tabular-nums ${accent} ${prominent ? 'text-5xl font-semibold leading-none' : 'text-4xl font-semibold leading-none'}`}
       >
         {value}
       </p>
-      <p className="mt-1 text-sm obs-text-faint">{hint}</p>
+      <p className="mt-2 obs-body-sm obs-text-faint">{hint}</p>
     </div>
   );
 }

@@ -54,7 +54,7 @@ export function ObserverShellFrame({
 
   return (
     <div
-      className="observer-console obs-page text-lg leading-relaxed"
+      className="observer-console obs-page"
       data-theme={theme}
       suppressHydrationWarning
     >
@@ -65,7 +65,7 @@ export function ObserverShellFrame({
           <div className="flex min-w-0 flex-1 items-center gap-4">
             <Link
               href={backHref}
-              className="obs-link shrink-0 text-sm uppercase tracking-widest"
+              className="obs-link obs-eyebrow shrink-0"
             >
               ← {backLabel}
             </Link>
@@ -75,8 +75,8 @@ export function ObserverShellFrame({
             />
             <div className="min-w-0">
               <p className="obs-heading-muted">朝会支援UI</p>
-              <h1 className="obs-title text-xl sm:text-2xl">{title}</h1>
-              {subtitle && <p className="mt-0.5 text-base obs-text-muted">{subtitle}</p>}
+              <h1 className="obs-page-title">{title}</h1>
+              {subtitle && <p className="mt-1 obs-page-subtitle">{subtitle}</p>}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">

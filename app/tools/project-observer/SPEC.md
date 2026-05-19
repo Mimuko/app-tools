@@ -42,22 +42,25 @@
 
 | URL | 画面 | 説明 |
 |-----|------|------|
+| `/tools` | ツール一覧 | 全テナント共通。CRH のみ「朝会支援UI」カードを表示 |
 | `/tools/project-observer` | 朝会支援UI（一覧） | 全プロジェクトのサマリー・チーム負荷・優先確認 |
 | `/tools/project-observer/projects/[id]` | プロジェクト詳細 | 1 プロジェクトの深掘りパネル群 |
 
 `[id]` は Backlog の **projectKey**（例: `NAITOHOUSE_CRH`）。
+
+**ツール一覧からの導線:** `app/tools/page.tsx` で `TENANT_ID === 'crh'` のときのみ `/tools/project-observer/` へのリンクカードを出す（汎用 Netlify サイトでは非表示）。
 
 ### 2.2 一覧画面の構成（上から）
 
 | ブロック | コンポーネント | 内容 |
 |----------|----------------|------|
 | 免責 | `ObservationDisclaimer` | Backlog がマスタである旨 |
-| 鮮度 | `DataFreshnessBanner` | 観測時刻・バッチ想定（毎日 6:00 JST） |
+| 鮮度 | `DataFreshnessBanner` | 観測時刻（`snapshot.json` の `observedAt`・**Asia/Tokyo 表示**）・バッチ想定（毎日 6:00 JST） |
 | 凡例 | `StatusLegend` | 共有ステータス・優先ルール |
-| 艦隊サマリー | `FleetSummary` | 全案件の合計指標 |
 | 優先確認 | `DirectorPromptsPanel` | チーム全体の high 優先プロンプト（初期6件・「もっと見る」で6件ずつ追加） |
-| チーム負荷 | `FleetAssigneeOverview` | ディレクター別の横断負荷 |
-| プロジェクト全体計測 | `ProjectCard` × N | 案件カード（共有ステータス・3指標） |
+| 担当者別の割り当て課題 | `DirectorTodayActions` | Backlog 担当がディレクターの課題（記法あり＋要整理課題）を担当者別に一覧 |
+| プロジェクト全体計測 | `ProjectCard` × N | 案件カード（共有ステータス・記法件数。**0件の指標は非表示**） |
+| チーム状態 | `FleetSummary` | 要注目・注意の件数サマリー |
 
 ### 2.3 詳細画面の構成
 
@@ -78,6 +81,7 @@
 - 製品名: **朝会支援UI**
 - 常時ダークテーマ（`layout.tsx` で `className="dark"` を付与）
 - 課題キーは Backlog 課題 URL へリンク（`BACKLOG_SPACE` 設定時）
+- **観測時刻:** `tenants/{TENANT_ID}/data/snapshot.json` の `observedAt`（UTC ISO）を `lib/format.ts` の `formatDateTime` で **`OBSERVATION_CONFIG.batchTimezone`（Asia/Tokyo）** に変換して表示。Netlify ランタイムの TZ には依存しない
 
 ---
 
@@ -118,17 +122,70 @@ flowchart TD
 | `BACKLOG_USE_SNAPSHOT` | 任意 | `true` でスナップショット優先 |
 | `BACKLOG_USE_LIVE` | 任意 | `true` でランタイム API 優先 |
 
-### 3.3 デプロイ（Netlify Next ランタイム）
+### 3.3 本番運用（CRH / Netlify）
+
+CRH サイト（`TENANT_ID=crh`）の想定。**閲覧時は Backlog API を叩かず**、ビルド時に生成したスナップショットを読む。
+
+```mermaid
+sequenceDiagram
+  participant GHA as GitHub Actions
+  participant Hook as Netlify Build Hook
+  participant Build as Netlify Build
+  participant BL as Backlog API
+  participant App as 本番 SSR
+
+  Note over GHA: 毎日 6:00 Asia/Tokyo（workflow_dispatch 可）
+  GHA->>Hook: POST（NETLIFY_CRH_BUILD_HOOK）
+  Hook->>Build: npm run build:netlify
+  Build->>BL: observer:sync（TENANT_ID=crh のみ）
+  Build->>Build: next build
+  Build->>App: デプロイ（snapshot 同梱）
+  App->>App: loadFromSnapshot（ランタイム）
+```
+
+| 段階 | 内容 |
+|------|------|
+| ① スケジュール | `.github/workflows/crh-observer-daily.yml` — `cron: 0 6 * * *` + `timezone: Asia/Tokyo`。Repository **Variable** `NETLIFY_CRH_BUILD_HOOK` に Hook URL |
+| ② ビルド開始 | Netlify Build Hook（UI で作成。例: `Daily observer sync`） |
+| ③ 同期 | `scripts/netlify-build.js`（`npm run build:netlify`）— **`TENANT_ID=crh` のときだけ** `npm run observer:sync` |
+| ④ ビルド | `npm run build` → `tenants/crh/data/snapshot.json` がデプロイ成果物に含まれる |
+| ⑤ 閲覧 | `BACKLOG_USE_SNAPSHOT=true` 推奨。`loadAllProjects()` がスナップショットの `observedAt` を観測時刻として表示 |
+
+**`netlify.toml` と UI の Build command:** リポジトリの `netlify.toml` の `command` が **UI 設定より優先**される。共通設定は次のとおり。
+
+```toml
+[build]
+  command = "npm run build:netlify"
+```
+
+汎用サイト（`TENANT_ID=generic`）では `build:netlify` 内で **sync をスキップ**し、`npm run build` のみ実行。
+
+**手動同期（ローカル）:**
 
 ```bash
-TENANT_ID=crh npm run observer:sync   # 任意: スナップショット更新
-npm run build
+TENANT_ID=crh npm run observer:sync   # → tenants/crh/data/snapshot.json
 ```
+
+コミットは任意（本番 CRH はビルド時 sync が主。git 上の JSON はフォールバック・開発用）。
+
+**その他:**
 
 - **Netlify**: `@netlify/plugin-nextjs` で SSR。`/tools/project-observer` は `force-dynamic`
 - `scripts/sync-project-observer.ts` → `tenants/{TENANT_ID}/data/snapshot.json`
 - URL は **`trailingSlash: true`** のため末尾 `/` 必須（例: `.../projects/NAITOHOUSE_CRH/`）
 - 静的 export が必要な場合のみ `npm run build:static`（Xserver 等）
+
+**Netlify 環境変数（CRH サイト例）:**
+
+```
+TENANT_ID=crh
+BACKLOG_USE_SNAPSHOT=true
+BACKLOG_SPACE=...
+BACKLOG_API_KEY=...
+BACKLOG_PROJECT_IDS=...
+```
+
+ビルドログに `[netlify-build] TENANT_ID=crh → running observer:sync` と `Wrote tenants/crh/data/snapshot.json` が出ていれば同期成功。
 
 ### 3.4 Backlog 同期の制限（PoC）
 
@@ -258,33 +315,59 @@ Backlog 課題の**件名（summary）**に次の文字列を**含む**課題は
 
 ---
 
-## 7. 負荷指標（ディレクター向け）
+## 7. 担当者アクション（ディレクター向け）— コメント記法
 
-「忙しさ」ではなく **確認待ち・未返信・要確認** を数える。
+自然文推定・「社内最終コメント＝返信待ち」は廃止。Backlog コメント（最新 `commentParseLimit` 件、既定 10）の **明示ラベル** のみ読む。
 
-### 7.1 未返信（unreplied）
+判定: `lib/observation/comment-notation.ts`（`sync-project.ts` から利用）。
 
-| 条件 | 説明 |
-|------|------|
-| 最新コメント | 課題の**最新1件**のコメント（最大10件のうち先頭） |
-| 未返信 | その投稿者が**社内ユーザー** |
-| カウント | 上記かつ課題担当が**ディレクターチーム**のとき、案件・担当別に +1 |
+### 7.1 正式記法
 
-UI 表記: **未返信（社内最終コメント）** — クライアント返信待ちのイメージ。
+| ラベル | 意味 |
+|--------|------|
+| `要確認：` | ディレクター判断・要件確認が必要 |
+| `社内待ち：` | デザイン・実装・社内確認など（待機） |
+| `外部待ち：` | クライアント・発注・承認など（待機） |
+| `次アクション：` | 次に誰が何をするか整理済み |
 
-### 7.2 確認待ち（awaitingConfirmation）
+全角 `：` / 半角 `:` どちらも可。
 
-- 課題担当がディレクター
-- 最新コメントが社内（= 未返信と同じ `lastCommentInternal` 条件）
+### 7.2 UI フラグ
 
-### 7.3 要確認（needsReview）
+| 記法 | フラグ |
+|------|--------|
+| `要確認：` | needsConfirmation |
+| `外部待ち：` | externalWait |
+| `社内待ち：` | internalWait |
+| `次アクション：` | hasNextAction |
+
+**要注目・注意**（危険状態）は課題本文の未FIX等（`issue-signals`）。記法の要確認とは独立。
+
+### 7.3 状態未記載・要整理課題
+
+ディレクター担当の観測対象課題のうち、最新コメント（`commentParseLimit` 件）に **4記法のいずれもない** もの。
+
+| UI | フィールド / ラベル |
+|----|---------------------|
+| プロジェクト全体計測 | `statusUnrecordedCount` · 表示名 **状態未記載**（0件は非表示） |
+| 担当者別一覧 | `needsOrganization: true` · 行タグ **要整理課題** |
+
+Backlog に新記法は追加しない（UI 専用ラベル）。記法を書けば要整理から外れる。
+
+### 7.4 次アクション（案件安定性）
+
+`次アクション：` がある場合のみ `nextActionValid === true`。
+
+### 7.5 要注目カウント（needsReview）
 
 - 課題担当がディレクター
 - 課題の共有ステータスが `attention` または `caution`
 
-### 7.4 認知負荷（cognitiveLoad）
+### 7.6 認知負荷（cognitiveLoad）
 
-担当者ごとに `確認待ち + 未返信 + 要確認` の合計:
+※ 要整理課題は認知負荷の合計に含めない（要確認 + 要注目系のみ）。
+
+待機は含めない。担当者ごとに `要確認 + 要注目系` の合計:
 
 | 合計 | レベル |
 |------|--------|
@@ -326,14 +409,21 @@ app/tools/project-observer/
 ├── components/             # UI
 ├── lib/
 │   ├── load-projects.ts    # データ入口
+│   ├── format.ts           # 日時表示（Asia/Tokyo）
 │   ├── evaluate-records.ts # 観測結果の組み立て
 │   └── observation/        # 判定ロジック
 │       ├── config.ts       # 定数・ディレクター一覧
 │       ├── evaluate.ts     # 共有ステータス・負荷
 │       └── next-action.ts
 ├── mock/                   # モックデータ
-├── data/snapshot.json      # 静的用スナップショット
 └── types/index.ts
+
+tenants/
+├── crh/
+│   ├── config.ts           # DIRECTOR_TEAM 等
+│   └── data/snapshot.json  # 本番 CRH 用スナップショット（ビルド時更新）
+└── generic/
+    └── config.ts
 
 lib/backlog/                # Backlog API・同期
 ├── client.ts
@@ -342,7 +432,12 @@ lib/backlog/                # Backlog API・同期
 ├── env.ts
 └── business-days.ts
 
-scripts/sync-project-observer.ts
+scripts/
+├── sync-project-observer.ts
+└── netlify-build.js        # Netlify 共通ビルド（crh のみ sync）
+
+.github/workflows/
+└── crh-observer-daily.yml  # 毎朝 6:00 JST → Build Hook
 ```
 
 ---
@@ -352,28 +447,41 @@ scripts/sync-project-observer.ts
 ### 10.1 ローカル開発
 
 ```bash
-# .env.local に BACKLOG_* を設定
+# .env.local に TENANT_ID=crh と BACKLOG_* を設定
 npm run dev
 # → http://localhost:3000/tools/project-observer
 ```
 
-環境変数変更後は **dev サーバー再起動**が必要。Backlog 取得結果は **約5分キャッシュ**。
+環境変数変更後は **dev サーバー再起動**が必要。Backlog 取得結果は **約5分キャッシュ**（`BACKLOG_USE_LIVE_IN_DEV=true` で開発時 API 直叩き可）。
 
-### 10.2 本番ビルド（静的）
+### 10.2 Netlify ビルド（CRH）
 
 ```bash
-npm run observer:sync   # スナップショット更新
-npm run build
+# ローカルで Netlify と同じ流れを試す場合
+TENANT_ID=crh npm run build:netlify
 ```
 
-### 10.3 既知の制限・今後の拡張候補
+本番は Build Hook または push で `build:netlify` が走る。観測時刻が更新されない場合は Deploy log で `observer:sync` の有無を確認（`npm run build` のみだと git 上の古い `snapshot.json` のまま）。
+
+### 10.3 毎日 6:00 JST バッチのセットアップ checklist
+
+| # | 場所 | 設定 |
+|---|------|------|
+| 1 | Netlify（CRH） | 環境変数 `TENANT_ID=crh`, `BACKLOG_*`, `BACKLOG_USE_SNAPSHOT=true` |
+| 2 | Netlify（CRH） | Build Hook 作成 → URL を GitHub Variable `NETLIFY_CRH_BUILD_HOOK` に登録 |
+| 3 | GitHub | `.github/workflows/crh-observer-daily.yml` を default ブランチに含める |
+| 4 | 確認 | Actions 手動実行 → Deploy log に sync → 本番の観測時刻が JST で更新 |
+
+### 10.4 既知の制限・今後の拡張候補
 
 - [x] コメント `changeLog` による状態・担当変更日（50 件窓。それ以前はフォールバック）
+- [x] 毎日 6:00 JST バッチ（GitHub Actions → Build Hook → `build:netlify`）
+- [x] 観測時刻の Asia/Tokyo 表示
+- [x] CRH ツール一覧からの導線
 - [ ] 祝日カレンダー対応の営業日
 - [ ] 優先確認の `assignee_change` と課題キーの対応付け
 - [ ] コメント解析対象課題数の設定化
-- [ ] バッチ AM6:00 の自動実行（現状は表示ラベルのみ）
-- [ ] README への運用手順統合
+- [ ] `outputFileTracingIncludes` でスナップショット同梱を明示（ホスティング変更時の保険）
 
 ---
 
@@ -381,4 +489,5 @@ npm run build
 
 | 日付 | 内容 |
 |------|------|
+| 2026-05-19 | 本番運用: `build:netlify`・GitHub Actions 6:00 JST・Build Hook・観測時刻 TZ・CRH ツール一覧導線 |
 | 2026-05-17 | 初版（朝会支援UI・Backlog 連携 PoC 時点の実装に基づく） |

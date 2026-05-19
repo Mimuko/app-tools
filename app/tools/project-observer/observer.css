@@ -38,8 +38,18 @@
   --obs-toggle-border: rgba(8, 145, 178, 0.28);
   --obs-toggle-hover: #f0f9ff;
 
-  font-size: 1rem;
-  line-height: 1.65;
+  /* タイプスケール（約 1.333 段）— 見出しと本文のジャンプ率 */
+  --obs-fs-caption: 0.75rem;
+  --obs-fs-sm: 0.8125rem;
+  --obs-fs-base: 0.9375rem;
+  --obs-fs-md: 1.0625rem;
+  --obs-fs-lg: 1.3125rem;
+  --obs-fs-xl: 1.625rem;
+  --obs-fs-2xl: 2rem;
+  --obs-fs-3xl: 2.5rem;
+
+  font-size: var(--obs-fs-base);
+  line-height: 1.6;
   color: var(--obs-text);
   background-color: var(--obs-bg);
 }
@@ -85,7 +95,7 @@ html.dark .observer-console {
 }
 
 .observer-console main {
-  font-size: 1.0625rem;
+  font-size: var(--obs-fs-base);
 }
 
 /* レイアウト・サーフェス */
@@ -142,18 +152,87 @@ html.dark .observer-console {
   color: var(--obs-text-faint);
 }
 
+/** セクション見出し（h2） */
 .obs-heading {
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--obs-heading);
+  font-size: var(--obs-fs-xl);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--obs-text);
 }
 
-.obs-heading-muted {
-  font-size: 0.875rem;
+/** セクション直下の補足1行 */
+.obs-section-lead {
+  font-size: var(--obs-fs-sm);
+  line-height: 1.55;
+  color: var(--obs-text-muted);
+}
+
+/** パネル内・凡例の小見出し */
+.obs-subheading {
+  font-size: var(--obs-fs-md);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--obs-text-secondary);
+}
+
+/** 本文（明示するとき） */
+.obs-body {
+  font-size: var(--obs-fs-base);
+  line-height: 1.6;
+}
+
+.obs-body-sm {
+  font-size: var(--obs-fs-sm);
+  line-height: 1.55;
+}
+
+/** 補足・メタ・件数 */
+.obs-caption {
+  font-size: var(--obs-fs-caption);
+  line-height: 1.45;
+  color: var(--obs-text-faint);
+}
+
+/** 課題キー・ラベルチップ用 */
+.obs-heading-muted,
+.obs-eyebrow {
+  font-size: var(--obs-fs-caption);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   color: var(--obs-heading-muted);
+}
+
+/** ページタイトル（h1） */
+.obs-page-title {
+  font-size: var(--obs-fs-2xl);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--obs-text);
+}
+
+@media (min-width: 640px) {
+  .obs-page-title {
+    font-size: var(--obs-fs-3xl);
+  }
+}
+
+.obs-page-subtitle {
+  font-size: var(--obs-fs-sm);
+  line-height: 1.5;
+  color: var(--obs-text-muted);
+}
+
+/** カード・担当者名（h3） */
+.obs-card-title {
+  font-size: var(--obs-fs-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--obs-text);
 }
 
 .obs-title {
@@ -177,11 +256,11 @@ html.dark .observer-console {
 
 /* セクション階層 — 視線誘導 */
 .obs-section-primary {
-  margin-bottom: 2rem;
+  margin-bottom: 2.75rem;
 }
 
 .obs-section-secondary {
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
 }
 
 /* メトリクス強調 */
@@ -280,4 +359,107 @@ html.dark .observer-console {
 
 .obs-prompts-more-btn--muted:hover {
   color: var(--obs-text-secondary);
+}
+
+/* アクションタグ — 要確認 / 待機 */
+.obs-tag {
+  display: inline-block;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  padding: 0.125rem 0.5rem;
+  font-size: var(--obs-fs-caption);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.obs-tag--confirm {
+  border-color: rgba(245, 158, 11, 0.45);
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+html.dark .obs-tag--confirm,
+.observer-console[data-theme='dark'] .obs-tag--confirm {
+  border-color: rgba(251, 191, 36, 0.35);
+  background-color: rgba(251, 191, 36, 0.1);
+  color: rgba(253, 224, 171, 0.95);
+}
+
+.obs-tag--external {
+  border-color: rgba(37, 99, 235, 0.4);
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+}
+
+html.dark .obs-tag--external,
+.observer-console[data-theme='dark'] .obs-tag--external {
+  border-color: rgba(96, 165, 250, 0.35);
+  background-color: rgba(59, 130, 246, 0.12);
+  color: rgba(191, 219, 254, 0.95);
+}
+
+.obs-tag--internal {
+  border-color: rgba(124, 58, 237, 0.4);
+  background-color: rgba(124, 58, 237, 0.1);
+  color: #6d28d9;
+}
+
+.obs-tag--next {
+  border-color: rgba(16, 185, 129, 0.4);
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #047857;
+}
+
+html.dark .obs-tag--internal,
+.observer-console[data-theme='dark'] .obs-tag--internal {
+  border-color: rgba(167, 139, 250, 0.35);
+  background-color: rgba(139, 92, 246, 0.12);
+  color: rgba(221, 214, 254, 0.95);
+}
+
+html.dark .obs-tag--next,
+.observer-console[data-theme='dark'] .obs-tag--next {
+  border-color: rgba(52, 211, 153, 0.35);
+  background-color: rgba(16, 185, 129, 0.12);
+  color: rgba(167, 243, 208, 0.95);
+}
+
+.obs-tag--organization {
+  border-color: rgba(100, 116, 139, 0.45);
+  background-color: rgba(100, 116, 139, 0.12);
+  color: #475569;
+}
+
+html.dark .obs-tag--organization,
+.observer-console[data-theme='dark'] .obs-tag--organization {
+  border-color: rgba(148, 163, 184, 0.35);
+  background-color: rgba(148, 163, 184, 0.1);
+  color: rgba(226, 232, 240, 0.95);
+}
+
+.obs-metric-value--external {
+  color: #2563eb;
+}
+
+html.dark .obs-metric-value--external,
+.observer-console[data-theme='dark'] .obs-metric-value--external {
+  color: rgba(147, 197, 253, 0.95);
+}
+
+.obs-metric-value--internal {
+  color: #7c3aed;
+}
+
+html.dark .obs-metric-value--internal,
+.observer-console[data-theme='dark'] .obs-metric-value--internal {
+  color: rgba(196, 181, 253, 0.95);
+}
+
+.obs-metric-value--unrecorded {
+  color: #475569;
+}
+
+html.dark .obs-metric-value--unrecorded,
+.observer-console[data-theme='dark'] .obs-metric-value--unrecorded {
+  color: rgba(203, 213, 225, 0.95);
 }

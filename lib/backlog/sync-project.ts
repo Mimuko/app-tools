@@ -25,6 +25,12 @@ import {
   type BacklogIssue,
 } from './client';
 import { getInternalEmailDomain } from './env';
+import { OBSERVATION_CONFIG } from '@/app/tools/project-observer/lib/observation/config';
+import {
+  flagsFromCommentNotation,
+  hasAnyCommentNotation,
+  parseCommentsNotation,
+} from '@/app/tools/project-observer/lib/observation/comment-notation';
 import {
   issueReasons,
   issueShareStatus,
@@ -61,8 +67,9 @@ function initDirectorLoads(): Map<string, AssigneeLoad> {
       id: d.id,
       name: d.backlogName,
       roleLabel: 'ディレクション',
-      awaitingConfirmationCount: 0,
-      unrepliedIssueCount: 0,
+      needsConfirmationCount: 0,
+      externalWaitCount: 0,
+      internalWaitCount: 0,
       needsReviewCount: 0,
       attentionIssueCount: 0,
       cognitiveLoad: 'light',
@@ -126,9 +133,11 @@ export async function syncProjectFromBacklog(
   let provisionalIssueCount = 0;
   let requirementsUnsetCount = 0;
   let specUndecidedCount = 0;
-  let unrepliedIssueCount = 0;
+  let needsConfirmationCount = 0;
+  let externalWaitCount = 0;
+  let internalWaitCount = 0;
+  let statusUnrecordedCount = 0;
   let needsReviewCount = 0;
-  let awaitingConfirmationCount = 0;
 
   const directorLoads = initDirectorLoads();
   const observedIssues: ObservedIssue[] = [];
@@ -154,22 +163,10 @@ export async function syncProjectFromBacklog(
     const directorId = findDirectorId(issue.assignee?.name);
     const issueStatus = issueShareStatus(scan);
 
-    if (scan.lastCommentInternal && directorId) {
-      unrepliedIssueCount++;
-      const load = directorLoads.get(directorId);
-      if (load) load.unrepliedIssueCount++;
-    }
-
     if (directorId && (issueStatus === 'attention' || issueStatus === 'caution')) {
       needsReviewCount++;
       const load = directorLoads.get(directorId);
       if (load) load.needsReviewCount++;
-    }
-
-    if (directorId && scan.lastCommentInternal) {
-      awaitingConfirmationCount++;
-      const load = directorLoads.get(directorId);
-      if (load) load.awaitingConfirmationCount++;
     }
 
     if (directorId && issueStatus === 'attention') {
@@ -177,15 +174,33 @@ export async function syncProjectFromBacklog(
       if (load) load.attentionIssueCount++;
     }
 
-    const needsConfirmation = Boolean(
-      directorId &&
-        (scan.lastCommentInternal ||
-          issueStatus === 'attention' ||
-          issueStatus === 'caution'),
-    );
-    const awaitingReply = Boolean(directorId && scan.lastCommentInternal);
+    const commentTexts = comments
+      .map((c) => stripBacklogMarkup(c.content))
+      .slice(0, OBSERVATION_CONFIG.commentParseLimit);
+    const notation = parseCommentsNotation(commentTexts);
+    const action = flagsFromCommentNotation(notation, Boolean(directorId));
 
-    if (directorId && (needsConfirmation || awaitingReply)) {
+    if (directorId && action.needsConfirmation) {
+      needsConfirmationCount++;
+      const load = directorLoads.get(directorId);
+      if (load) load.needsConfirmationCount++;
+    }
+    if (directorId && action.externalWait) {
+      externalWaitCount++;
+      const load = directorLoads.get(directorId);
+      if (load) load.externalWaitCount++;
+    }
+    if (directorId && action.internalWait) {
+      internalWaitCount++;
+      const load = directorLoads.get(directorId);
+      if (load) load.internalWaitCount++;
+    }
+
+    if (directorId) {
+      const hasNotation = hasAnyCommentNotation(notation);
+      if (!hasNotation) {
+        statusUnrecordedCount++;
+      }
       directorActionIssues.push({
         issueKey: issue.issueKey,
         title: issue.summary,
@@ -193,8 +208,15 @@ export async function syncProjectFromBacklog(
         projectId: project.projectKey,
         projectName: project.name,
         shareStatus: issueStatus,
-        needsConfirmation,
-        awaitingReply,
+        needsOrganization: !hasNotation,
+        needsConfirmation: hasNotation && action.needsConfirmation,
+        externalWait: hasNotation && action.externalWait,
+        internalWait: hasNotation && action.internalWait,
+        hasNextAction: hasNotation && action.hasNextAction,
+        needsReviewNote: hasNotation ? action.needsReviewNote : null,
+        waitingExternalNote: hasNotation ? action.waitingExternalNote : null,
+        waitingInternalNote: hasNotation ? action.waitingInternalNote : null,
+        nextActionNote: hasNotation ? action.nextActionNote : null,
       });
     }
 
@@ -206,10 +228,15 @@ export async function syncProjectFromBacklog(
         assigneeName: issue.assignee?.name ?? null,
         shareStatus: issueStatus,
         reasons: issueReasons(scan),
-        awaitingConfirmation: needsConfirmation,
-        unreplied: awaitingReply,
-        nextActionText: scan.nextActionText,
-        nextActionValid: scan.nextActionValid,
+        needsConfirmation: action.needsConfirmation,
+        externalWait: action.externalWait,
+        internalWait: action.internalWait,
+        hasNextAction: action.hasNextAction,
+        needsReviewNote: action.needsReviewNote,
+        waitingExternalNote: action.waitingExternalNote,
+        waitingInternalNote: action.waitingInternalNote,
+        nextActionText: action.nextActionNote ?? scan.nextActionText,
+        nextActionValid: action.hasNextAction || scan.nextActionValid,
       });
     }
 
@@ -275,8 +302,10 @@ export async function syncProjectFromBacklog(
     specUndecidedCount,
     hasDocumentedNextAction,
     needsReviewCount,
-    awaitingConfirmationCount,
-    unrepliedIssueCount,
+    needsConfirmationCount,
+    externalWaitCount,
+    internalWaitCount,
+    statusUnrecordedCount,
   };
 
   const riskTimeline: RiskTimelineEvent[] = issueScans
@@ -301,8 +330,9 @@ export async function syncProjectFromBacklog(
     contextNotes: [],
     assigneeLoads: [...directorLoads.values()].filter(
       (l) =>
-        l.awaitingConfirmationCount +
-          l.unrepliedIssueCount +
+        l.needsConfirmationCount +
+          l.externalWaitCount +
+          l.internalWaitCount +
           l.needsReviewCount +
           l.attentionIssueCount >
         0,

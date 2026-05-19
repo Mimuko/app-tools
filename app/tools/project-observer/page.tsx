@@ -40,8 +40,6 @@ export default async function ProjectObserverPage() {
     >
       <ObservationDisclaimer />
 
-      <FleetSummary projects={projects} />
-
       {fleetPrompts.length > 0 && (
         <div className="obs-section-secondary">
           <DirectorPromptsPanel
@@ -55,7 +53,7 @@ export default async function ProjectObserverPage() {
       <DirectorTodayActions actions={directorActions} />
 
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="obs-heading">プロジェクト全体計測</h2>
+        <h2 className="obs-heading">Backlogごとのプロジェクト全体計測</h2>
         <span className="text-sm obs-text-faint">
           {actionableProjects.length} / {projects.length} PROJECTS
         </span>
@@ -73,7 +71,7 @@ export default async function ProjectObserverPage() {
         </div>
       )}
 
-      <StatusLegend />
+      {/* <FleetSummary projects={projects} /> */}
 
       <DataFreshnessBanner dataObservedAt={dataObservedAt} />
 
@@ -84,7 +82,7 @@ export default async function ProjectObserverPage() {
       )}
 
       <p className="mb-8 max-w-2xl text-base leading-relaxed obs-text-muted">
-        完了率や工数ではなく、案件状態と担当者の今日の確認アクションを観測します。
+        完了率や工数ではなく、担当者別の割り当て課題と案件状態を観測します。
       </p>
 
       <footer className="obs-divider mt-10 border-t pt-6 text-center">

@@ -1,7 +1,7 @@
 import { OBSERVATION_CONFIG } from '@/app/tools/project-observer/lib/observation/config';
-import { classifyNextActionText } from '@/app/tools/project-observer/lib/observation/next-action';
+import { parseCommentsNotation } from '@/app/tools/project-observer/lib/observation/comment-notation';
 import type { ShareStatus } from '@/app/tools/project-observer/types';
-import { stripBacklogMarkup, extractLatestMeaningfulLine } from './text';
+import { stripBacklogMarkup } from './text';
 import type { BacklogComment, BacklogIssue } from './client';
 
 export interface IssueSignalScan {
@@ -20,17 +20,22 @@ function matchesAny(text: string, patterns: readonly RegExp[]): boolean {
   return patterns.some((p) => p.test(text));
 }
 
-export function scanIssueText(combinedText: string): Omit<IssueSignalScan, 'lastCommentAuthor' | 'lastCommentInternal' | 'lastCommentAt'> {
-  const nextLine = extractLatestMeaningfulLine(combinedText);
-  const next = classifyNextActionText(nextLine);
+export function scanIssueText(
+  combinedText: string,
+  commentTextsNewestFirst: string[] = [],
+): Omit<IssueSignalScan, 'lastCommentAuthor' | 'lastCommentInternal' | 'lastCommentAt'> {
+  const notation = parseCommentsNotation(
+    commentTextsNewestFirst.length > 0 ? commentTextsNewestFirst : [combinedText],
+  );
+  const nextActionText = notation.nextAction ?? '';
 
   return {
     unfixed: /未FIX|未fix|まだFIX/i.test(combinedText),
     provisional: /暫定|一旦対応|仮対応/i.test(combinedText),
     requirementsUnset: /要件未確定|要件未決/i.test(combinedText),
     specUndecided: /仕様未決|仕様未確定|仕様未合意/i.test(combinedText),
-    nextActionText: nextLine,
-    nextActionValid: next.valid,
+    nextActionText,
+    nextActionValid: Boolean(notation.nextAction),
   };
 }
 
@@ -42,7 +47,7 @@ export function scanIssue(
   const desc = stripBacklogMarkup(issue.description);
   const commentTexts = comments.map((c) => stripBacklogMarkup(c.content));
   const combined = [desc, ...commentTexts].filter(Boolean).join('\n');
-  const base = scanIssueText(combined);
+  const base = scanIssueText(combined, commentTexts);
 
   const latest = comments[0];
   const lastCommentInternal = latest ? isInternalUser(latest.createdUser) : false;

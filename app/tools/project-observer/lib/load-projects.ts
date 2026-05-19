@@ -8,6 +8,7 @@ import {
   getBacklogProjectKeys,
   getBacklogApiBase,
 } from '@/lib/backlog/env';
+import { normalizeObservationRecord } from './observation/normalize-legacy';
 import {
   evaluateAllRecords,
   sortProjects,
@@ -41,7 +42,12 @@ function loadFromSnapshot(): ProjectDetail[] | null {
         extras: ProjectObservationExtras;
       }>;
     };
-    return sortProjects(evaluateAllRecords(raw.records, raw.observedAt));
+    return sortProjects(
+      evaluateAllRecords(
+        raw.records.map((r) => normalizeObservationRecord(r)),
+        raw.observedAt,
+      ),
+    );
   } catch {
     return null;
   }
@@ -87,7 +93,7 @@ function loadFromMock(): ProjectDetail[] {
   const dataObservedAt = observationNow();
   return sortProjects(
     evaluateAllRecords(
-      rawProjects.map((r) => ({ signals: r.signals, extras: r.extras })),
+      rawProjects.map((r) => normalizeObservationRecord(r)),
       dataObservedAt,
     ),
   );

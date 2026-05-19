@@ -1,5 +1,10 @@
-import { ACTION_LABELS } from '../lib/labels';
-import type { FleetDirectorAction } from '../types';
+import {
+  ACTION_LABEL_HINTS,
+  ACTION_LABELS,
+  ACTION_TAG_CLASS,
+  SECTION_HEADINGS,
+} from '../lib/labels';
+import type { DirectorActionIssue, FleetDirectorAction } from '../types';
 
 interface DirectorTodayActionsProps {
   actions: FleetDirectorAction[];
@@ -9,26 +14,26 @@ export function DirectorTodayActions({ actions }: DirectorTodayActionsProps) {
   if (actions.length === 0) {
     return (
       <section className="obs-section-secondary">
-        <header className="mb-4">
-          <h2 className="obs-heading">今日の確認アクション</h2>
-          <p className="mt-1 text-sm obs-text-muted">
-            ディレクターごと — 要確認・返信待ちの課題
-          </p>
+        <header className="mb-5">
+          <h2 className="obs-heading">{SECTION_HEADINGS.directorAssignedIssues}</h2>
+          <ActionLabelLegend className="mt-3" />
         </header>
-        <p className="obs-surface-muted rounded-lg px-5 py-8 text-center text-base obs-text-muted">
-          いま担当者に割り当てられた確認アクションはありません。
+        <p className="obs-surface-muted rounded-lg px-5 py-8 text-center obs-body obs-text-muted">
+          ディレクター担当の観測対象課題はありません。
         </p>
       </section>
     );
   }
 
   return (
-    <section className="obs-section-secondary" aria-label="今日の確認アクション">
-      <header className="mb-4">
-        <h2 className="obs-heading">今日の確認アクション</h2>
-        <p className="mt-1 text-sm obs-text-muted">
-          朝会後、各ディレクターが今日見るべき課題（要確認 = 判断が必要 / 返信待ち = 外部返信待ち）
+    <section className="obs-section-secondary" aria-label={SECTION_HEADINGS.directorAssignedIssues}>
+      <header className="mb-5">
+        <h2 className="obs-heading">{SECTION_HEADINGS.directorAssignedIssues}</h2>
+        <p className="mt-1.5 obs-section-lead">
+          Backlog で担当者がディレクターチームの課題一覧。コメント記法があるものと、記法未記載の
+          要整理課題を表示します。
         </p>
+        <ActionLabelLegend className="mt-3" />
       </header>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -43,15 +48,29 @@ export function DirectorTodayActions({ actions }: DirectorTodayActionsProps) {
 function DirectorCard({ director }: { director: FleetDirectorAction }) {
   return (
     <article className="obs-surface rounded-lg px-5 py-4">
-      <h3 className="text-lg font-semibold obs-text-primary">{director.name}</h3>
+      <h3 className="obs-card-title">{director.name}</h3>
 
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm tabular-nums">
-        <span className="text-cyan-700 dark:text-cyan-300/90">
-          {ACTION_LABELS.needsConfirmation} {director.needsConfirmationCount}
-        </span>
-        <span className="text-amber-700 dark:text-amber-300/80">
-          {ACTION_LABELS.awaitingReply} {director.awaitingReplyCount}
-        </span>
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 obs-body-sm tabular-nums font-medium">
+        {director.needsConfirmationCount > 0 && (
+          <span className="text-amber-800 dark:text-amber-200/90">
+            {ACTION_LABELS.needsConfirmation} {director.needsConfirmationCount}
+          </span>
+        )}
+        {director.externalWaitCount > 0 && (
+          <span className="text-blue-700 dark:text-blue-300/90">
+            {ACTION_LABELS.externalWait} {director.externalWaitCount}
+          </span>
+        )}
+        {director.internalWaitCount > 0 && (
+          <span className="text-violet-700 dark:text-violet-300/90">
+            {ACTION_LABELS.internalWait} {director.internalWaitCount}
+          </span>
+        )}
+        {director.needsOrganizationCount > 0 && (
+          <span className="text-slate-700 dark:text-slate-300/90">
+            {ACTION_LABELS.needsOrganization} {director.needsOrganizationCount}
+          </span>
+        )}
       </div>
 
       <ul className="obs-divider mt-4 space-y-2 border-t pt-3">
@@ -65,21 +84,26 @@ function DirectorCard({ director }: { director: FleetDirectorAction }) {
   );
 }
 
-function IssueRow({ issue }: { issue: FleetDirectorAction['issues'][number] }) {
-  const label = issue.issueKey;
+function IssueRow({ issue }: { issue: DirectorActionIssue }) {
   const content = (
     <>
-      <span className="obs-heading-muted">{label}</span>
-      <span className="mt-0.5 block text-sm leading-snug obs-text-muted line-clamp-2">
+      <span className="obs-heading-muted">{issue.issueKey}</span>
+      <span className="mt-1 block obs-body leading-snug obs-text-primary line-clamp-2">
         {issue.title}
       </span>
-      <span className="mt-1 flex flex-wrap gap-2">
+      <NotationLines issue={issue} />
+      <span className="mt-1.5 flex flex-wrap gap-2">
+        {issue.needsOrganization && (
+          <IssueTag tone="organization">{ACTION_LABELS.needsOrganization}</IssueTag>
+        )}
         {issue.needsConfirmation && (
           <IssueTag tone="confirm">{ACTION_LABELS.needsConfirmation}</IssueTag>
         )}
-        {issue.awaitingReply && (
-          <IssueTag tone="reply">{ACTION_LABELS.awaitingReply}</IssueTag>
+        {issue.externalWait && (
+          <IssueTag tone="external">{ACTION_LABELS.externalWait}</IssueTag>
         )}
+        {issue.internalWait && <IssueTag tone="internal">{ACTION_LABELS.internalWait}</IssueTag>}
+        {issue.hasNextAction && <IssueTag tone="next">{ACTION_LABELS.nextAction}</IssueTag>}
       </span>
     </>
   );
@@ -100,17 +124,60 @@ function IssueRow({ issue }: { issue: FleetDirectorAction['issues'][number] }) {
   return <div className="px-2 py-1.5">{content}</div>;
 }
 
+function NotationLines({ issue }: { issue: DirectorActionIssue }) {
+  if (issue.needsOrganization) return null;
+
+  const lines: { label: string; text: string | null | undefined }[] = [
+    { label: ACTION_LABELS.needsConfirmation, text: issue.needsReviewNote },
+    { label: ACTION_LABELS.externalWait, text: issue.waitingExternalNote },
+    { label: ACTION_LABELS.internalWait, text: issue.waitingInternalNote },
+    { label: ACTION_LABELS.nextAction, text: issue.nextActionNote },
+  ].filter((l) => l.text);
+
+  if (lines.length === 0) return null;
+
+  return (
+    <ul className="mt-2 space-y-1 obs-body-sm obs-text-muted">
+      {lines.map((l) => (
+        <li key={l.label}>
+          <span className="obs-text-secondary">{l.label}:</span> {l.text}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ActionLabelLegend({ className = '' }: { className?: string }) {
+  return (
+    <ul className={`space-y-2 obs-body-sm leading-relaxed obs-text-muted ${className}`}>
+      {(Object.keys(ACTION_LABELS) as Array<keyof typeof ACTION_LABELS>).map((key) => (
+        <li key={key}>
+          <strong className="font-semibold obs-text-secondary">{ACTION_LABELS[key]}</strong>
+          {' — '}
+          {ACTION_LABEL_HINTS[key]}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function IssueTag({
   children,
   tone,
 }: {
   children: string;
-  tone: 'confirm' | 'reply';
+  tone: 'confirm' | 'external' | 'internal' | 'next' | 'organization';
 }) {
   const className =
     tone === 'confirm'
-      ? 'rounded border border-cyan-500/30 bg-cyan-500/10 px-1.5 py-0.5 text-xs text-cyan-800 dark:text-cyan-200/90'
-      : 'rounded border border-amber-500/30 bg-amber-500/10 px-1.5 py-0.5 text-xs text-amber-800 dark:text-amber-200/90';
+      ? ACTION_TAG_CLASS.needsConfirmation
+      : tone === 'external'
+        ? ACTION_TAG_CLASS.externalWait
+        : tone === 'internal'
+          ? ACTION_TAG_CLASS.internalWait
+          : tone === 'organization'
+            ? ACTION_TAG_CLASS.needsOrganization
+            : ACTION_TAG_CLASS.nextAction;
 
   return <span className={className}>{children}</span>;
 }

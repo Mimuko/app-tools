@@ -16,11 +16,12 @@ import { SafetyReadinessPanel } from '../../components/SafetyReadinessPanel';
 import { ShareStatusBadge } from '../../components/ShareStatusBadge';
 import { SharingGapPanel } from '../../components/SharingGapPanel';
 import { StatusReasonsPanel } from '../../components/StatusReasonsPanel';
-import { ACTION_LABELS } from '../../lib/labels';
+import { ACTION_LABELS, METRIC_LABELS } from '../../lib/labels';
 import { formatRelativeTime } from '../../lib/format';
 import { isUsingLiveBacklog } from '../../lib/load-projects';
 import { projectDetailPath } from '../../lib/paths';
 import { getProjectDetail } from '../../mock/projects';
+import type { ProjectDetail } from '../../types';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,10 +79,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </p>
       </div>
 
-      <div className="mb-8 grid grid-cols-2 gap-3 sm:max-w-md">
-        <StatPill label={ACTION_LABELS.needsConfirmation} value={project.awaitingConfirmationCount} />
-        <StatPill label={ACTION_LABELS.awaitingReply} value={project.unrepliedIssueCount} />
-      </div>
+      <ProjectActionMetrics project={project} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <StatusReasonsPanel
@@ -107,6 +105,34 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </Link>
       </footer>
     </ObserverShell>
+  );
+}
+
+function ProjectActionMetrics({ project }: { project: ProjectDetail }) {
+  const pills = [
+    { label: ACTION_LABELS.needsConfirmation, value: project.needsConfirmationCount },
+    { label: ACTION_LABELS.externalWait, value: project.externalWaitCount },
+    { label: ACTION_LABELS.internalWait, value: project.internalWaitCount },
+    { label: METRIC_LABELS.statusUnrecorded, value: project.statusUnrecordedCount },
+  ].filter((p) => p.value > 0);
+
+  if (pills.length === 0) return null;
+
+  const gridClass =
+    pills.length >= 4
+      ? 'grid-cols-2 sm:grid-cols-4'
+      : pills.length === 3
+        ? 'grid-cols-3'
+        : pills.length === 2
+          ? 'grid-cols-2'
+          : 'grid-cols-1';
+
+  return (
+    <div className={`mb-8 grid gap-3 sm:max-w-xl ${gridClass}`}>
+      {pills.map((p) => (
+        <StatPill key={p.label} label={p.label} value={p.value} />
+      ))}
+    </div>
   );
 }
 
